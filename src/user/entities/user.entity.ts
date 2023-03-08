@@ -1,4 +1,5 @@
 import { Organization } from 'src/organization/entities/organization.entity';
+import { PasswordResetToken } from 'src/password-reset-token/entities/password-reset-token.entity';
 import { Role } from 'src/role/entities/role.entity';
 import {
   Entity,
@@ -8,6 +9,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { isEmail } from 'validator';
 
@@ -36,6 +38,10 @@ export class User {
 
   @ManyToOne(() => Organization, (organization) => organization.user)
   organization: Organization;
+
+  @OneToMany(() => PasswordResetToken, (resetPassword) => resetPassword.user)
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  resetPassword: PasswordResetToken;
 
   @CreateDateColumn()
   createdDate: Date;

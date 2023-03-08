@@ -26,6 +26,11 @@ export class UserController {
     return this.userService.login(user);
   }
 
+  @Post('/forgot')
+  forgotPassword(@Body() email: string): Promise<string> {
+    return this.userService.forgotPassword(email);
+  }
+
   @Get()
   findAll() {
     return this.userService.findAll();

@@ -15,11 +15,6 @@ export class UserService {
   ) {}
 
   async create(user: User): Promise<User> {
-    // console.log('USer ', user);
-
-    // const encPassword = await bcrypt.hash(user.password, 12);
-    // console.log('User Encrypted', encPassword);
-    // const createdUser = { ...user, password: encPassword };
     const newUser = this.userRepository.create({
       ...user,
       password: await bcrypt.hash(user.password, 12),
@@ -37,6 +32,11 @@ export class UserService {
       const token = generateToken(String(userExists.id));
       return { user: userExists, token };
     }
+  }
+
+  async forgotPassword(email: string): Promise<string> {
+    const token = Math.random().toString(28).substr(2, 12);
+    return token;
   }
 
   findAll() {
