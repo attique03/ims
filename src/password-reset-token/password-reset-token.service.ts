@@ -15,10 +15,10 @@ export class PasswordResetTokenService {
     private passwordResetRepository: Repository<PasswordResetToken>,
     private readonly configService: ConfigService,
   ) {
-    SendGrid.setApiKey(
-      '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',
-    );
-    // SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'));
+    // SendGrid.setApiKey(
+    //   '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',
+    // );
+    SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'));
   }
 
   async create(
