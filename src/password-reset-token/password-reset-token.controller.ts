@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PasswordResetTokenService } from './password-reset-token.service';
 import { CreatePasswordResetTokenDto } from './dto/create-password-reset-token.dto';
 import { UpdatePasswordResetTokenDto } from './dto/update-password-reset-token.dto';
 import { PasswordResetToken } from './entities/password-reset-token.entity';
+import * as SendGrid from '@sendgrid/mail';
 
 @Controller('password-reset-token')
 export class PasswordResetTokenController {
@@ -21,8 +23,21 @@ export class PasswordResetTokenController {
   @Post()
   create(
     @Body() createPasswordResetTokenDto: CreatePasswordResetTokenDto,
-  ): Promise<PasswordResetToken> {
-    return this.passwordResetTokenService.create(createPasswordResetTokenDto);
+    @Query('email') email,
+  ) {
+    console.log('Email ==> ', email);
+    const mail = {
+      to: email,
+      subject: 'Greeting Message from NestJS Sendgrid',
+      from: '<send_grid_email_address>',
+      cc: '<send_grid_email_address>',
+      text: 'Hello World from NestJS Sendgrid',
+      html: '<h1>Hello World from NestJS Sendgrid</h1>',
+    };
+    return this.passwordResetTokenService.create(
+      createPasswordResetTokenDto,
+      mail,
+    );
   }
 
   @Get()

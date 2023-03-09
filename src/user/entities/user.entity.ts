@@ -39,9 +39,9 @@ export class User {
   @ManyToOne(() => Organization, (organization) => organization.user)
   organization: Organization;
 
-  @OneToMany(() => PasswordResetToken, (resetPassword) => resetPassword.user)
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  resetPassword: PasswordResetToken;
+  // @OneToMany(() => PasswordResetToken, (resetPassword) => resetPassword.user)
+  // @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  // resetPassword: PasswordResetToken;
 
   @CreateDateColumn()
   createdDate: Date;

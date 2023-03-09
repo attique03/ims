@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Role } from './role/entities/role.entity';
@@ -25,6 +26,7 @@ import { PasswordResetToken } from './password-reset-token/entities/password-res
       entities: [Role, User, Organization, PasswordResetToken],
       synchronize: true,
     }),
+    ConfigModule.forRoot(),
     RoleModule,
     UserModule,
     OrganizationModule,

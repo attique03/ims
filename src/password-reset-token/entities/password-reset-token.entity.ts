@@ -11,6 +11,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { isEmail } from 'validator';
+import * as SendGrid from '@sendgrid/mail';
 
 @Entity()
 export class PasswordResetToken {
@@ -23,11 +24,11 @@ export class PasswordResetToken {
   @Column()
   token: string;
 
+  // // @Column()
+  // mail: SendGrid.MailDataRequired;
+
   @CreateDateColumn()
   expiresIn: Date;
-
-  @ManyToOne(() => User, (user) => user.resetPassword)
-  user: User;
 
   @CreateDateColumn()
   createdDate: Date;
