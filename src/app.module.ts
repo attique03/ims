@@ -45,6 +45,6 @@ import { AssetsModule } from './assets/assets.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(authMiddleware).forRoutes('user');
+    consumer.apply(authMiddleware).forRoutes('users');
   }
 }
