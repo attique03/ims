@@ -22,7 +22,7 @@ export class PasswordResetToken {
   email: string;
 
   @Column()
-  token: string;
+  code: string;
 
   // // @Column()
   // mail: SendGrid.MailDataRequired;

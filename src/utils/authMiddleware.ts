@@ -5,13 +5,10 @@ import {
   NestMiddleware,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-// import { InjectModel } from '@nestjs/mongoose';
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
-// import { Model } from 'mongoose';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
-// import { User } from 'src/users/interfaces/user.interface';
 
 @Injectable()
 export class authMiddleware implements NestMiddleware {
@@ -31,12 +28,13 @@ export class authMiddleware implements NestMiddleware {
       try {
         token = req.headers.authorization.split(' ')[1];
 
-        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         //fetching User
-        // req.user = await this.userModel
-        //   .findById(decoded.id)
-        //   .select('-password');
+        req.user = await this.userRepository.findOne({
+          where: { id: decoded.id },
+          relations: ['role'],
+        });
 
         return next();
       } catch (error) {

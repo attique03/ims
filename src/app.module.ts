@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -13,6 +13,12 @@ import { OrganizationModule } from './organization/organization.module';
 import { Organization } from './organization/entities/organization.entity';
 import { PasswordResetTokenModule } from './password-reset-token/password-reset-token.module';
 import { PasswordResetToken } from './password-reset-token/entities/password-reset-token.entity';
+import { CategoryModule } from './category/category.module';
+import { Category } from './category/entities/category.entity';
+import { authMiddleware } from './utils/authMiddleware';
+import { UserController } from './user/user.controller';
+import { Repository } from 'typeorm';
+import { AssetsModule } from './assets/assets.module';
 
 @Module({
   imports: [
@@ -23,7 +29,7 @@ import { PasswordResetToken } from './password-reset-token/entities/password-res
       username: 'attique',
       password: '1234',
       database: 'ims',
-      entities: [Role, User, Organization, PasswordResetToken],
+      entities: [Role, User, Organization, PasswordResetToken, Category],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
@@ -31,8 +37,14 @@ import { PasswordResetToken } from './password-reset-token/entities/password-res
     UserModule,
     OrganizationModule,
     PasswordResetTokenModule,
+    CategoryModule,
+    AssetsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(authMiddleware).forRoutes('user');
+  }
+}

@@ -25,20 +25,33 @@ export class PasswordResetTokenController {
     @Body() createPasswordResetTokenDto: CreatePasswordResetTokenDto,
     @Query('email') email,
   ) {
-    console.log('Email ==> ', email);
     const mail = {
       to: email,
       subject: 'Greeting Message from NestJS Sendgrid',
-      from: '<send_grid_email_address>',
-      cc: '<send_grid_email_address>',
+      from: 'muhammad.attique@gigalabs.co',
       text: 'Hello World from NestJS Sendgrid',
       html: '<h1>Hello World from NestJS Sendgrid</h1>',
     };
+
+    console.log('Email ==> ', email);
+
     return this.passwordResetTokenService.create(
       createPasswordResetTokenDto,
       mail,
     );
   }
+
+  @Post('/verify')
+  login(
+    @Body() passwordReset: PasswordResetToken,
+  ): Promise<{ passwordReset: PasswordResetToken }> {
+    return this.passwordResetTokenService.verify(passwordReset);
+  }
+
+  // @Post('/verify')
+  // verify(@Body() code: string): Promise<string> {
+  //   return this.passwordResetTokenService.verify(code);
+  // }
 
   @Get()
   findAll() {
