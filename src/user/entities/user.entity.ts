@@ -1,6 +1,8 @@
+import { Asset } from 'src/assets/entities/asset.entity';
 import { Organization } from 'src/organization/entities/organization.entity';
-import { PasswordResetToken } from 'src/password-reset-token/entities/password-reset-token.entity';
+import { Requests } from 'src/requests/entities/request.entity';
 import { Role } from 'src/role/entities/role.entity';
+import { Vendor } from 'src/vendor/entities/vendor.entity';
 import {
   Entity,
   Column,
@@ -11,7 +13,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { isEmail } from 'validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
+import { Complaint } from 'src/complaints/entities/complaint.entity';
 
 @Entity()
 export class User {
@@ -22,9 +25,11 @@ export class User {
   name: string;
 
   @Column({ unique: true })
+  @IsEmail()
   email: string;
 
   @Column()
+  @IsNotEmpty()
   password: string;
 
   @Column()
@@ -39,9 +44,21 @@ export class User {
   @ManyToOne(() => Organization, (organization) => organization.user)
   organization: Organization;
 
-  // @OneToMany(() => PasswordResetToken, (resetPassword) => resetPassword.user)
-  // @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  // resetPassword: PasswordResetToken;
+  @OneToMany(() => Vendor, (vendor) => vendor.user)
+  @JoinColumn({ name: 'user', referencedColumnName: 'id' })
+  vendor: Vendor;
+
+  @OneToMany(() => Asset, (asset) => asset.employee)
+  @JoinColumn({ name: 'user', referencedColumnName: 'id' })
+  asset: Asset;
+
+  @OneToMany(() => Requests, (requests) => requests.user)
+  @JoinColumn({ name: 'user', referencedColumnName: 'id' })
+  requests: Requests;
+
+  @OneToMany(() => Complaint, (complaint) => complaint.user)
+  @JoinColumn({ name: 'user', referencedColumnName: 'id' })
+  complaint: Complaint;
 
   @CreateDateColumn()
   createdDate: Date;

@@ -10,7 +10,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { isEmail } from 'validator';
 
 @Entity()
 export class Organization {

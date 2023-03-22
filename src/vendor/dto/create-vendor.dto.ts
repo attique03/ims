@@ -1,16 +1,14 @@
+import { Asset } from 'src/assets/entities/asset.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Vendor } from 'src/vendor/entities/vendor.entity';
 
-export class CreateAssetDto {
+export class CreateVendorDto {
   readonly id: number;
   readonly name: string;
-  readonly serial_number: number;
-  readonly description: string;
-  readonly price: number;
-  readonly vendor: Vendor;
-  readonly employee: User;
+  readonly phone: string;
   readonly subCategory: Category;
+  readonly user: User;
+  readonly asset: Asset;
   readonly createdDate: Date;
   readonly updatedDate: Date;
 }

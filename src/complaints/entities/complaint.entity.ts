@@ -1,29 +1,30 @@
+import { Category } from 'src/category/entities/category.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
   ManyToOne,
 } from 'typeorm';
 
 @Entity()
-export class PasswordResetToken {
+export class Complaint {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  email: string;
+  description: string;
 
   @Column()
-  code: string;
+  status: string;
 
-  // // @Column()
-  // mail: SendGrid.MailDataRequired;
+  @Column()
+  image: string;
 
-  @CreateDateColumn()
-  expiresIn: Date;
+  @ManyToOne(() => User, (user) => user.complaint)
+  user: User;
 
   @CreateDateColumn()
   createdDate: Date;

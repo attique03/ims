@@ -1,9 +1,10 @@
-// import { Item } from 'src/item/entity/item.entity';
-// import { Organization } from 'src/organization/entity/organization.entity';
-// import { Vendor } from 'src/vendor/entity/vendor.entity';
+import { Asset } from 'src/assets/entities/asset.entity';
+import { Requests } from 'src/requests/entities/request.entity';
+import { Vendor } from 'src/vendor/entities/vendor.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -25,6 +26,15 @@ export class Category {
   @ManyToOne(() => Category, (category) => category.children)
   parent: Category;
 
-  //   @ManyToOne(() => Organization, (organization) => organization.categories, {})
-  //   organization: Organization;
+  @OneToMany(() => Vendor, (vendor) => vendor.subCategory)
+  @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
+  vendor: Vendor;
+
+  @OneToMany(() => Asset, (asset) => asset.subCategory)
+  @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
+  asset: Asset;
+
+  @OneToMany(() => Requests, (requests) => requests.subCategory)
+  @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
+  requests: Requests;
 }

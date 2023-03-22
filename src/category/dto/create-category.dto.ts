@@ -1,15 +1,15 @@
-// import { Organization } from 'src/organization/entities/organization.entity';
-// import { PasswordResetToken } from 'src/password-reset-token/entities/password-reset-token.entity';
-// import { Role } from 'src/role/entities/role.entity';
-
+import { Asset } from 'src/assets/entities/asset.entity';
+import { Requests } from 'src/requests/entities/request.entity';
+import { Vendor } from 'src/vendor/entities/vendor.entity';
 import { Category } from '../entities/category.entity';
-
 export class CreateCategoryDto {
   readonly id: number;
   readonly name: string;
   readonly children: Category[];
   readonly parent: Category;
-  //   readonly organization: Organization;
+  readonly vendor: Vendor;
+  readonly asset: Asset;
+  readonly requests: Requests;
   readonly createdDate: Date;
   readonly updatedDate: Date;
 }

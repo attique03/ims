@@ -1,6 +1,6 @@
+import { Asset } from 'src/assets/entities/asset.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Vendor } from 'src/vendor/entities/vendor.entity';
 import {
   Entity,
   Column,
@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Asset {
+export class Vendor {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,25 +21,17 @@ export class Asset {
   name: string;
 
   @Column()
-  serial_number: number;
+  phone: string;
 
-  @Column()
-  description: string;
-
-  @Column()
-  price: number;
-
-  // Assigned to this employee
-  @ManyToOne(() => User, (employee) => employee.asset)
-  employee: User;
-
-  // Asset of this category
-  @ManyToOne(() => Category, (subCategory) => subCategory.asset)
+  @ManyToOne(() => Category, (subCategory) => subCategory.vendor)
   subCategory: Category;
 
-  // Asset from this Vendor
-  @ManyToOne(() => Vendor, (vendor) => vendor.asset)
-  vendor: Vendor;
+  @ManyToOne(() => User, (user) => user.vendor)
+  user: User;
+
+  @OneToMany(() => Asset, (asset) => asset.vendor)
+  @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
+  asset: Asset;
 
   @CreateDateColumn()
   createdDate: Date;
