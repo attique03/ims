@@ -11,3 +11,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* .css-1aquho2-MuiTabs-indicator {
+  height: 0px !important;
+} */
+
+.navcolor {
+  height: 64px;
+  background-color: green;
+}
+
+/* .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
+  color: #31de79 !important;
+}
+
+.css-1q39md6-MuiButtonBase-root-MuiButton-root {
+  color: black !important;
+}
+
+.css-6lpcrm-MuiPaper-root-MuiAppBar-root {
+  background-color: white !important;
+}
+
+.css-hip9hq-MuiPaper-root-MuiAppBar-root {
+  background-color: white !important;
+}
+
+.css-w1znpf-MuiPaper-root-MuiAppBar-root {
+  background-color: white !important;
+} */
