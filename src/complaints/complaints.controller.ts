@@ -21,8 +21,9 @@ import { join } from 'path';
 
 export const storage = {
   storage: diskStorage({
-    destination: './uploads/profileimages',
-    filename: (req, file, cb) => {
+    destination: './uploads',
+    filename: (req, file: any, cb) => {
+      console.log('File in Storage ', file);
       const filename: string =
         path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
       const extension: string = path.parse(file.originalname).ext;

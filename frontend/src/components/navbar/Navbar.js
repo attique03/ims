@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+// import Link from '@mui/material/Link';
+import { useSelector } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,6 +15,9 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import './navbar.css';
 
 // const pages = ["Dashboard", "Organizations", "Admins", "Complaints"];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -20,7 +25,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const superAdminPages = [
   { title: 'Dashboard', route: '/' },
   { title: 'Organizations', route: '/organizations' },
-  { title: 'Admins', route: '/admin' },
+  { title: 'Admins', route: '/admins' },
   { title: 'Complaints', route: '/complaints' },
 ];
 
@@ -45,13 +50,17 @@ const employeePages = [
 // .css-hip9hq-MuiPaper-root-MuiAppBar-root navbar background
 
 function Navbar() {
-  const [user, setUser] = useState('superadmin');
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [selectedNav, setSelectedNav] = useState(null);
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { error, userInfo } = userLogin;
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -62,6 +71,10 @@ function Navbar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleSelectedNav = (index) => {
+    setSelectedNav(index);
   };
 
   function checkUser(userRole) {
@@ -75,11 +88,6 @@ function Navbar() {
       default:
         return null;
     }
-    // return userRole === 'superadmin'
-    //   ? superAdminPages
-    //   : userRole === 'admin'
-    //   ? adminPages
-    //   : employeePages;
   }
 
   return (
@@ -128,13 +136,12 @@ function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {checkUser('admin').map((page, index) => (
-                <MenuItem key={index} onClick={handleCloseNavMenu}>
-                  <Link textAlign="center" to={page.route}>
-                    {page.title}
-                  </Link>
-                </MenuItem>
-              ))}
+              {userInfo &&
+                checkUser(userInfo?.user?.role?.role).map((page, index) => (
+                  <MenuItem key={index} onClick={handleCloseNavMenu}>
+                    <Link to={page.route}>{page.title}</Link>
+                  </MenuItem>
+                ))}
             </Menu>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
@@ -162,37 +169,37 @@ function Navbar() {
             }}
           ></Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {checkUser('employee').map((page, index) => (
-              <Link
-                textAlign="center"
-                to={page.route}
-                onClick={handleCloseNavMenu}
-                style={{
-                  margin: '2px 5px 2px 5px',
-                  color: 'black',
-                  display: 'block',
-                  textDecoration: 'none',
-                }}
-              >
-                {page.title}
-              </Link>
-
-              //   <Button
-              //     key={index}
-              //     onClick={handleCloseNavMenu}
-              //     sx={{ my: 2, color: "white", display: "block" }}
-              //   >
-              //     {page.title}
-              //   </Button>
-            ))}
+            {userInfo &&
+              checkUser(userInfo?.user?.role?.role).map((page, index) => (
+                <Link
+                  key={index}
+                  to={page.route}
+                  onClick={() => handleSelectedNav(index)}
+                  className={selectedNav === index && 'active'}
+                  style={{
+                    margin: '2px 5px 2px 5px',
+                    color: 'black',
+                    display: 'block',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {page.title}
+                </Link>
+              ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton sx={{ p: 0 }} onClick={handleOpenUserMenu}>
                 <Avatar alt="Remy Sharp" src="/avatar0.jpg" />
-                {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" /> */}
+                <Typography sx={{ mx: 1, color: 'black' }}>
+                  {userInfo?.user?.role?.role}
+                </Typography>
+                <FontAwesomeIcon icon={faChevronDown} className="fa-light" />
+                {/* <FontAwesomeIcon icon="fa-light fa-chevron-down" /> */}
               </IconButton>
+              {/* <Box onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              </Box> */}
             </Tooltip>
             <Menu
               sx={{ mt: '45px' }}

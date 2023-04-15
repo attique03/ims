@@ -62,9 +62,13 @@ import { Complaint } from './complaints/entities/complaint.entity';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(authMiddleware)
-      .exclude('user/login')
-      .forRoutes('user', 'vendor', 'assets', 'requests', 'complaints');
+    consumer.apply(authMiddleware).exclude('user/login').forRoutes(
+      'user',
+      'vendor',
+      'assets',
+      'requests',
+      // 'complaints',
+      'organization',
+    );
   }
 }

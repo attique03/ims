@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,12 +22,24 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  create(
+    @Body() createUserDto: CreateUserDto,
+    @Req() req,
+    @Query('email') email,
+  ) {
+    const mail = {
+      to: email,
+      subject: 'Login Credentials | Inventory Management System',
+      from: 'muhammad.attique@gigalabs.co',
+      text: 'Password Reset Code | IMS Password Reset',
+      // html: '<div>Hello World from NestJS Sendgrid</div>',
+    };
+    return this.userService.create(createUserDto, req, mail);
   }
 
   @Post('/login')
   login(@Body() user: User): Promise<{ user: User }> {
+    console.log('Login Controller ', user);
     return this.userService.login(user);
   }
 
@@ -37,9 +50,8 @@ export class UserController {
 
   @Get()
   // @UseGuards(AuthGuard)
-  findAll(@Req() req) {
-    console.log('Req ====> ', req.user);
-    return this.userService.findAll();
+  findAll(@Req() req /* @Param('organizationId') organizationId */) {
+    return this.userService.findAll(req);
   }
 
   @Get(':id')

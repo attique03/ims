@@ -12,7 +12,6 @@ import { PasswordResetTokenService } from './password-reset-token.service';
 import { CreatePasswordResetTokenDto } from './dto/create-password-reset-token.dto';
 import { UpdatePasswordResetTokenDto } from './dto/update-password-reset-token.dto';
 import { PasswordResetToken } from './entities/password-reset-token.entity';
-import * as SendGrid from '@sendgrid/mail';
 
 @Controller('password-reset-token')
 export class PasswordResetTokenController {
@@ -27,10 +26,10 @@ export class PasswordResetTokenController {
   ) {
     const mail = {
       to: email,
-      subject: 'Greeting Message from NestJS Sendgrid',
+      subject: 'Password Reset Code | IMS Password Reset',
       from: 'muhammad.attique@gigalabs.co',
-      text: 'Hello World from NestJS Sendgrid',
-      html: '<h1>Hello World from NestJS Sendgrid</h1>',
+      text: 'Password Reset Code | IMS Password Reset',
+      // html: '<div>Hello World from NestJS Sendgrid</div>',
     };
 
     console.log('Email ==> ', email);

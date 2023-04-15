@@ -1,9 +1,9 @@
 import React from 'react';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
-import DashboardSummary from '../components/dashboard/DashboardSummary';
-import { DashboardGraph } from '../components/dashboard/DashboardGraph';
-import CustomizedTables from '../components/table/table';
+import DashboardSummary from '../../components/dashboard/DashboardSummary';
+import { DashboardGraph } from '../../components/dashboard/DashboardGraph';
+import DataTable from '../../components/table/Table';
 
 const tableColumns = [
   'ID',
@@ -53,7 +53,7 @@ const DashboardPage = () => {
       <Card sx={{ borderRadius: '15px', boxShadow: 3, my: 5 }}>
         <DashboardSummary />
         <DashboardGraph />
-        <CustomizedTables columns={tableColumns} data={tableRows} />
+        <DataTable columns={tableColumns} data={tableRows} />
       </Card>
     </Container>
   );

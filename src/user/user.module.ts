@@ -7,11 +7,12 @@ import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { authMiddleware } from 'src/utils/authMiddleware';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, ConfigService],
   exports: [TypeOrmModule.forFeature([User])],
 })
 export class UserModule {}

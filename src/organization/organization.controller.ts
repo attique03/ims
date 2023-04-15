@@ -6,29 +6,45 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { Organization } from './entities/organization.entity';
+import { AuthGuard } from 'src/utils/auth.guard';
+import { RolesGuard } from 'src/utils/roles.guard';
 
 @Controller('organization')
 export class OrganizationController {
   constructor(private readonly organizationService: OrganizationService) {}
 
   @Post()
+  @SetMetadata('roles', 'superadmin')
+  @UseGuards(RolesGuard)
   create(@Body() createOrganizationDto: CreateOrganizationDto) {
     return this.organizationService.create(createOrganizationDto);
   }
 
   @Get()
+  @SetMetadata('roles', 'superadmin')
+  @UseGuards(RolesGuard)
   findAll() {
     return this.organizationService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.organizationService.findOne(+id);
+  @SetMetadata('roles', 'superadmin')
+  @UseGuards(RolesGuard)
+  findOne(@Param('id') id): Promise<Organization> {
+    return this.organizationService.findOne(id);
   }
+
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.organizationService.findOne(+id);
+  // }
 
   @Patch(':id')
   update(

@@ -22,6 +22,9 @@ export class User {
   id: number;
 
   @Column()
+  image: string;
+
+  @Column()
   name: string;
 
   @Column({ unique: true })
@@ -34,9 +37,6 @@ export class User {
 
   @Column()
   phone: string;
-
-  @Column()
-  image: string;
 
   @ManyToOne(() => Role, (role) => role.user)
   role: Role;

@@ -1,0 +1,48 @@
+.edit-color {
+  color: #35baf6 !important;
+  /* margin-right: 1rem; */
+}
+
+.delete-color {
+  color: red !important;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+}
+
+.icon-button {
+  font-size: 15px;
+}
+
+.icon-background {
+  background-color: #2979ff;
+  color: #fff;
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.customized-tab {
+  /* color: #fff; */
+  background: #2979ff;
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+
+/* .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
+  color: white;
+} */
+
+/* .indicator {
+    display: "flex",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+    "& > span": {
+      maxWidth: 40,
+      width: "100%",
+      backgroundColor: "white"
+    }
+  } */

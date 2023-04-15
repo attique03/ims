@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, TextField, Typography } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import React from 'react';
-import CardContainer from '../../components/card/CardContainer';
+import CardContainer from '../../../components/card/CardContainer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAdd, faRemove } from '@fortawesome/free-solid-svg-icons';

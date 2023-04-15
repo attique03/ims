@@ -1,0 +1,7 @@
+.view {
+  color: #2979ff;
+}
+
+.view:hover {
+  cursor: pointer;
+}

@@ -17,7 +17,7 @@ export class authMiddleware implements NestMiddleware {
     private userRepository: Repository<User>,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    console.log('Request...', req.headers.authorization);
+    console.log('Request ===> ', req.headers.authorization);
 
     let token;
 
@@ -33,7 +33,7 @@ export class authMiddleware implements NestMiddleware {
         //fetching User
         req.user = await this.userRepository.findOne({
           where: { id: decoded.id },
-          relations: ['role'],
+          relations: ['role', 'organization'],
         });
 
         return next();

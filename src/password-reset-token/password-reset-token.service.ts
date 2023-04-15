@@ -16,23 +16,22 @@ export class PasswordResetTokenService {
     private readonly configService: ConfigService,
   ) {
     SendGrid.setApiKey(process.env.SEND_GRID_KEY);
-    // SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'));
+    // SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'))
   }
 
   async create(
     passwordReset: PasswordResetToken,
     mail: SendGrid.MailDataRequired,
   ): Promise<{ token: PasswordResetToken; mail: SendGrid.MailDataRequired }> {
-    const transport = await SendGrid.send(mail);
-
-    console.log('key ==> ', typeof process.env.SEND_GRID_KEY);
+    console.log('key ==> ', process.env.SEND_GRID_KEY);
     console.log(`Email successfully dispatched to ${mail.to}`);
-    console.log(`Transport ===> ${transport}`);
 
     const newToken = this.passwordResetRepository.create({
       ...passwordReset,
       code: Math.random().toString(28).substr(2, 12),
     });
+    mail.html = `<div>Use this Code to Reset Your Password: <br/> <b>${newToken.code}</b> </div>`;
+    const transport = await SendGrid.send(mail);
 
     // const newToken = this.passwordResetRepository.create({
     //   ...passwordReset,

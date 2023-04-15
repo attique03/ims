@@ -1,4 +1,6 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { login } from '../../redux/actions/userActions';
 
 function Copyright(props) {
   return (
@@ -45,17 +48,40 @@ const theme = createTheme({
 });
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { error, userInfo } = userLogin;
+
+  useEffect(() => {
+    if (userInfo) {
+      console.log('iNFO ', userInfo);
+      navigate('/');
+    }
+  }, [userInfo, navigate]);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(login(email, password));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('Event ', event);
     const data = new FormData(event.currentTarget);
 
-    
     console.log({
       email: data.get('email'),
       password: data.get('password'),
     });
-    console.log('Data ===> ', data);
+
+    const email = data.get('email');
+    const password = data.get('password');
+
+    dispatch(login(email, password));
   };
 
   return (

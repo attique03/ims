@@ -1,33 +1,56 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import DashboardPage from './pages/DashboardPage';
+import { useSelector } from 'react-redux';
+import DashboardPage from './pages/dashboard/DashboardPage';
 import Navbar from './components/navbar/Navbar';
-import Login from './pages/Login';
-import OrganizationCreatePage from './pages/organization/OrganizationCreatePage';
-import OrganizationListPage from './pages/organization/OrganizationListPage';
-import OrganizationPage from './pages/organization/OrganizationPage';
+import Login from './pages/login/LoginPage';
+import Organizations from './pages/organization/Organizations';
 import Category from './pages/categories/Category';
-import CollapsibleTable from './pages/categories/CategoryListPage';
-import CategoryCreatePage from './pages/categories/CategoryCreatePage';
+import CollapsibleTable from './pages/categories/categoryList/CategoryListPage';
+import CategoryCreatePage from './pages/categories/categoryCreate/CategoryCreatePage';
+import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
+import { CssBaseline, StyledEngineProvider } from '@mui/material';
+import OrganizationListPage from './pages/organization/organizationList/OrganizationListPage';
+import OrganizationCreatePage from './pages/organization/organizationCreate/OrganizationCreatePage';
+import OrganizationPage from './pages/organization/organizationDetail/OrganizationPage';
+import AdminListPage from './pages/admin/adminList/AdminListPage';
+import Admins from './pages/admin/Admins';
+import AdminCreatePage from './pages/admin/adminCreate/AdminCreatePage';
 
 function App() {
-  return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route exact path="/" element={<DashboardPage />} />
-        <Route exact path="/login" element={<Login />} />
-        <Route path="organizations" element={<Category />}>
-          <Route exact path="" element={<OrganizationListPage />} />
-          <Route exact path="create" element={<OrganizationCreatePage />} />
-          <Route exact path="details" element={<OrganizationPage />} />
-        </Route>
+  const userLogin = useSelector((state) => state.userLogin);
+  const { error, userInfo } = userLogin;
 
-        <Route path="categories" element={<Category />}>
-          <Route path="" element={<CollapsibleTable />} />
-          <Route path="create" element={<CategoryCreatePage />} />
-        </Route>
-      </Routes>
-    </Router>
+  return (
+    <StyledEngineProvider injectFirst>
+      <CssBaseline />
+      <Router>
+        {userInfo && <Navbar />}
+        <Routes>
+          <Route exact path="/login" element={<Login />} />
+        </Routes>
+        <ProtectedRoute>
+          <Routes>
+            <Route exact path="/" element={<DashboardPage />} />
+            <Route path="organizations" element={<Organizations />}>
+              <Route exact path="" element={<OrganizationListPage />} />
+              <Route exact path="create" element={<OrganizationCreatePage />} />
+              <Route exact path=":id" element={<OrganizationPage />} />
+            </Route>
+
+            <Route path="admins" element={<Admins />}>
+              <Route exact path="" element={<AdminListPage />} />
+              <Route exact path="create" element={<AdminCreatePage />} />
+              {/* <Route exact path=":id" element={<OrganizationPage />} /> */}
+            </Route>
+
+            <Route path="categories" element={<Category />}>
+              <Route path="" element={<CollapsibleTable />} />
+              <Route path="create" element={<CategoryCreatePage />} />
+            </Route>
+          </Routes>
+        </ProtectedRoute>
+      </Router>
+    </StyledEngineProvider>
   );
 }
 
