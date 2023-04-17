@@ -52,12 +52,14 @@ export default function DataTable({ columns, data }) {
   };
 
   function checkValues(val) {
-    if (String(val)?.startsWith('/')) {
+    if (String(val)?.startsWith('frontend/public')) {
+      console.log('Value ', val);
       return (
-        <Avatar
+        <img
           alt="profile-img"
-          src={val && val}
-          style={{ borderRadius: '0px' }}
+          // src={val && val}
+          src={`/uploads/${val?.split('/')[3]}`}
+          style={{ borderRadius: '0px', height: '40px', width: '40px' }}
         />
         // <img
         //   src={val && val}

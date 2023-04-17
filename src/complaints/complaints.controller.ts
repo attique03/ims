@@ -21,9 +21,9 @@ import { join } from 'path';
 
 export const storage = {
   storage: diskStorage({
-    destination: './uploads',
+    destination: 'uploads/',
     filename: (req, file: any, cb) => {
-      console.log('File in Storage ', file);
+      console.log('File in Storage ==> ', file);
       const filename: string =
         path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
       const extension: string = path.parse(file.originalname).ext;
@@ -64,6 +64,7 @@ export class ComplaintsController {
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log('File Uploaded ==> ', file);
+    return file;
   }
 
   @Get()

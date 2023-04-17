@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -20,6 +21,7 @@ import axiosConfig from '../../../utils/axiosConfig';
 import { createOrganization } from '../../../redux/actions/organizationActions';
 import { ORGANIZATION_CREATE_RESET } from '../../../redux/constants/organizationConstants';
 import Loader from '../../../components/loader/Loader';
+import axios from 'axios';
 
 const countries = [
   {
@@ -37,8 +39,6 @@ const OrganizationCreatePage = () => {
     { id: 1, label: 'Name of the Orgnization', value: '' },
     { id: 2, label: 'Bio', value: '' },
   ]);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
   const [formData, setFormData] = useState({
     image: '',
     name: '',
@@ -51,6 +51,8 @@ const OrganizationCreatePage = () => {
     representativeName: '',
     representativeContact: '',
   });
+  const [image, setImage] = useState(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -63,10 +65,9 @@ const OrganizationCreatePage = () => {
   useEffect(() => {
     if (success) {
       dispatch({ type: ORGANIZATION_CREATE_RESET });
-      // dispatch({ type: EVENT_LIST_RESET });
       navigate('/');
     }
-  }, [success, dispatch, navigate]);
+  }, [success, dispatch, navigate, image]);
 
   const createOrgnizationHandler = (e) => {
     e.preventDefault();
@@ -86,54 +87,58 @@ const OrganizationCreatePage = () => {
   //   }
   // }, [selectedImage]);
 
-  // const handleFiles = (files) => {
-  //   console.log(files[0]);
-  //   setImage(files[0]);
-  // };
+  const handleFiles = (files) => {
+    console.log(files[0]);
+    // setImage(files[0]);
+  };
 
-  // const handleChange = async (e) => {
-  //   // setImageUrl(URL.createObjectURL(e));
+  const handleChange = async (e) => {
+    console.log('dlk ', e);
+    e.preventDefault();
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
 
-  //   const file = e.target.files[0];
-  //   console.log('File  ===> ', file);
+    const config = {
+      headers: {
+        'Content-Type': 'image/jpeg',
+      },
+    };
 
-  //   const formData = new FormData();
+    //   .then((response) => response.json())
+    //   .then((data) => console.log('Fetch ', data))
+    //   .catch((error) => console.error('Error ', error));
 
-  //   formData.append('image', e.target.files[0]);
-  //   console.log('Form Data ==> ', formData.get('image'));
+    const { data } = await axios.post(
+      // '/upload',
+      // `${axiosConfig.defaults.baseURL}/upload`,
+      'http://127.0.0.1:4000/upload',
+      formData,
+      // config,
+    );
 
-  //   const config = {
-  //     header: {
-  //       'Content-Type': 'multipart/form-data',
-  //     },
-  //   };
+    if (data) {
+      setImage(data);
+      setFormData({
+        ...formData,
+        image: data,
+      });
+    }
+    console.log('Daata ', data);
+  };
 
-  //   const { data } = await axiosConfig.post(
-  //     '/complaints/upload',
-  //     {
-  //       fieldname: 'file',
-  //       originalname: 'AMS ERD.jpg',
-  //       encoding: '7bit',
-  //       mimetype: 'image/jpeg',
-  //       destination: './uploads',
-  //       filename: 'AMSERD24e6374b-ab67-4d03-a235-62c08d6ed8a5.jpg',
-  //       path: 'uploads/AMSERD24e6374b-ab67-4d03-a235-62c08d6ed8a5.jpg',
-  //       size: 75761,
-  //     },
-  //     // { file: formData.get('image') },
-  //     config,
-  //   );
-  //   console.log('Daata ', data);
-  // };
-
-  // console.log('Selected Image ', selectedImage);
+  // console.log('Image ', image, '/uploads/' + image.split('/')[3]);
+  console.log('Form Data ', formData);
 
   return (
     <>
       {loadingState && <Loader />}
       <Container className={'wrapper'}>
         <Card className={'card'}>
-          <form onSubmit={createOrgnizationHandler}>
+          <form
+            onSubmit={createOrgnizationHandler}
+            // encType="multipart/form-data"
+          >
             <Box display="flex" p={1} className={'border-card'}>
               <Box p={1} flexGrow={1}>
                 <Stack
@@ -181,14 +186,19 @@ const OrganizationCreatePage = () => {
             <Box sx={{ p: 1, m: 1 }}>
               <Grid container spacing={2}>
                 <Grid item xs={1}>
+                  {/* <Avatar
+                    alt="Remy Sharp"
+                    src={'/uploads/' + image.split('/')[3]}
+                  /> */}
                   <img
+                    // src={'/uploads/ux.png'}
                     src={
-                      formData?.image
-                        ? formData?.image
+                      image
+                        ? `/uploads/${image?.split('/')[3]}`
                         : 'https://www.sourcedogg.com/wp-content/uploads/2015/05/default-placeholder.png'
                     }
                     style={{ width: '70px', height: '70px' }}
-                    alt="organization_logo"
+                    alt="logo"
                   />
                 </Grid>
                 <Grid item xs={3.5}>
@@ -204,14 +214,13 @@ const OrganizationCreatePage = () => {
                     id="select-image"
                     style={{ display: 'none' }}
                     name="image"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        image: URL.createObjectURL(e.target.files[0]),
-                      })
-                    }
-                    // onChange={handleChange}
-                    // onChange={(e) => setSelectedImage(e.target.files[0])}
+                    // onChange={(e) =>
+                    //   setFormData({
+                    //     ...formData,
+                    //     image: URL.createObjectURL(e.target.files[0]),
+                    //   })
+                    // }
+                    onChange={handleChange}
                   />
                   <label htmlFor="select-image">
                     <Button

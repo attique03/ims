@@ -15,12 +15,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@mui/material/Grid';
-import axiosConfig from '../../../utils/axiosConfig';
 import { listOrganizations } from '../../../redux/actions/organizationActions';
-import Loader from '../../../components/loader/Loader';
 import { USER_CREATE_RESET } from '../../../redux/constants/userConstants';
 import { createUser } from '../../../redux/actions/userActions';
 import './adminCreate.css';
+import axios from 'axios';
 
 const AdminCreatePage = () => {
   const [formData, setFormData] = useState({
@@ -32,8 +31,6 @@ const AdminCreatePage = () => {
     organization: 0,
   });
   const [email, setEmail] = useState();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -44,75 +41,38 @@ const AdminCreatePage = () => {
   const organizationList = useSelector((state) => state.organizationList);
   const { organizations, error: errorOrganizationList } = organizationList;
 
-  const loading = useSelector((state) => state.loading);
-  const { loading: loadingState } = loading;
-
   useEffect(() => {
     dispatch(listOrganizations());
     if (user?.id) {
       dispatch({ type: USER_CREATE_RESET });
       navigate('/admins');
     }
-  }, [user?.id, dispatch, navigate]);
+  }, [user?.id, dispatch, navigate, formData.image]);
 
   const createUserHandler = (e) => {
     e.preventDefault();
     dispatch(createUser(formData, email));
   };
 
+  const handleChange = async (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const { data } = await axios.post('http://127.0.0.1:4000/upload', formData);
+
+    if (data) {
+      setFormData({
+        ...formData,
+        image: data,
+      });
+    }
+  };
+
   const goBackHandler = () => {
     navigate('/admins');
   };
-
-  // useEffect(() => {
-  //   if (selectedImage) {
-  //     setImageUrl(URL.createObjectURL(selectedImage));
-  //     const { data } = axiosConfig.post('/complaints/upload', selectedImage);
-  //     console.log('Daata ', data);
-  //   }
-  // }, [selectedImage]);
-
-  // const handleFiles = (files) => {
-  //   console.log(files[0]);
-  //   setImage(files[0]);
-  // };
-
-  // const handleChange = async (e) => {
-  //   // setImageUrl(URL.createObjectURL(e));
-
-  //   const file = e.target.files[0];
-  //   console.log('File  ===> ', file);
-
-  //   const formData = new FormData();
-
-  //   formData.append('image', e.target.files[0]);
-  //   console.log('Form Data ==> ', formData.get('image'));
-
-  //   const config = {
-  //     header: {
-  //       'Content-Type': 'multipart/form-data',
-  //     },
-  //   };
-
-  //   const { data } = await axiosConfig.post(
-  //     '/complaints/upload',
-  //     {
-  //       fieldname: 'file',
-  //       originalname: 'AMS ERD.jpg',
-  //       encoding: '7bit',
-  //       mimetype: 'image/jpeg',
-  //       destination: './uploads',
-  //       filename: 'AMSERD24e6374b-ab67-4d03-a235-62c08d6ed8a5.jpg',
-  //       path: 'uploads/AMSERD24e6374b-ab67-4d03-a235-62c08d6ed8a5.jpg',
-  //       size: 75761,
-  //     },
-  //     // { file: formData.get('image') },
-  //     config,
-  //   );
-  //   console.log('Daata ', data);
-  // };
-
-  // console.log('Selected Image ', selectedImage);
 
   return (
     <Container className={'wrapper'}>
@@ -150,7 +110,6 @@ const AdminCreatePage = () => {
                 fullWidth
                 variant="contained"
                 sx={{ backgroundColor: '#31DE79' }}
-                // onClick={createOrgnizationHandler}
               >
                 Save
               </Button>
@@ -163,7 +122,7 @@ const AdminCreatePage = () => {
                 <img
                   src={
                     formData?.image
-                      ? formData?.image
+                      ? `/uploads/${formData?.image?.split('/')[3]}`
                       : 'https://www.sourcedogg.com/wp-content/uploads/2015/05/default-placeholder.png'
                   }
                   style={{ width: '70px', height: '70px' }}
@@ -183,14 +142,7 @@ const AdminCreatePage = () => {
                   id="select-image"
                   style={{ display: 'none' }}
                   name="image"
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      image: URL.createObjectURL(e.target.files[0]),
-                    })
-                  }
-                  // onChange={handleChange}
-                  // onChange={(e) => setSelectedImage(e.target.files[0])}
+                  onChange={handleChange}
                 />
                 <label htmlFor="select-image">
                   <Button

@@ -254,9 +254,10 @@ export default function OrganizationPage() {
                   <Grid container spacing={2}>
                     <Grid item xs={1.5}>
                       <img
-                        src={
-                          organization.image ? organization.image : '/wp2.png'
-                        }
+                        src={`/uploads/${organization?.image?.split('/')[3]}`}
+                        // src={
+                        //   organization.image ? organization.image : '/wp2.png'
+                        // }
                         className={'logo'}
                         alt="organization-logo"
                       />

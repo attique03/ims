@@ -15,6 +15,7 @@ import OrganizationPage from './pages/organization/organizationDetail/Organizati
 import AdminListPage from './pages/admin/adminList/AdminListPage';
 import Admins from './pages/admin/Admins';
 import AdminCreatePage from './pages/admin/adminCreate/AdminCreatePage';
+import AdminPage from './pages/admin/adminDetail/AdminPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -40,7 +41,7 @@ function App() {
             <Route path="admins" element={<Admins />}>
               <Route exact path="" element={<AdminListPage />} />
               <Route exact path="create" element={<AdminCreatePage />} />
-              {/* <Route exact path=":id" element={<OrganizationPage />} /> */}
+              <Route exact path=":id" element={<AdminPage />} />
             </Route>
 
             <Route path="categories" element={<Category />}>

@@ -19,5 +19,6 @@ if (userInfoFromStorage) {
   ] = `Bearer ${userInfoFromStorage.token}`;
 }
 instance.defaults.headers.post['Content-Type'] = 'application/json';
+// instance.defaults.headers.post['Content-Type'] = 'images/jpeg';
 
 export default instance;
