@@ -1,0 +1,28 @@
+.title {
+  margin-top: 8px;
+  display: flex;
+  align-items: stretch;
+  color: #808080;
+}
+
+.icon-background {
+  background-color: #2979ff;
+  color: #fff;
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.edit-color {
+  color: #35baf6 !important;
+}
+
+.delete-color {
+  color: red !important;
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+}

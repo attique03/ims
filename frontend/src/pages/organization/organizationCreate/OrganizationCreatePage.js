@@ -18,8 +18,8 @@ import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@mui/material/Grid';
 import './organizationCreate.css';
 import axiosConfig from '../../../utils/axiosConfig';
-import { createOrganization } from '../../../redux/actions/organizationActions';
-import { ORGANIZATION_CREATE_RESET } from '../../../redux/constants/organizationConstants';
+import { createOrganization } from '../../../redux/actions/organization/organizationActions';
+import { ORGANIZATION_CREATE_RESET } from '../../../redux/constants//organization/organizationConstants';
 import Loader from '../../../components/loader/Loader';
 import axios from 'axios';
 

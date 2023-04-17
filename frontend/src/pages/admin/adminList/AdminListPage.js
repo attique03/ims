@@ -18,8 +18,8 @@ import { faAdd, faSearch } from '@fortawesome/free-solid-svg-icons';
 import DataTable from '../../../components/table/Table';
 import { tableColumns, tableRows } from './adminListData';
 import CardContainer from '../../../components/card/CardContainer';
-import { listOrganizations } from '../../../redux/actions/organizationActions';
-import { listUsers } from '../../../redux/actions/userActions';
+import { listOrganizations } from '../../../redux/actions/organization/organizationActions';
+import { listUsers } from '../../../redux/actions/user/userActions';
 
 const AdminListPage = () => {
   const [organization, setOrganization] = React.useState('');

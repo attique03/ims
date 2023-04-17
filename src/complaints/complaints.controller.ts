@@ -23,7 +23,6 @@ export const storage = {
   storage: diskStorage({
     destination: 'uploads/',
     filename: (req, file: any, cb) => {
-      console.log('File in Storage ==> ', file);
       const filename: string =
         path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
       const extension: string = path.parse(file.originalname).ext;
@@ -56,14 +55,12 @@ export class ComplaintsController {
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log('File ====> ', file);
     return this.complaintsService.create(createComplaintDto, req.user);
   }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log('File Uploaded ==> ', file);
     return file;
   }
 

@@ -18,7 +18,7 @@ import { faAdd, faSearch } from '@fortawesome/free-solid-svg-icons';
 import DataTable from '../../../components/table/Table';
 import { tableColumns, tableRows } from './organizationListData';
 import CardContainer from '../../../components/card/CardContainer';
-import { listOrganizations } from '../../../redux/actions/organizationActions';
+import { listOrganizations } from '../../../redux/actions/organization/organizationActions';
 
 const OrganizationListPage = () => {
   const [location, setLocation] = React.useState('');

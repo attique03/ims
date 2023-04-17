@@ -56,9 +56,7 @@ export class UserController {
 
   @Get(':id')
   async findOne(@Req() request, @Param('id') id): Promise<User> {
-    const user = await this.userService.findOne(id);
-    request.user = user;
-    return user;
+    return await this.userService.findOne(id, request);
   }
 
   // async getUserByEmail(@Req() request, @Param('email') email: string) {

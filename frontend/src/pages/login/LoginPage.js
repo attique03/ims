@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { login } from '../../redux/actions/userActions';
+import { login } from '../../redux/actions/user/userActions';
 
 function Copyright(props) {
   return (

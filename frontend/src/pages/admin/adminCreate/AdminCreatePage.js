@@ -15,9 +15,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@mui/material/Grid';
-import { listOrganizations } from '../../../redux/actions/organizationActions';
-import { USER_CREATE_RESET } from '../../../redux/constants/userConstants';
-import { createUser } from '../../../redux/actions/userActions';
+import { listOrganizations } from '../../../redux/actions/organization/organizationActions';
+import { USER_CREATE_RESET } from '../../../redux/constants/user/userConstants';
+import { createUser } from '../../../redux/actions/user/userActions';
 import './adminCreate.css';
 import axios from 'axios';
 

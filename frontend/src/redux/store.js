@@ -3,25 +3,27 @@ import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import {
   userCreateReducer,
+  userDetailsReducer,
   userListReducer,
   userLoginReducer,
-} from './reducers/userReducers';
-import { loadingReducer } from './reducers/loadingReducers';
+} from './reducers/user/userReducers';
+import { loadingReducer } from './reducers/loading/loadingReducers';
 import { getLocalStorage } from '../utils/localStorage';
 import {
   organizationCreateReducer,
   organizationDetailsReducer,
   organizationListReducer,
-} from './reducers/organizationReducers';
+} from './reducers/organization/organizationReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
   userLogin: userLoginReducer,
   userList: userListReducer,
-  loading: loadingReducer,
+  userDetails: userDetailsReducer,
   organizationCreate: organizationCreateReducer,
   organizationList: organizationListReducer,
   organizationDetails: organizationDetailsReducer,
+  loading: loadingReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')

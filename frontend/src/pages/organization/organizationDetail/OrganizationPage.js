@@ -19,18 +19,18 @@ import {
 } from '@mui/material';
 import DataTable from '../../../components/table/Table';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { listOrganizationDetails } from '../../../redux/actions/organizationActions';
-import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
+import { listOrganizationDetails } from '../../../redux/actions/organization/organizationActions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV, faPen } from '@fortawesome/free-solid-svg-icons';
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { listUsers } from '../../../redux/actions/userActions';
+import { listUsers } from '../../../redux/actions/user/userActions';
 import './organization.css';
+import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
+import EditIcon from '@mui/icons-material/Edit';
 
 const tableColumns = ['ID', 'Image', 'Name', 'Email', 'Contact No.', 'Action'];
 
@@ -255,9 +255,6 @@ export default function OrganizationPage() {
                     <Grid item xs={1.5}>
                       <img
                         src={`/uploads/${organization?.image?.split('/')[3]}`}
-                        // src={
-                        //   organization.image ? organization.image : '/wp2.png'
-                        // }
                         className={'logo'}
                         alt="organization-logo"
                       />

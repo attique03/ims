@@ -1,7 +1,9 @@
 import {
+  ForbiddenException,
   forwardRef,
   Injectable,
   NotFoundException,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +15,7 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
+import { selectUserColumns } from 'src/constants/userConstants/userConstants';
 
 @Injectable()
 export class UserService {
@@ -139,11 +142,45 @@ export class UserService {
     }
   }
 
-  async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+  async findOne(id: number, @Req() request): Promise<User> {
+    if (request.user.role.role === 'superadmin') {
+      const user = await this.userRepository.findOne({
+        where: { id },
+        select: [
+          'id',
+          'image',
+          'name',
+          'email',
+          'phone',
+          'createdDate',
+          'updatedDate',
+        ],
+        relations: ['role', 'organization'],
+      });
+      const isAdmin = user.role.role === 'admin';
+      return isAdmin ? user : null;
+    } else if (request.user.role.role === 'admin') {
+      const user = await this.userRepository.findOne({
+        where: { id },
+        select: [
+          'id',
+          'image',
+          'name',
+          'email',
+          'phone',
+          'createdDate',
+          'updatedDate',
+        ],
+        relations: ['role', 'oragnization'],
+      });
+      const isAdmin = user.role.role === 'employee';
+      return isAdmin ? user : null;
+    } else {
+      throw new ForbiddenException('Not Authozied');
+    }
 
-    if (!user) throw new NotFoundException('User Not Found');
-    return user;
+    // if (!user) throw new NotFoundException('User Not Found');
+    // return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
