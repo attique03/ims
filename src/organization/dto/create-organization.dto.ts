@@ -1,3 +1,4 @@
+import { Complaint } from 'src/complaints/entities/complaint.entity';
 import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 
@@ -14,6 +15,7 @@ export class CreateOrganizationDto {
   readonly representativeName: string;
   readonly representativeContact: string;
   readonly user: User;
+  readonly complaint: Complaint;
   readonly createdDate: Date;
   readonly updatedDate: Date;
 }

@@ -31,51 +31,9 @@ import { listUsers } from '../../../redux/actions/user/userActions';
 import './organization.css';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import EditIcon from '@mui/icons-material/Edit';
+import MenuActions from '../../../components/menu/Menu';
 
 const tableColumns = ['ID', 'Image', 'Name', 'Email', 'Contact No.', 'Action'];
-
-const StyledMenu = styled((props) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
-  '& .MuiPaper-root': {
-    borderRadius: 6,
-    marginTop: theme.spacing(1),
-    minWidth: 180,
-    color:
-      theme.palette.mode === 'light'
-        ? 'rgb(55, 65, 81)'
-        : theme.palette.grey[300],
-    boxShadow:
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-    '& .MuiMenu-list': {
-      padding: '4px 0',
-    },
-    '& .MuiMenuItem-root': {
-      '& .MuiSvgIcon-root': {
-        fontSize: 18,
-        color: theme.palette.text.secondary,
-        marginRight: theme.spacing(1.5),
-      },
-      '&:active': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity,
-        ),
-      },
-    },
-  },
-}));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -186,7 +144,7 @@ export default function OrganizationPage() {
             >
               <FontAwesomeIcon icon={faEllipsisV} />
             </IconButton>
-            <StyledMenu
+            <MenuActions
               id="demo-customized-menu"
               MenuListProps={{
                 'aria-labelledby': 'demo-customized-button',
@@ -207,7 +165,7 @@ export default function OrganizationPage() {
                 <DeleteOutlineOutlinedIcon classes={{ root: 'delete-color' }} />
                 Delete
               </MenuItem>
-            </StyledMenu>
+            </MenuActions>
           </Box>
         </Box>
         <Box

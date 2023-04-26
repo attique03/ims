@@ -16,6 +16,7 @@ import AdminListPage from './pages/admin/adminList/AdminListPage';
 import Admins from './pages/admin/Admins';
 import AdminCreatePage from './pages/admin/adminCreate/AdminCreatePage';
 import AdminPage from './pages/admin/adminDetail/AdminPage';
+import ComplaintListPage from './pages/compaint/ComplaintListPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -48,6 +49,8 @@ function App() {
               <Route path="" element={<CollapsibleTable />} />
               <Route path="create" element={<CategoryCreatePage />} />
             </Route>
+
+            <Route path="/complaints" element={<ComplaintListPage />} />
           </Routes>
         </ProtectedRoute>
       </Router>

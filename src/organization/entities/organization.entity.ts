@@ -1,3 +1,4 @@
+import { Complaint } from 'src/complaints/entities/complaint.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
@@ -49,6 +50,10 @@ export class Organization {
   @OneToMany(() => User, (user) => user.organization)
   @JoinColumn({ name: 'organization_id', referencedColumnName: 'id' })
   user: User;
+
+  @OneToMany(() => Complaint, (complaint) => complaint.organization)
+  @JoinColumn({ name: 'organization_id', referencedColumnName: 'id' })
+  complaint: Complaint;
 
   @CreateDateColumn()
   createdDate: Date;

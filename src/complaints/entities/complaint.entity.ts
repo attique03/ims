@@ -1,4 +1,5 @@
 import { Category } from 'src/category/entities/category.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Entity,
@@ -14,6 +15,9 @@ export class Complaint {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  title: string | null;
+
   @Column()
   description: string;
 
@@ -25,6 +29,9 @@ export class Complaint {
 
   @ManyToOne(() => User, (user) => user.complaint)
   user: User;
+
+  @ManyToOne(() => Organization, (organization) => organization.complaint)
+  organization: Organization;
 
   @CreateDateColumn()
   createdDate: Date;

@@ -14,6 +14,7 @@ import {
   organizationDetailsReducer,
   organizationListReducer,
 } from './reducers/organization/organizationReducers';
+import { complaintListReducer } from './reducers/complaint/complaintReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
@@ -23,6 +24,7 @@ const reducer = combineReducers({
   organizationCreate: organizationCreateReducer,
   organizationList: organizationListReducer,
   organizationDetails: organizationDetailsReducer,
+  complaintList: complaintListReducer,
   loading: loadingReducer,
 });
 

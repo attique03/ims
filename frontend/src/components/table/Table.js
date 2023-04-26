@@ -52,12 +52,11 @@ export default function DataTable({ columns, data }) {
   };
 
   function checkValues(val) {
+    console.log('Value ', val);
     if (String(val)?.startsWith('frontend/public')) {
-      console.log('Value ', val);
       return (
         <img
           alt="profile-img"
-          // src={val && val}
           src={`/uploads/${val?.split('/')[3]}`}
           style={{ borderRadius: '0px', height: '40px', width: '40px' }}
         />
@@ -67,11 +66,26 @@ export default function DataTable({ columns, data }) {
         //   style={{ width: '35px', height: '35px', borderRadius: '5px' }}
         // />
       );
+    } else if (val === 'Pending') {
+      return (
+        <>
+          <span class="pending"></span>
+          <span>{val}</span>
+        </>
+      );
+    } else if (val === 'Resolved') {
+      return (
+        <>
+          <span class="resolved"></span>
+          <span>{val}</span>
+        </>
+      );
     }
     return val;
   }
+
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, data?.length - page * rowsPerPage);
 
   // if (data) {
   //   data.map((row) => {
@@ -95,7 +109,7 @@ export default function DataTable({ columns, data }) {
         </TableHead>
         <TableBody>
           {data
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((row, index) => (
               <StyledTableRow key={index}>
                 {Object.values(row).map((value, idx) => (
