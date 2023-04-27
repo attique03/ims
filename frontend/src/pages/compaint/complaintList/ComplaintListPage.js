@@ -1,12 +1,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ComplaintListAdmin from '../../components/complaint/admin/ComplaintListAdmin';
-import ComplaintListEmployee from '../../components/complaint/employee/ComplaintListEmployee';
-import ComplaintListSuperAdmin from '../../components/complaint/superadmin/ComplaintListSuperAdmin';
+import ComplaintListAdmin from '../../../components/complaint/admin/complaintListAdmin/ComplaintListAdmin';
+import ComplaintListEmployee from '../../../components/complaint/employee/complaintListEmployee/ComplaintListEmployee';
+import ComplaintListSuperAdmin from '../../../components/complaint/superadmin/complaintListSuperAdmin/ComplaintListSuperAdmin';
 
 const ComplaintListPage = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { error, userInfo } = userLogin;
+  
   return (
     <div>
       {userInfo?.user.role.role === 'superadmin' ? (

@@ -15,6 +15,7 @@ import {
   organizationListReducer,
 } from './reducers/organization/organizationReducers';
 import { complaintListReducer } from './reducers/complaint/complaintReducers';
+import { categoryCreateReducer } from './reducers/category/categoryReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   organizationList: organizationListReducer,
   organizationDetails: organizationDetailsReducer,
   complaintList: complaintListReducer,
+  categoryCreate: categoryCreateReducer,
   loading: loadingReducer,
 });
 

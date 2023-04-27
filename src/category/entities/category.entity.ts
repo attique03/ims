@@ -3,6 +3,7 @@ import { Requests } from 'src/requests/entities/request.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -10,6 +11,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -37,4 +39,10 @@ export class Category {
   @OneToMany(() => Requests, (requests) => requests.subCategory)
   @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
   requests: Requests;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 }

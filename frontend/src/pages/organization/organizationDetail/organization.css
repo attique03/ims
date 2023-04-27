@@ -24,6 +24,10 @@
   height: 40px;
 }
 
+.icon-background:hover {
+  background-color: #2979ff;
+}
+
 .customized-tab {
   /* color: #fff; */
   background: #2979ff;

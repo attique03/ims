@@ -96,6 +96,7 @@ export class AppModule implements NestModule {
         'requests',
         'complaints',
         'organization',
+        'category',
         // { path: 'uploads', method: RequestMethod.POST },
       );
   }

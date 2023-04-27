@@ -13,21 +13,32 @@ export class CategoryService {
   ) {}
 
   async create(category: Category): Promise<Category> {
-    const newCategory = this.categoryRepository.create(category);
+    const newCategory = this.categoryRepository.create({ name: category[0] });
+    const createdCategory = await this.categoryRepository.save(newCategory);
 
-    return await this.categoryRepository.save(newCategory);
+    let newSubCategory, createdSubCategory;
+
+    if (category) {
+      category[1].map(async (cat) => {
+        newSubCategory = this.categoryRepository.create({
+          name: cat.value,
+          parent: createdCategory,
+        });
+        createdSubCategory = await this.categoryRepository.save(newSubCategory);
+      });
+    }
+
+    return createdCategory;
   }
 
   // create(createCategoryDto: CreateCategoryDto) {
   //   return 'This action adds a new category';
-  // }
-
   findAll() {
     return `This action returns all category`;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} category`;
+    return `This action returnss a #${id} category`;
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {

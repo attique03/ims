@@ -149,7 +149,6 @@ const OrganizationCreatePage = () => {
                     classes={{ root: 'title' }}
                     component="caption"
                     variant="caption"
-                    sx={{}}
                     onClick={goBackHandler}
                   >
                     <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />

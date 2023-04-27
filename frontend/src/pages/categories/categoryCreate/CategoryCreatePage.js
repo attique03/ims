@@ -1,16 +1,23 @@
 import { useState } from 'react';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, IconButton, TextField, Typography } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import React from 'react';
 import CardContainer from '../../../components/card/CardContainer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAdd, faRemove } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+import './categoryCreate.css';
+import { createCategory } from '../../../redux/actions/category/categoryActions';
+import { useDispatch } from 'react-redux';
 
 const CategoryCreatePage = () => {
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState([{ value: '' }]);
   const [categories, setCategories] = useState([]);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleAddField = () => {
     const newFields = [...subCategory, { value: '' }];
@@ -35,8 +42,15 @@ const CategoryCreatePage = () => {
     event.preventDefault();
     setCategories([category, subCategory]);
 
-    console.log('Category ==>   ', category);
+    dispatch(createCategory([category, subCategory]));
+
+    console.log('Category  ==>   ', category);
     console.log('SubCategories Values ==>   ', subCategory);
+    console.log('Categoriesss in handle submit ==> ', categories);
+  };
+
+  const handleGoBack = () => {
+    navigate('/categories');
   };
 
   console.log('Categoriesss ==> ', categories);
@@ -47,16 +61,15 @@ const CategoryCreatePage = () => {
       <Box style={{ width: '100%', borderBottom: '1px solid #E0E0E0' }}>
         <Box display="flex" p={1}>
           <Box p={1} flexGrow={1}>
-            <Stack direction="row" spacing={2}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 2, md: 4 }}
+            >
               <Typography
+                classes={{ root: 'title' }}
                 component="caption"
                 variant="caption"
-                sx={{
-                  mt: 1,
-                  display: 'flex',
-                  alignItems: 'stretch',
-                  color: '#808080',
-                }}
+                onClick={handleGoBack}
               >
                 <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />
                 Back

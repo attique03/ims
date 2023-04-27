@@ -13,11 +13,11 @@ import {
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAdd, faSearch } from '@fortawesome/free-solid-svg-icons';
-import DataTable from '../../../components/table/Table';
-import CardContainer from '../../../components/card/CardContainer';
-import { listOrganizations } from '../../../redux/actions/organization/organizationActions';
+import DataTable from '../../../../components/table/Table';
+import CardContainer from '../../../../components/card/CardContainer';
+import { listOrganizations } from '../../../../redux/actions/organization/organizationActions';
 import { tableColumns } from './ComplaintListDataSuperAdmin';
-import { listComplaints } from '../../../redux/actions/complaint/complaintActions';
+import { listComplaints } from '../../../../redux/actions/complaint/complaintActions';
 
 const ComplaintListSuperAdmin = () => {
   const [organization, setOrganization] = useState('');

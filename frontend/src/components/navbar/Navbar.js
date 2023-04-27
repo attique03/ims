@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 // import Link from '@mui/material/Link';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -18,6 +18,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import './navbar.css';
+import { logout } from '../../redux/actions/user/userActions';
 
 // const pages = ["Dashboard", "Organizations", "Admins", "Complaints"];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -54,6 +55,9 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [selectedNav, setSelectedNav] = useState(null);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const userLogin = useSelector((state) => state.userLogin);
   const { error, userInfo } = userLogin;
 
@@ -89,6 +93,11 @@ function Navbar() {
         return null;
     }
   }
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    navigate('/');
+  };
 
   return (
     <AppBar
@@ -193,7 +202,10 @@ function Navbar() {
               <IconButton sx={{ p: 0 }} onClick={handleOpenUserMenu}>
                 <Avatar alt="Remy Sharp" src="/avatar0.jpg" />
                 <Typography sx={{ mx: 1, color: 'black' }}>
-                  {userInfo?.user?.role?.role}
+                  {userInfo?.user?.role?.role === 'superadmin' && 'Super Admin'}
+                  {userInfo?.user?.role?.role === 'admin' && 'Admin'}
+                  {userInfo?.user?.role?.role === 'employee' &&
+                    userInfo?.user?.name}
                 </Typography>
                 <FontAwesomeIcon icon={faChevronDown} className="fa-light" />
                 {/* <FontAwesomeIcon icon="fa-light fa-chevron-down" /> */}
@@ -217,11 +229,23 @@ function Navbar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center">Account</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center">Dashboard</Typography>
+              </MenuItem>
+              <MenuItem onClick={logoutHandler}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
+              {/* {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
-              ))}
+              ))} */}
             </Menu>
           </Box>
         </Toolbar>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate, useNavigation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -242,6 +243,7 @@ const rows = [
 ];
 
 export default function CollapsibleTable() {
+  const navigate = useNavigate();
   return (
     <Container style={{ maxWidth: '1200px', mb: 3 }}>
       <Card sx={{ borderRadius: '15px', boxShadow: 3, my: 5, p: 2 }}>
@@ -277,6 +279,7 @@ export default function CollapsibleTable() {
                 <FontAwesomeIcon icon={faAdd} style={{ height: '13px' }} />
               }
               sx={{ backgroundColor: '#31DE79' }}
+              onClick={() => navigate('create')}
             >
               Add Category
             </Button>

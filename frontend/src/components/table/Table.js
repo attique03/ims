@@ -52,7 +52,6 @@ export default function DataTable({ columns, data }) {
   };
 
   function checkValues(val) {
-    console.log('Value ', val);
     if (String(val)?.startsWith('frontend/public')) {
       return (
         <img
@@ -149,7 +148,7 @@ export default function DataTable({ columns, data }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={data?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

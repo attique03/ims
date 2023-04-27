@@ -12,7 +12,7 @@ import {
 export const organizationCreateReducer = (state = {}, action) => {
   switch (action.type) {
     case ORGANIZATION_CREATE_SUCCESS:
-      return { success: true, event: action.payload };
+      return { success: true, organization: action.payload };
     case ORGANIZATION_CREATE_FAIL:
       return { error: action.payload };
     case ORGANIZATION_CREATE_RESET:

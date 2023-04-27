@@ -64,11 +64,6 @@ export default function Login() {
     }
   }, [userInfo, navigate]);
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    dispatch(login(email, password));
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);

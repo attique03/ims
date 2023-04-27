@@ -1,0 +1,11 @@
+.icon-background {
+  background-color: #787878;
+  color: #fff;
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.icon-background:hover {
+  background-color: #787878;
+}

@@ -85,6 +85,7 @@ export class ComplaintsService {
           })
           .getRawMany();
       }
+      console.log('After ');
       return await this.complaintRepository
         .createQueryBuilder('complaint')
         .select([
@@ -101,7 +102,7 @@ export class ComplaintsService {
     }
     // Employee Fetches his own complaints
     else if (req.user.role.id === 3) {
-      return await this.complaintRepository
+      const complaints = await this.complaintRepository
         .createQueryBuilder('complaint')
         .select([
           'complaint.title',
@@ -114,22 +115,42 @@ export class ComplaintsService {
           userId: req.user.id,
         })
         .getRawMany();
+
+      console.log('com ', complaints);
+
+      return complaints;
     }
     throw new ForbiddenException('Not Authozied');
   }
 
   async findOne(id: number, request) {
-    try {
-      return this.complaintRepository
-        .createQueryBuilder('complaint')
-        .where('complaint.id = :id AND complaint.userId = :userId', {
-          id,
+    const complaint = await this.complaintRepository
+      .createQueryBuilder('complaint')
+      .leftJoinAndSelect('complaint.user', 'user')
+      .leftJoinAndSelect('user.role', 'role')
+      .leftJoinAndSelect('complaint.organization', 'organization')
+      .where('complaint.id = :id', { id });
+
+    if (request.user.role.role === 'superadmin') {
+      complaint.andWhere('user.roleId = :roleId', {
+        roleId: 2,
+      });
+    } else if (request.user.role.role === 'admin') {
+      console.log('Administ ', request.user);
+      complaint.andWhere(
+        '(complaint.userId = :userId OR (user.roleId = :roleId AND complaint.organizationId IN (:organizationId)))',
+        {
           userId: request.user.id,
-        })
-        .getOne();
-    } catch (error) {
-      throw new NotFoundException();
+          roleId: 3,
+          organizationId: request.user.organization.id,
+        },
+      );
+    } else {
+      complaint.andWhere('complaint.userId = :userId', {
+        userId: request.user.id,
+      });
     }
+    return complaint.getOne();
   }
 
   async update(id: number, updateComplaintDto: CreateComplaintDto) {

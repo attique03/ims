@@ -1,0 +1,10 @@
+.title {
+  margin-top: 8px;
+  display: flex;
+  align-items: stretch;
+  color: #808080;
+}
+
+.title:hover {
+  cursor: pointer;
+}
