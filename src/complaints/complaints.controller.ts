@@ -32,11 +32,8 @@ export class ComplaintsController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: number,
-    @Body() updateComplaintDto: CreateComplaintDto,
-  ) {
-    return this.complaintsService.update(id, updateComplaintDto);
+  update(@Param('id') id: number) {
+    return this.complaintsService.update(id);
   }
 
   @Delete(':id')

@@ -23,7 +23,7 @@ import axios from 'axios';
 
 const AdminCreatePage = () => {
   const [formData, setFormData] = useState({
-    image: '',
+    image: '/images/user.jpg',
     name: '',
     email: '',
     password: '',
@@ -47,7 +47,7 @@ const AdminCreatePage = () => {
       dispatch({ type: USER_CREATE_RESET });
       navigate('/admins');
     }
-  }, [user?.id, dispatch, navigate, formData.image]);
+  }, [user?.id, dispatch, navigate, formData?.image]);
 
   const createUserHandler = (e) => {
     e.preventDefault();

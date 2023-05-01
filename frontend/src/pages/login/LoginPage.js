@@ -55,14 +55,14 @@ export default function Login() {
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { error, userInfo } = userLogin;
+  const { error, userInfo, success } = userLogin;
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo && success) {
       console.log('iNFO ', userInfo);
       navigate('/');
     }
-  }, [userInfo, navigate]);
+  }, [userInfo, navigate, success]);
 
   const handleSubmit = (event) => {
     event.preventDefault();

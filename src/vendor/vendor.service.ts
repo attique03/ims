@@ -18,13 +18,11 @@ export class VendorService {
       user: req.id,
     });
 
-    console.log('Request ', req);
-
     return await this.vendorRepository.save(newVendor);
   }
 
-  findAll() {
-    return `This action returns all vendor`;
+  findAll(): Promise<Vendor[]> {
+    return this.vendorRepository.find();
   }
 
   findOne(id: number) {

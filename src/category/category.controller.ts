@@ -10,6 +10,7 @@ import {
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @Controller('category')
 export class CategoryController {
@@ -23,6 +24,11 @@ export class CategoryController {
   @Get()
   findAll() {
     return this.categoryService.findAll();
+  }
+
+  @Get('/all')
+  getCategoriesWithSubcategoriesAndVendors() {
+    return this.categoryService.getCategoriesWithSubcategoriesAndVendors();
   }
 
   @Get(':id')

@@ -157,7 +157,7 @@ export class UserService {
         ],
         relations: ['role', 'organization'],
       });
-      const isAdmin = user.role.role === 'admin';
+      const isAdmin = request.user.role.role === 'admin';
       return isAdmin ? user : null;
     } else if (request.user.role.role === 'admin') {
       const user = await this.userRepository.findOne({

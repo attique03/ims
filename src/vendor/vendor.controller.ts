@@ -11,6 +11,7 @@ import {
 import { VendorService } from './vendor.service';
 import { CreateVendorDto } from './dto/create-vendor.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
+import { Vendor } from './entities/vendor.entity';
 
 @Controller('vendor')
 export class VendorController {
@@ -23,7 +24,7 @@ export class VendorController {
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Vendor[]> {
     return this.vendorService.findAll();
   }
 

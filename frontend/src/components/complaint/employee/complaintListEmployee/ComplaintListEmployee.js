@@ -19,9 +19,11 @@ import CardContainer from '../../../../components/card/CardContainer';
 import { listOrganizations } from '../../../../redux/actions/organization/organizationActions';
 import { listComplaints } from '../../../../redux/actions/complaint/complaintActions';
 import { tableColumns } from './ComplaintListDataEmployee';
+import { useNavigate } from 'react-router-dom';
 
 const ComplaintListEmployee = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const complaintList = useSelector((state) => state.complaintList);
   const { complaints, error: errorcomplaintList } = complaintList;
@@ -31,7 +33,7 @@ const ComplaintListEmployee = () => {
   }, [dispatch]);
 
   const handleComplaintCreate = () => {
-    console.log('reate');
+    navigate('create');
   };
 
   return (

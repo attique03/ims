@@ -14,8 +14,18 @@ import {
   organizationDetailsReducer,
   organizationListReducer,
 } from './reducers/organization/organizationReducers';
-import { complaintListReducer } from './reducers/complaint/complaintReducers';
-import { categoryCreateReducer } from './reducers/category/categoryReducers';
+import {
+  complaintCreateReducer,
+  complaintDetailsReducer,
+  complaintListReducer,
+  complaintUpdateReducer,
+} from './reducers/complaint/complaintReducers';
+import {
+  categoryCreateReducer,
+  categoryListReducer,
+} from './reducers/category/categoryReducers';
+import { vendorListReducer } from './reducers/vendor/vendorReducers';
+import { assetCreateReducer } from './reducers/asset/assetReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
@@ -25,8 +35,14 @@ const reducer = combineReducers({
   organizationCreate: organizationCreateReducer,
   organizationList: organizationListReducer,
   organizationDetails: organizationDetailsReducer,
+  complaintCreate: complaintCreateReducer,
   complaintList: complaintListReducer,
+  complaintDetails: complaintDetailsReducer,
+  complaintUpdate: complaintUpdateReducer,
   categoryCreate: categoryCreateReducer,
+  categoryList: categoryListReducer,
+  vendorList: vendorListReducer,
+  assetCreate: assetCreateReducer,
   loading: loadingReducer,
 });
 

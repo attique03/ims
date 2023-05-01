@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, IsNull } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
@@ -31,11 +31,52 @@ export class CategoryService {
     return createdCategory;
   }
 
+  async findAll() {
+    const categories = await this.categoryRepository
+      .createQueryBuilder('category')
+      .getRawMany();
+
+    const cats = categories.filter((cat) => cat.category_parentId === null);
+    const subCats = categories.filter((cat) => cat.category_parentId !== null);
+
+    return [cats, subCats];
+  }
+
+  async getCategoriesWithSubcategoriesAndVendors() {
+    const categories = await this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.children', 'subcategory')
+      .leftJoinAndSelect('category.vendor', 'vendor')
+      .where('category.parent IS NULL')
+      .select([
+        'category.id',
+        'category.name',
+        'COUNT(DISTINCT subcategory.id) AS subcategories_count',
+        'COUNT(DISTINCT vendor.id) AS vendors_count',
+      ])
+      .groupBy('category.id')
+      .getRawMany();
+
+    return categories;
+  }
+
   // create(createCategoryDto: CreateCategoryDto) {
   //   return 'This action adds a new category';
-  findAll() {
-    return `This action returns all category`;
-  }
+  // async findAll(): Promise<Category[]> {
+  //   // const [categories, subcategories] = await Promise.all([
+  //   //   this.categoryRepository.find({ where: { parent: null } }),
+  //   //   this.categoryRepository.find({ where: { parent: Not(null) } }),
+  //   // ]);
+
+  //   // return [...categories, ...subcategories];
+  //   return this.categoryRepository.find();
+  // }
+
+  // async function someFunction() {
+  //   const result = await findAll();
+  //   console.log('Categories:', result.categories);
+  //   console.log('Subcategories:', result.subcategories);
+  // }
 
   findOne(id: number) {
     return `This action returnss a #${id} category`;

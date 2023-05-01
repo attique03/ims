@@ -16,9 +16,11 @@ import AdminListPage from './pages/admin/adminList/AdminListPage';
 import Admins from './pages/admin/Admins';
 import AdminCreatePage from './pages/admin/adminCreate/AdminCreatePage';
 import AdminPage from './pages/admin/adminDetail/AdminPage';
-import ComplaintListPage from './pages/compaint/complaintList/ComplaintListPage';
-import ComplaintPage from './pages/compaint/complaintDetail/ComplaintPage';
+import ComplaintListPage from './pages/complaint/complaintList/ComplaintListPage';
+import ComplaintPage from './pages/complaint/complaintDetail/ComplaintPage';
 import InventoryCreatePage from './pages/inventory/inventoryCreate/InventoryCreatePage';
+import InventoryListPage from './pages/inventory/inventoryList/InventoryListPage';
+import ComplaintCreatePage from './pages/complaint/complaintCreate/ComplaintCreatePage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -54,11 +56,12 @@ function App() {
 
             <Route path="complaints" element={<Category />}>
               <Route path="" element={<ComplaintListPage />} />
+              <Route path="create" element={<ComplaintCreatePage />} />
               <Route path=":id" element={<ComplaintPage />} />
             </Route>
 
             <Route path="inventory" element={<Category />}>
-              {/* <Route path="" element={<ComplaintListPage />} /> */}
+              <Route path="" element={<InventoryListPage />} />
               <Route path="create" element={<InventoryCreatePage />} />
             </Route>
           </Routes>

@@ -28,7 +28,7 @@ export const userCreateReducer = (state = {}, action) => {
 export const userLoginReducer = (state = {}, action) => {
   switch (action.type) {
     case USER_LOGIN_SUCCESS:
-      return { userInfo: action.payload };
+      return { userInfo: action.payload, success: true };
     case USER_LOGIN_FAIL:
       return { error: action.payload };
     case USER_LOGOUT:

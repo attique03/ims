@@ -63,7 +63,6 @@ export class ComplaintsService {
     // Admin fetches all the complaints from Employee and his own complaints as well
     else if (req.user.role.id === 2) {
       if (req.query.employees) {
-        console.log('Employees ==>  ', req.user.organization);
         return await this.complaintRepository
           .createQueryBuilder('complaint')
           .select([
@@ -85,7 +84,6 @@ export class ComplaintsService {
           })
           .getRawMany();
       }
-      console.log('After ');
       return await this.complaintRepository
         .createQueryBuilder('complaint')
         .select([
@@ -116,8 +114,6 @@ export class ComplaintsService {
         })
         .getRawMany();
 
-      console.log('com ', complaints);
-
       return complaints;
     }
     throw new ForbiddenException('Not Authozied');
@@ -136,7 +132,6 @@ export class ComplaintsService {
         roleId: 2,
       });
     } else if (request.user.role.role === 'admin') {
-      console.log('Administ ', request.user);
       complaint.andWhere(
         '(complaint.userId = :userId OR (user.roleId = :roleId AND complaint.organizationId IN (:organizationId)))',
         {
@@ -153,9 +148,8 @@ export class ComplaintsService {
     return complaint.getOne();
   }
 
-  async update(id: number, updateComplaintDto: CreateComplaintDto) {
+  async update(id: number) {
     let complaintResolved = await this.complaintRepository.findOneBy({ id });
-    console.log('Inside Update ', complaintResolved, id);
 
     if (!complaintResolved) {
       throw new NotFoundException('Complaint Not Found');

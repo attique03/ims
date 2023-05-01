@@ -77,9 +77,6 @@ const ComplaintListAdmin = () => {
   const complaintList = useSelector((state) => state.complaintList);
   const { complaints, error: errorcomplaintList } = complaintList;
 
-  const userList = useSelector((state) => state.userList);
-  const { users, error: error } = userList;
-
   useEffect(() => {
     dispatch(listComplaints(true));
   }, [dispatch]);
@@ -93,7 +90,7 @@ const ComplaintListAdmin = () => {
   };
 
   const handleComplaintCreate = () => {
-    console.log('reate');
+    navigate('create');
   };
 
   const handleChange = (event, newValue) => {
