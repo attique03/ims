@@ -21,6 +21,7 @@ import ComplaintPage from './pages/complaint/complaintDetail/ComplaintPage';
 import InventoryCreatePage from './pages/inventory/inventoryCreate/InventoryCreatePage';
 import InventoryListPage from './pages/inventory/inventoryList/InventoryListPage';
 import ComplaintCreatePage from './pages/complaint/complaintCreate/ComplaintCreatePage';
+import SubCategoryPage from './pages/subCategory/subCategoryDetail/SubCategoryPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -52,6 +53,10 @@ function App() {
             <Route path="categories" element={<Category />}>
               <Route path="" element={<CollapsibleTable />} />
               <Route path="create" element={<CategoryCreatePage />} />
+              <Route
+                path=":id/sub-category/:subCatId"
+                element={<SubCategoryPage />}
+              />
             </Route>
 
             <Route path="complaints" element={<Category />}>

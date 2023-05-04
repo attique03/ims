@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useNavigate, useNavigation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -35,6 +35,12 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  listCategoryDetails,
+  listDetailsCategories,
+} from '../../../redux/actions/category/categoryActions';
+import './categoryList.css';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -89,22 +95,37 @@ function createData(name, calories, fat, carbs, protein, price) {
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const categoryDetails = useSelector((state) => state.categoryDetails);
+  const { category, error } = categoryDetails;
 
   return (
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <StyledTableCell component="th" scope="row">
-          {row.name}
+        <StyledTableCell component="th" scope="row" align="center">
+          {row.category_id}
         </StyledTableCell>
-        <StyledTableCell align="left">{row.calories}</StyledTableCell>
-        <StyledTableCell align="left">{row.fat}</StyledTableCell>
-        <StyledTableCell align="left">{row.carbs}</StyledTableCell>
-        <StyledTableCell align="left">{row.protein}</StyledTableCell>
-        <StyledTableCell>
+        <StyledTableCell align="center">{row.category_name}</StyledTableCell>
+        <StyledTableCell align="center">
+          {row.subcategories_count}
+        </StyledTableCell>
+        <StyledTableCell align="center">{row.vendors_count}</StyledTableCell>
+        <StyledTableCell align="center">
+          <AddIcon style={{ height: '20px' }} />
+          <EditIcon style={{ height: '20px' }} />
+          <DeleteOutlineIcon style={{ height: '20px' }} />
+        </StyledTableCell>
+        <StyledTableCell align="center">
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}
+            onClick={() => {
+              console.log('Id ', row.category_id);
+              dispatch(listCategoryDetails(row.category_id));
+              setOpen(!open);
+            }}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -113,46 +134,74 @@ function Row(props) {
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
+            <Box sx={{ my: 1 }}>
               {/* <Typography variant="h6" gutterBottom component="div">
                 History
               </Typography> */}
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Sub-Category Name</TableCell>
-                    <TableCell>Vendor Name</TableCell>
-                    <TableCell align="right">Qunatity</TableCell>
-                    <TableCell align="right">Quantity Assigned</TableCell>
-                    <TableCell align="right">Quantity Unassigned</TableCell>
-                    <TableCell align="right">Quantity Faulty</TableCell>
-                    <TableCell align="right">Action</TableCell>
+                    <TableCell align="center" className={'table-cell'}>
+                      Sub-Category Name
+                    </TableCell>
+                    <TableCell align="center" className={'table-cell'}>
+                      Vendor Name
+                    </TableCell>
+                    <TableCell align="center" className={'table-cell'}>
+                      Qunatity
+                    </TableCell>
+                    <TableCell align="center" className={'table-cell'}>
+                      Quantity Assigned
+                    </TableCell>
+                    <TableCell align="center" className={'table-cell'}>
+                      Quantity Unassigned
+                    </TableCell>
+                    <TableCell align="center" className={'table-cell'}>
+                      Quantity Faulty
+                    </TableCell>
+                    <TableCell align="center" className={'table-cell'}>
+                      Action
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell>{historyRow.subCategoryName}</TableCell>
-                      <TableCell align="right">
-                        {historyRow.vendorName}
-                      </TableCell>
-                      <TableCell align="right">{historyRow.quantity}</TableCell>
-                      <TableCell align="right">
-                        {historyRow.quantityAssigned}
-                      </TableCell>
-                      <TableCell align="right">
-                        {historyRow.quantityUnassigned}
-                      </TableCell>
-                      <TableCell align="right">
-                        {historyRow.quantityFaulty}
-                      </TableCell>
-                      <TableCell align="right">{historyRow.action}</TableCell>
+                  {category &&
+                    category.length > 0 &&
+                    category.map((cat, index) => (
+                      <TableRow align="center" key={index}>
+                        <TableCell align="center">
+                          {cat.subcategoryName}
+                        </TableCell>
+                        <TableCell align="center">{cat.vendorName}</TableCell>
+                        <TableCell align="center">
+                          {cat.totalQuantity}
+                        </TableCell>
+                        <TableCell align="center">
+                          {cat.quantityAssigned}
+                        </TableCell>
+                        <TableCell align="center">
+                          {cat.quantityUnassigned}
+                        </TableCell>
+                        <TableCell align="center">
+                          {cat.faultyQuantity}
+                        </TableCell>
+                        <TableCell
+                          align="center"
+                          className={'view'}
+                          onClick={() =>
+                            navigate(
+                              `${row.category_id}/sub-category/${cat.subcategoryId}`,
+                            )
+                          }
+                        >
+                          View
+                        </TableCell>
 
-                      {/* <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
+                        {/* <TableCell align="right">
+                        {Math.round(cat.amount * row.price * 100) / 100}
                       </TableCell> */}
-                    </TableRow>
-                  ))}
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </Box>
@@ -163,87 +212,35 @@ function Row(props) {
   );
 }
 
-Row.propTypes = {
-  row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
-};
-
-const rows = [
-  createData(
-    'Frozen yoghurt',
-    159,
-    6.0,
-    24,
-    <>
-      {/* <FontAwesomeIcon icon={faAdd} style={{ height: '13px' }} />{' '}
-      <FontAwesomeIcon icon={faEdit} style={{ height: '13px' }} /> */}
-      <AddIcon style={{ height: '20px' }} />
-      <EditIcon style={{ height: '20px' }} />
-      <DeleteOutlineIcon style={{ height: '20px' }} />
-    </>,
-    // <FontAwesomeIcon icon={faAdd} style={{ height: '13px' }} />,
-  ),
-  createData(
-    'Ice cream sandwich',
-    237,
-    9.0,
-    37,
-    <>
-      <AddIcon style={{ height: '20px' }} />
-      <EditIcon style={{ height: '20px' }} />
-      <DeleteOutlineIcon style={{ height: '20px' }} />
-    </>,
-  ),
-  createData(
-    'Eclair',
-    262,
-    16.0,
-    24,
-    <>
-      <AddIcon style={{ height: '20px' }} />
-      <EditIcon style={{ height: '20px' }} />
-      <DeleteOutlineIcon style={{ height: '20px' }} />
-    </>,
-  ),
-  createData(
-    'Cupcake',
-    305,
-    3.7,
-    67,
-    <>
-      <AddIcon style={{ height: '20px' }} />
-      <EditIcon style={{ height: '20px' }} />
-      <DeleteOutlineIcon style={{ height: '20px' }} />
-    </>,
-  ),
-  createData(
-    'Gingerbread',
-    356,
-    16.0,
-    49,
-    <>
-      <AddIcon style={{ height: '20px' }} />
-      <EditIcon style={{ height: '20px' }} />
-      <DeleteOutlineIcon style={{ height: '20px' }} />
-    </>,
-  ),
-];
+// Row.propTypes = {
+//   row: PropTypes.shape({
+//     calories: PropTypes.number.isRequired,
+//     carbs: PropTypes.number.isRequired,
+//     fat: PropTypes.number.isRequired,
+//     history: PropTypes.arrayOf(
+//       PropTypes.shape({
+//         amount: PropTypes.number.isRequired,
+//         customerId: PropTypes.string.isRequired,
+//         date: PropTypes.string.isRequired,
+//       }),
+//     ).isRequired,
+//     name: PropTypes.string.isRequired,
+//     price: PropTypes.number.isRequired,
+//     protein: PropTypes.number.isRequired,
+//   }).isRequired,
+// };
 
 export default function CollapsibleTable() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const categoryDetailsList = useSelector((state) => state.categoryDetailsList);
+  const { categories, error } = categoryDetailsList;
+
+  React.useEffect(() => {
+    dispatch(listDetailsCategories());
+  }, [dispatch]);
+
   return (
     <Container style={{ maxWidth: '1200px', mb: 3 }}>
       <Card sx={{ borderRadius: '15px', boxShadow: 3, my: 5, p: 2 }}>
@@ -289,21 +286,21 @@ export default function CollapsibleTable() {
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow>
-                <StyledTableCell align="left">ID</StyledTableCell>
-                <StyledTableCell align="left">Category Name</StyledTableCell>
-                <StyledTableCell align="left">
+                <StyledTableCell align="center">ID</StyledTableCell>
+                <StyledTableCell align="center">Category Name</StyledTableCell>
+                <StyledTableCell align="center">
                   Number of Sub-Categories
                 </StyledTableCell>
-                <StyledTableCell align="left">
+                <StyledTableCell align="center">
                   Number of Vendors
                 </StyledTableCell>
-                <StyledTableCell align="left">Action</StyledTableCell>
+                <StyledTableCell align="center">Action</StyledTableCell>
                 <StyledTableCell />
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <Row key={row.name} row={row} />
+              {categories?.map((row) => (
+                <Row key={row.category_id} row={row} />
               ))}
             </TableBody>
           </Table>

@@ -31,6 +31,18 @@ export class CategoryController {
     return this.categoryService.getCategoriesWithSubcategoriesAndVendors();
   }
 
+  @Get('/all/:id')
+  getSubCategoriesByCategoryIdWithAssetQuantities(@Param('id') categoryId) {
+    return this.categoryService.getSubCategoriesByCategoryIdWithAssetQuantities(
+      categoryId,
+    );
+  }
+
+  @Get('/all/subcategory/:id')
+  getSubCategoryInfo(@Param('id') subCategoryId) {
+    return this.categoryService.getSubCategoryInfo(subCategoryId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.categoryService.findOne(+id);

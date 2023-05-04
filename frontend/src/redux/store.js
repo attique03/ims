@@ -22,10 +22,13 @@ import {
 } from './reducers/complaint/complaintReducers';
 import {
   categoryCreateReducer,
+  categoryDetailsListReducer,
+  categoryDetailsReducer,
   categoryListReducer,
 } from './reducers/category/categoryReducers';
 import { vendorListReducer } from './reducers/vendor/vendorReducers';
 import { assetCreateReducer } from './reducers/asset/assetReducers';
+import { subcategoryDetailsReducer } from './reducers/subcategory/subcategoryReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
@@ -41,6 +44,9 @@ const reducer = combineReducers({
   complaintUpdate: complaintUpdateReducer,
   categoryCreate: categoryCreateReducer,
   categoryList: categoryListReducer,
+  categoryDetailsList: categoryDetailsListReducer,
+  categoryDetails: categoryDetailsReducer,
+  subcategoryDetails: subcategoryDetailsReducer,
   vendorList: vendorListReducer,
   assetCreate: assetCreateReducer,
   loading: loadingReducer,
