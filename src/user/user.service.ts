@@ -27,20 +27,7 @@ export class UserService {
     SendGrid.setApiKey(process.env.SEND_GRID_KEY);
   }
 
-  // const orders = await this.userRepository
-  // .createQueryBuilder('user')
-  // .leftJoinAndSelect('user.organization', 'organization')
-  // .getMany();
-
-  // .innerJoinAndSelect(
-  //   'user.organization',
-  //   'organization',
-  //   'organization.id = :organizationId',
-  //   { organizationId },
-  // )
   async findAll(req) {
-    console.log('Req in Service ===> ', req?.user.role.id + 1);
-
     // Fetch Admins || Employees based on specific organization
     if (req?.query?.organizationId) {
       const organizationId = req.query.organizationId;

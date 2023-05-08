@@ -1,4 +1,5 @@
 import { Category } from 'src/category/entities/category.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import {
@@ -40,6 +41,9 @@ export class Asset {
   // Asset from this Vendor
   @ManyToOne(() => Vendor, (vendor) => vendor.asset)
   vendor: Vendor;
+
+  @ManyToOne(() => Organization, (organization) => organization.asset)
+  organization: Organization;
 
   @CreateDateColumn()
   createdDate: Date;

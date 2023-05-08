@@ -1,4 +1,5 @@
 import { Asset } from 'src/assets/entities/asset.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
 import { Requests } from 'src/requests/entities/request.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 import {
@@ -27,6 +28,9 @@ export class Category {
 
   @ManyToOne(() => Category, (category) => category.children)
   parent: Category;
+
+  @ManyToOne(() => Organization, (organization) => organization.category)
+  organization: Organization;
 
   @OneToMany(() => Vendor, (vendor) => vendor.subCategory)
   @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })

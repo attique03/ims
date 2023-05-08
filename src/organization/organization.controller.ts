@@ -41,11 +41,6 @@ export class OrganizationController {
     return this.organizationService.findOne(id);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.organizationService.findOne(+id);
-  // }
-
   @Patch(':id')
   update(
     @Param('id') id: string,

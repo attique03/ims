@@ -34,6 +34,8 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import * as express from 'express';
 import { join } from 'path';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
@@ -72,6 +74,8 @@ import { join } from 'path';
     RequestsModule,
     ComplaintsModule,
     UploadModule,
+    DashboardModule,
+    DepartmentModule,
   ],
   controllers: [AppController],
   providers: [
@@ -97,6 +101,7 @@ export class AppModule implements NestModule {
         'complaints',
         'organization',
         'category',
+        'dashboard',
         // { path: 'uploads', method: RequestMethod.POST },
       );
   }

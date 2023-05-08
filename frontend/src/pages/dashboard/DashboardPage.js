@@ -4,6 +4,12 @@ import Card from '@mui/material/Card';
 import DashboardSummary from '../../components/dashboard/DashboardSummary';
 import { DashboardGraph } from '../../components/dashboard/DashboardGraph';
 import DataTable from '../../components/table/Table';
+import CardContainer from '../../components/card/CardContainer';
+import { useSelector } from 'react-redux';
+import { ADMIN, EMPLOYEE, SUPERADMIN } from '../../utils/constants';
+import DashboardSuperAdmin from '../../components/dashboard/superadmin/DashboardSuperAdmin';
+import DashboardAdmin from '../../components/dashboard/admin/DashboardAdmin';
+import DashboardEmployee from '../../components/dashboard/employee/DashboardEmployee';
 
 const tableColumns = [
   'ID',
@@ -36,26 +42,21 @@ const tableRows = [
 ];
 
 const DashboardPage = () => {
-  tableRows.map((row, index) => {
-    console.log('Loop ', index);
-    Object.values(row).map((value, index) => {
-      console.log('Values ===> ', value);
-    });
-  });
+  const userLogin = useSelector((state) => state.userLogin);
+  const { error, userInfo } = userLogin;
+
   return (
-    <Container
-      style={{
-        maxWidth: '1200px',
-        marginBottom: '5rem',
-        paddingBottom: '3rem',
-      }}
-    >
-      <Card sx={{ borderRadius: '15px', boxShadow: 3, my: 5 }}>
-        <DashboardSummary />
-        <DashboardGraph />
-        <DataTable columns={tableColumns} data={tableRows} />
-      </Card>
-    </Container>
+    <div>
+      {userInfo?.user.role.role === SUPERADMIN ? (
+        <DashboardSuperAdmin />
+      ) : userInfo?.user.role.role === ADMIN ? (
+        <DashboardAdmin />
+      ) : userInfo?.user.role.role === EMPLOYEE ? (
+        <DashboardEmployee />
+      ) : (
+        <h1>Not Found</h1>
+      )}
+    </div>
   );
 };
 

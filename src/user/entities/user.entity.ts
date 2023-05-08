@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Complaint } from 'src/complaints/entities/complaint.entity';
+import { Department } from 'src/department/entities/department.entity';
 
 @Entity()
 export class User {
@@ -40,6 +41,9 @@ export class User {
 
   @ManyToOne(() => Role, (role) => role.user)
   role: Role;
+
+  // @ManyToOne(() => Department, (department) => department.user)
+  // department: Department;
 
   @ManyToOne(() => Organization, (organization) => organization.user)
   organization: Organization;
