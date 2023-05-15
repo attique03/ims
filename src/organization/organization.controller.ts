@@ -13,7 +13,6 @@ import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { Organization } from './entities/organization.entity';
-import { AuthGuard } from 'src/utils/auth.guard';
 import { RolesGuard } from 'src/utils/roles.guard';
 
 @Controller('organization')

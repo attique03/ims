@@ -16,7 +16,10 @@ import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { login } from '../../redux/actions/user/userActions';
 import CardContainer from '../../components/card/CardContainer';
-import './login.css';
+import './forgotPassword.css';
+import { createPasswordResetToken } from '../../redux/actions/passwordResetToken/passwordResetTokenActions';
+import { PASSWORD_RESET_TOKEN_CREATE_RESET } from '../../redux/constants/password-reset/passwordResetConstants';
+
 const theme = createTheme({
   typography: {
     caption: {
@@ -29,37 +32,33 @@ const theme = createTheme({
   },
 });
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const userLogin = useSelector((state) => state.userLogin);
-  const { error, userInfo, success } = userLogin;
+  const passwordResetTokenCreate = useSelector(
+    (state) => state.passwordResetTokenCreate,
+  );
+  const { error, passwordResetToken, success } = passwordResetTokenCreate;
 
   useEffect(() => {
-    if (userInfo && success) {
-      console.log('iNFO ', userInfo);
-      navigate('/');
+    if (passwordResetToken && success) {
+      console.log('If Effect ', passwordResetToken);
+
+      dispatch({ type: PASSWORD_RESET_TOKEN_CREATE_RESET });
+      navigate('/verify-code');
     }
-  }, [userInfo, navigate, success]);
+  }, [passwordResetToken, navigate, success]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
 
-    // console.log({
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    // });
-
-    // const email = data.get('email');
-    // const password = data.get('password');
-
-    dispatch(login(email, password));
+    dispatch(createPasswordResetToken(email));
   };
+
+  console.log('Password ', passwordResetToken);
 
   return (
     <ThemeProvider theme={theme}>
@@ -97,10 +96,23 @@ export default function LoginPage() {
               }}
             >
               <Typography component="h1" variant="h5">
-                Welcome Back!
+                Forgot Password?
               </Typography>
-              <Typography variant="caption" display="block" gutterBottom>
-                Enter your credentials to access your account.
+              <Typography
+                variant="caption"
+                display="block"
+                gutterBottom
+                sx={{
+                  mx: 0,
+                  width: '205px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                Don't Worry, enter below your email and a verification code will
+                be sent to your mail.
               </Typography>
             </Box>
             <Box
@@ -121,41 +133,15 @@ export default function LoginPage() {
                 sx={{ padding: '0px 0px' }}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Enter Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
+
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, backgroundColor: '#31DE79' }}
               >
-                Sign In
+                Send Verification Code
               </Button>
-              {/* <Grid container>
-                  <Grid item xs>
-                    <Link href="#" variant="body2">
-                      Forgot password?
-                    </Link>
-                  </Grid>
-                  <Grid item>
-                    <Link href="#" variant="body2">
-                      {"Don't have an account? Sign Up"}
-                    </Link>
-                  </Grid>
-                </Grid> */}
             </Box>
           </CardContainer>
         </Box>
@@ -168,10 +154,10 @@ export default function LoginPage() {
           }}
         >
           <Typography variant="caption">
-            Forgot your Password?
-            <Link to={'/forgot-password'} className="reset-link">
+            Entered wrong credentials? Go back to
+            <Link to={'/login'} className="login-link">
               {' '}
-              Reset Password
+              Login
             </Link>
           </Typography>
         </Box>

@@ -1,10 +1,4 @@
-import 'reflect-metadata';
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -28,21 +22,12 @@ import { RequestsModule } from './requests/requests.module';
 import { Requests } from './requests/entities/request.entity';
 import { ComplaintsModule } from './complaints/complaints.module';
 import { Complaint } from './complaints/entities/complaint.entity';
-import { MulterModule } from '@nestjs/platform-express';
 import { UploadModule } from './upload/upload.module';
-import { MorganInterceptor, MorganModule } from 'nest-morgan';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import * as express from 'express';
-import { join } from 'path';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
-    // MulterModule.register({
-    //   dest: './uploads',
-    // }),
-    // MorganModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -78,20 +63,13 @@ import { DepartmentModule } from './department/department.module';
     DepartmentModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: MorganInterceptor('combined'),
-    // },
-  ],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
+  // console.log('Type orm ', typeOrmConfig);
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(
-        authMiddleware /* express.static(join(process.cwd(), 'uploads')) */,
-      )
+      .apply(authMiddleware)
       .exclude('user/login')
       .forRoutes(
         'user',
@@ -102,7 +80,6 @@ export class AppModule implements NestModule {
         'organization',
         'category',
         'dashboard',
-        // { path: 'uploads', method: RequestMethod.POST },
       );
   }
 }

@@ -1,55 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Chart } from 'react-google-charts';
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-import { Grid, Typography } from '@mui/material';
+import { Grid, IconButton, Menu, Tooltip, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload } from '@fortawesome/free-solid-svg-icons';
-
-export const data = [
-  ['Element', 'Density', { role: 'style' }],
-  ['Jan', 200, '#318CE7'], // RGB value
-  ['Feb', 500, '#318CE7'], // English color name
-  ['Mar', 856, '#318CE7'],
-  ['Apr', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['May', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Jun', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Jul', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Aug', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Sep', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Oct', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Nov', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Dec', 91.45, 'color: #318CE7'], // CSS-style declaration
-];
-
-export const data2 = [
-  ['Element', 'Density', { role: 'style' }],
-  ['Copper', 8.94, '#318CE7'], // RGB value
-  ['Silver', 10.49, '#318CE7'], // English color name
-  ['Gold', 19.3, '#318CE7'],
-  ['Platinum', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Platinum', 21.45, 'color: #318CE7'], // CSS-style declaration
-];
-
-export const inventoryData = [
-  ['Inventory', 'Assigned Items', 'Remaining Items'],
-  ['Electronics', 1000, 400],
-  ['Furniture', 460, 250],
-  ['Stationary', 660, 300],
-];
-
-export const complaintsData = [
-  ['Complaints', 'Pending', 'Resolved'],
-  ['Jan', 1000, 400],
-  ['Feb', 460, 250],
-  ['Mar', 660, 300],
-  ['Apr', 460, 500],
-  ['May', 349, 456],
-  ['Jun', 660, 300],
-];
+import { faChevronDown, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { listDashboardStats } from '../../../../redux/actions/dashboard/dashboardActions';
+import MenuItem from '@mui/material/MenuItem';
+import { months } from './DashboardGraphMonths';
 
 // export const options = {
 //   chart: {
@@ -59,11 +17,58 @@ export const complaintsData = [
 // };
 
 export function DashboardGraph() {
-  const [value, setValue] = useState('1');
+  const [month, setMonth] = useState('May');
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const dispatch = useDispatch();
+
+  const dashboardStats = useSelector((state) => state.dashboardStats);
+  const { dashboardStats: dashboard, error } = dashboardStats;
+
+  let inventoryStats = [];
+  let complaintsStats = [];
+
+  useEffect(() => {
+    dispatch(listDashboardStats());
+  }, [dispatch, month]);
+
+  const handleOpenMonthMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
   };
+
+  const handleCloseMonthMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleChange = (event) => {
+    setMonth(event);
+    handleCloseMonthMenu();
+  };
+
+  if (dashboard) {
+    // Inventorty Stats
+    inventoryStats.push(['Inventory', 'Assigned Items', 'Remaining Items']);
+    dashboard?.assetCountsByCategoryAndMonth?.map((dash) => {
+      if (dash.month.split(' ')[0] === month) {
+        inventoryStats.push([
+          dash.category,
+          Number(dash.assignedcount),
+          Number(dash.unassignedcount),
+        ]);
+      }
+      return inventoryStats;
+    });
+
+    // Complaints Stats
+    complaintsStats.push(['Complaints', 'Pending', 'Resolved']);
+    dashboard?.complaintsCountPerMonth?.map((dash) =>
+      complaintsStats.push([
+        dash.month.split(' ')[0],
+        Number(dash.pendingcount),
+        Number(dash.resolvedcount),
+      ]),
+    );
+  }
 
   return (
     <Grid container spacing={2}>
@@ -76,18 +81,18 @@ export function DashboardGraph() {
             justifyContent: 'space-around',
           }}
         >
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex' }} flexGrow={1}>
             <Typography
               component="span"
               variant="span"
-              sx={{ marginTop: '11px', padding: '0px 15px' }}
+              sx={{ marginTop: '5px', padding: '0px 15px' }}
             >
               Inventory Items
             </Typography>
             <Typography
               component="span"
               variant="span"
-              sx={{ marginTop: '11px', color: '#A9A9A9' }}
+              sx={{ my: '5px', color: '#A9A9A9' }}
             >
               <FontAwesomeIcon
                 icon={faDownload}
@@ -96,25 +101,54 @@ export function DashboardGraph() {
               Download Report
             </Typography>
           </Box>
-          <TabContext value={value}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                textAlign: 'center',
+
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              textAlign: 'center',
+            }}
+          >
+            <Tooltip title="Monthly Stats">
+              <IconButton sx={{ p: 0 }} onClick={handleOpenMonthMenu}>
+                <Typography sx={{ mx: 1, color: 'black' }}>{month}</Typography>
+                <FontAwesomeIcon icon={faChevronDown} className="fa-light" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
               }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseMonthMenu}
             >
-              <Typography>January</Typography>
-            </Box>
-          </TabContext>
+              {months.map((mnth) => (
+                <MenuItem
+                  onClick={() => handleChange(mnth.month)}
+                  key={mnth.id}
+                >
+                  <Typography textAlign="center">{mnth.month}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
         </Box>
         <Box sx={{ width: '100%' }}>
           <Chart
             chartType="Bar"
             width="100%"
             height="400px"
-            data={inventoryData}
+            data={inventoryStats}
             // options={options}
           />
         </Box>
@@ -149,25 +183,13 @@ export function DashboardGraph() {
               Download Report
             </Typography>
           </Box>
-          <TabContext value={value}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                textAlign: 'center',
-              }}
-            >
-              January
-            </Box>
-          </TabContext>
         </Box>
         <Box sx={{ width: '100%' }}>
           <Chart
             chartType="ColumnChart"
             width="100%"
             height="400px"
-            data={complaintsData}
+            data={complaintsStats}
           />
         </Box>
       </Grid>

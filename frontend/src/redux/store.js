@@ -29,12 +29,20 @@ import {
 import { vendorListReducer } from './reducers/vendor/vendorReducers';
 import { assetCreateReducer } from './reducers/asset/assetReducers';
 import { subcategoryDetailsReducer } from './reducers/subcategory/subcategoryReducers';
+import {
+  dashboardDataReducer,
+  dashboardStatsReducer,
+} from './reducers/dashboard/dashboardReducers';
+import { passwordResetTokenCreateReducer } from './reducers/password-reset/passwordResetReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
   userLogin: userLoginReducer,
   userList: userListReducer,
   userDetails: userDetailsReducer,
+  passwordResetTokenCreate: passwordResetTokenCreateReducer,
+  dashboardData: dashboardDataReducer,
+  dashboardStats: dashboardStatsReducer,
   organizationCreate: organizationCreateReducer,
   organizationList: organizationListReducer,
   organizationDetails: organizationDetailsReducer,

@@ -12,7 +12,10 @@ import {
   USER_DETAILS_FAIL,
 } from '../../constants/user/userConstants';
 import axiosConfig from '../../../utils/axiosConfig';
-import { LOADING_FALSE, LOADING_TRUE } from '../../constants/loading/loadingConstants';
+import {
+  LOADING_FALSE,
+  LOADING_TRUE,
+} from '../../constants/loading/loadingConstants';
 import {
   createUserApi,
   getUserApi,
@@ -20,7 +23,14 @@ import {
   loginApi,
 } from '../../../api/userapis/UserApis';
 import { errorHandler } from '../../../utils/errorHandler';
-import { removeLocalStorage, setLocalStorage } from '../../../utils/localStorage';
+import {
+  removeLocalStorage,
+  setLocalStorage,
+} from '../../../utils/localStorage';
+import {
+  DASHBOARD_DATA_RESET,
+  DASHBOARD_STATS_RESET,
+} from '../../constants/dashboard/dashboardConstants';
 
 export const createUser = (user, email) => async (dispatch) => {
   try {
@@ -142,4 +152,6 @@ export const logout = () => (dispatch) => {
   localStorage.removeItem('userInfo');
   // removeLocalStorage('userInfo');
   dispatch({ type: USER_LOGOUT });
+  dispatch({ type: DASHBOARD_DATA_RESET });
+  dispatch({ type: DASHBOARD_STATS_RESET });
 };

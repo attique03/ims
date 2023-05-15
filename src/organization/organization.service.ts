@@ -20,7 +20,7 @@ export class OrganizationService {
   async findAll() {
     const organizations = await this.organizationRepository.find();
 
-    const newArray = organizations.map((organization) => {
+    return organizations.map((organization) => {
       return {
         id: organization.id,
         image: organization.image,
@@ -30,8 +30,6 @@ export class OrganizationService {
         contact: organization.representativeContact,
       };
     });
-
-    return newArray;
     // return await this.organizationRepository.find();
   }
 

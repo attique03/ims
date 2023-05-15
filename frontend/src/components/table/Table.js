@@ -68,14 +68,14 @@ export default function DataTable({ columns, data }) {
     } else if (val === 'Pending') {
       return (
         <>
-          <span class="pending"></span>
+          <span className="pending"></span>
           <span>{val}</span>
         </>
       );
     } else if (val === 'Resolved') {
       return (
         <>
-          <span class="resolved"></span>
+          <span className="resolved"></span>
           <span>{val}</span>
         </>
       );
@@ -152,7 +152,7 @@ export default function DataTable({ columns, data }) {
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        // onChangeRowsPerPage={handleChangeRowsPerPage}
       />
     </TableContainer>
   );

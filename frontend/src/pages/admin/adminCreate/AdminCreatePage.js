@@ -23,7 +23,7 @@ import axios from 'axios';
 
 const AdminCreatePage = () => {
   const [formData, setFormData] = useState({
-    image: '/images/user.jpg',
+    image: '',
     name: '',
     email: '',
     password: '',

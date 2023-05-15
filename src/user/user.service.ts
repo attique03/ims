@@ -1,21 +1,18 @@
 import {
   ForbiddenException,
-  forwardRef,
   Injectable,
   NotFoundException,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import generateToken from 'src/utils/generateToken';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
-import { selectUserColumns } from 'src/constants/userConstants/userConstants';
 
 @Injectable()
 export class UserService {
@@ -57,14 +54,7 @@ export class UserService {
       .where('user.roleId = :roleId', {
         roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
       })
-      // .where('user.organizationId = :organizationId', {
-      //   organizationId: req?.user?.organization?.id,
-      // })
       .getRawMany();
-
-    // return await this.userRepository.find({
-    //   relations: ['role', 'organization'],
-    // });
   }
 
   async create(
@@ -102,8 +92,6 @@ export class UserService {
   // @Login User
   async login(user: User): Promise<{ user: User; token: string }> {
     const { email, password } = user;
-    console.log('Login Service ', user);
-    // const userExists = await this.userRepository.findOneBy({ email });
     const userExists = await this.userRepository.findOne({
       where: { email },
       relations: ['role'],
@@ -165,9 +153,6 @@ export class UserService {
     } else {
       throw new ForbiddenException('Not Authozied');
     }
-
-    // if (!user) throw new NotFoundException('User Not Found');
-    // return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

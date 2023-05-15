@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Chart } from 'react-google-charts';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -8,6 +9,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import { Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { listDashboardStats } from '../../../../redux/actions/dashboard/dashboardActions';
 
 export const data = [
   ['Element', 'Density', { role: 'style' }],
@@ -36,22 +38,50 @@ export const data2 = [
 
 export function DashboardGraph() {
   const [value, setValue] = useState('1');
+  // const [adminStats, setAdminStats] = useState([]);
+
+  const dispatch = useDispatch();
+
+  const dashboardStats = useSelector((state) => state.dashboardStats);
+  const { dashboardStats: dashboard, error } = dashboardStats;
+
+  let adminStats = [];
+  let organizationStats = [];
+
+  useEffect(() => {
+    dispatch(listDashboardStats());
+  }, [dispatch]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  if (dashboard) {
+    // Admin Stats
+    adminStats.push(['Element', 'Admins', { role: 'style' }]);
+    dashboard?.adminCountsPerMonth?.map((dash) =>
+      adminStats.push([
+        dash.month.split(' ')[0],
+        Number(dash.count),
+        '#318CE7',
+      ]),
+    );
+
+    // Organization Stats
+    organizationStats.push(['Element', 'Organizations', { role: 'style' }]);
+    dashboard?.orgCountsPerMonth?.map((dash) =>
+      organizationStats.push([
+        dash.month.split(' ')[0],
+        Number(dash.count),
+        '#318CE7',
+      ]),
+    );
+  }
+
   return (
     <>
-      <Box
-        sx={{
-          width: '100%',
-          typography: 'body1',
-          display: 'flex',
-          justifyContent: 'space-around',
-        }}
-      >
-        <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex' }}>
+        <Box flexGrow={1} sx={{ display: 'flex' }}>
           <Typography
             component="span"
             variant="span"
@@ -95,7 +125,7 @@ export function DashboardGraph() {
               chartType="ColumnChart"
               width="100%"
               height="400px"
-              data={data}
+              data={organizationStats}
             />
           </TabPanel>
           <TabPanel value="2">
@@ -103,7 +133,7 @@ export function DashboardGraph() {
               chartType="ColumnChart"
               width="100%"
               height="400px"
-              data={data2}
+              data={adminStats}
             />
           </TabPanel>
         </TabContext>

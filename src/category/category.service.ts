@@ -16,7 +16,7 @@ export class CategoryService {
     const newCategory = this.categoryRepository.create({ name: category[0] });
     const createdCategory = await this.categoryRepository.save(newCategory);
 
-    let newSubCategory, createdSubCategory;
+    let newSubCategory;
 
     if (category) {
       category[1].map(async (cat) => {
@@ -24,7 +24,7 @@ export class CategoryService {
           name: cat.value,
           parent: createdCategory,
         });
-        createdSubCategory = await this.categoryRepository.save(newSubCategory);
+        await this.categoryRepository.save(newSubCategory);
       });
     }
 
@@ -58,22 +58,6 @@ export class CategoryService {
       .getRawMany();
 
     return categories;
-
-    // const categories = await this.categoryRepository
-    //   .createQueryBuilder('category')
-    //   .leftJoinAndSelect('category.children', 'subcategory')
-    //   .leftJoinAndSelect('category.vendor', 'vendor')
-    //   .where('category.parent IS NULL')
-    //   .select([
-    //     'category.id',
-    //     'category.name',
-    //     'COUNT(DISTINCT subcategory.id) AS subcategories_count',
-    //     'COUNT(DISTINCT vendor.id) AS vendors_count',
-    //   ])
-    //   .groupBy('category.id')
-    //   .getRawMany();
-
-    // return categories;
   }
 
   async getSubCategoriesByCategoryIdWithAssetQuantities(
@@ -120,7 +104,6 @@ export class CategoryService {
   }
 
   async getSubCategoryInfo(subCategoryId: number): Promise<any> {
-    console.log('Here ==>', subCategoryId);
     const query = this.categoryRepository
       .createQueryBuilder('sub_categories')
       .leftJoin('sub_categories.parent', 'parent_categories')
@@ -143,116 +126,6 @@ export class CategoryService {
 
     const result = await query.getRawOne();
     return result;
-
-    // const query = this.categoryRepository
-    //   .createQueryBuilder('sub_categories')
-    //   .leftJoin('sub_categories.parent', 'parent_categories')
-    //   .leftJoin('sub_categories.vendor', 'vendor')
-    //   .leftJoin('sub_categories.asset', 'asset')
-    //   .leftJoin('sub_categories.requests', 'requests')
-    //   .select([
-    //     'parent_categories.name as categoryName',
-    //     'sub_categories.name as subCategoryName',
-    //     'COUNT(asset.id) as totalQuantity',
-    //     'COUNT(CASE WHEN asset.employeeId IS NOT NULL THEN 1 END) as quantityAssigned',
-    //     'COUNT(CASE WHEN asset.employeeId IS NULL THEN 1 END) as quantityUnassigned',
-    //     'COUNT(CASE WHEN requests.type = $1 THEN 1 END) as quantityFaulty',
-    //     'COUNT(DISTINCT vendor.id) as totalVendors',
-    //     "array_agg(vendor.name || ' (' || vendor.contact_number || ')') as vendorNames",
-    //   ])
-    //   .where('sub_categories.id = $1', [subCategoryId])
-    //   .groupBy('parent_categories.name, sub_categories.name');
-
-    // const result = await query.getRawOne();
-    // return result;
-
-    // const query = this.categoryRepository
-    //   .createQueryBuilder('sub_categories')
-    //   .leftJoin('sub_categories.parent', 'parent_categories')
-    //   .leftJoin('sub_categories.vendor', 'vendor')
-    //   .leftJoin('sub_categories.asset', 'asset')
-    //   .leftJoin('sub_categories.requests', 'requests')
-    //   .select([
-    //     'parent_categories.name as categoryName',
-    //     'sub_categories.name as subCategoryName',
-    //     'COUNT(asset.id) as totalQuantity',
-    //     'COUNT(CASE WHEN asset.employeeId IS NOT NULL THEN 1 END) as quantityAssigned',
-    //     'COUNT(CASE WHEN asset.employeeId IS NULL THEN 1 END) as quantityUnassigned',
-    //     'COUNT(CASE WHEN requests.type = :type THEN 1 END) as quantityFaulty',
-    //     'COUNT(DISTINCT vendor.id) as totalVendors',
-    //     "array_agg(vendor.name || ' (' || vendor.contact_number || ')') as vendorNames",
-    //   ])
-    //   .where('sub_categories.id = :subCategoryId', { subCategoryId })
-    //   .groupBy('parent_categories.name, sub_categories.name');
-
-    // const result = await query.getRawMany();
-
-    // return result.map((item) => ({
-    //   categoryName: item.categoryName,
-    //   subCategoryName: item.subCategoryName,
-    //   totalQuantity: Number(item.totalQuantity),
-    //   quantityAssigned: Number(item.quantityAssigned),
-    //   quantityUnassigned: Number(item.quantityUnassigned),
-    //   quantityFaulty: Number(item.quantityFaulty),
-    //   totalVendors: Number(item.totalVendors),
-    //   vendorNames: item.vendorNames,
-    // }));
-
-    // const query = this.categoryRepository
-    //   .createQueryBuilder('sub_categories')
-    //   .leftJoin('sub_categories.parent', 'parent_categories')
-    //   .leftJoin('sub_categories.vendors', 'vendors')
-    //   .leftJoin('sub_categories.assets', 'assets')
-    //   .leftJoin('sub_categories.requests', 'requests')
-    //   .select([
-    //     'parent_categories.name as categoryName',
-    //     'sub_categories.name as subCategoryName',
-    //     'COUNT(assets.id) as totalQuantity',
-    //     'COUNT(CASE WHEN assets.userId IS NOT NULL THEN 1 END) as quantityAssigned',
-    //     'COUNT(CASE WHEN assets.userId IS NULL THEN 1 END) as quantityUnassigned',
-    //     'COUNT(CASE WHEN requests.type = :requestType THEN 1 END) as quantityFaulty',
-    //     'COUNT(DISTINCT vendors.id) as totalVendors',
-    //     "array_agg(vendors.name || ' (' || vendors.contact_number || ')') as vendorNames",
-    //   ])
-    //   .where('sub_categories.id = :subCategoryId', { subCategoryId })
-    //   .groupBy(['parent_categories.name', 'sub_categories.name']);
-    // return query.getRawMany();
-
-    // const queryBuilder = this.categoryRepository
-    //   .createQueryBuilder('s')
-    //   .leftJoinAndSelect('s.vendor', 'v')
-    //   .leftJoinAndSelect('s.asset', 'a')
-    //   .leftJoinAndSelect(
-    //     'requests',
-    //     'r',
-    //     'r.subCategoryId = s.id AND r.type = :type',
-    //     { type: 'faulty' },
-    //   )
-    //   .where('s.id = :subcategoryId', { subcategoryId })
-    //   .select([
-    //     's.name AS subcategoryName',
-    //     'c.name AS categoryName',
-    //     'COUNT(a.id) AS totalQuantity',
-    //     'COUNT(CASE WHEN a.employeeId IS NOT NULL THEN 1 END) AS quantityAssigned',
-    //     'COUNT(CASE WHEN a.employeeId IS NULL THEN 1 END) AS quantityUnassigned',
-    //     'COUNT(CASE WHEN r.type = :type THEN 1 END) AS faultyQuantity',
-    //     'COUNT(DISTINCT v.id) AS totalVendors',
-    //     'GROUP_CONCAT(DISTINCT CONCAT_WS(" ", v.name, v.contactNumber)) AS vendorInfo',
-    //   ])
-    //   .leftJoin('s.category', 'c')
-    //   .groupBy('s.id, c.name')
-    //   .addGroupBy('s.name');
-    // const results = await queryBuilder.getRawOne();
-    // return {
-    //   subcategoryName: results.subcategoryName,
-    //   categoryName: results.categoryName,
-    //   totalQuantity: parseInt(results.totalQuantity),
-    //   quantityAssigned: parseInt(results.quantityAssigned),
-    //   quantityUnassigned: parseInt(results.quantityUnassigned),
-    //   faultyQuantity: parseInt(results.faultyQuantity),
-    //   totalVendors: parseInt(results.totalVendors),
-    //   vendorInfo: results.vendorInfo,
-    // };
   }
 
   findOne(id: number) {

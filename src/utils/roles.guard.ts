@@ -13,15 +13,11 @@ export class RolesGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
-    console.log('Roles ===>>> ', roles);
-
     function matchRoles(roles: string[], loggedInRole: string[]) {
       if (roles === loggedInRole) {
         return true;
       }
-      //   return false;
       throw new UnauthorizedException();
-      //   return roles === loggedInRole ? true : false;
     }
 
     if (!roles) {
@@ -29,11 +25,6 @@ export class RolesGuard implements CanActivate {
     }
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-
-    console.log('User ==> ', user.role.role);
-
-    const test = matchRoles(roles, user.role.role);
-    console.log('testing ', test);
 
     return matchRoles(roles, user.role.role);
   }

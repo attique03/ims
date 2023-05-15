@@ -23,22 +23,15 @@ export class PasswordResetTokenService {
     passwordReset: PasswordResetToken,
     mail: SendGrid.MailDataRequired,
   ): Promise<{ token: PasswordResetToken; mail: SendGrid.MailDataRequired }> {
-    console.log('key ==> ', process.env.SEND_GRID_KEY);
-    console.log(`Email successfully dispatched to ${mail.to}`);
-
     const newToken = this.passwordResetRepository.create({
       ...passwordReset,
       code: Math.random().toString(28).substr(2, 12),
     });
     mail.html = `<div>Use this Code to Reset Your Password: <br/> <b>${newToken.code}</b> </div>`;
-    const transport = await SendGrid.send(mail);
+    await SendGrid.send(mail);
 
-    // const newToken = this.passwordResetRepository.create({
-    //   ...passwordReset,
-    //   token: await bcrypt.hash(Math.random().toString(28).substr(2, 12), 12),
-    // });
+    // token: await bcrypt.hash(Math.random().toString(28).substr(2, 12), 12),
     await this.passwordResetRepository.save(newToken);
-
     return { token: newToken, mail };
   }
 

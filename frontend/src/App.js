@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { withProtectedRoute } from './components/protectedRoute/AuthenticatedRoute';
 import { useSelector } from 'react-redux';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import Navbar from './components/navbar/Navbar';
-import Login from './pages/login/LoginPage';
+import LoginPage from './pages/login/LoginPage';
 import Organizations from './pages/organization/Organizations';
 import Category from './pages/categories/Category';
 import CollapsibleTable from './pages/categories/categoryList/CategoryListPage';
@@ -22,10 +23,13 @@ import InventoryCreatePage from './pages/inventory/inventoryCreate/InventoryCrea
 import InventoryListPage from './pages/inventory/inventoryList/InventoryListPage';
 import ComplaintCreatePage from './pages/complaint/complaintCreate/ComplaintCreatePage';
 import SubCategoryPage from './pages/subCategory/subCategoryDetail/SubCategoryPage';
+import ForgotPasswordPage from './pages/forgot-password/ForgotPasswordPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
   const { error, userInfo } = userLogin;
+
+  const ProtectedDashboard = withProtectedRoute(DashboardPage);
 
   return (
     <StyledEngineProvider injectFirst>
@@ -33,10 +37,18 @@ function App() {
       <Router>
         {userInfo && <Navbar />}
         <Routes>
-          <Route exact path="/login" element={<Login />} />
-        </Routes>
+          <Route exact path="/login" element={<LoginPage />} />
+          {/* <Route exact path="/" element={<DashboardPage />} /> */}
+
+          <Route
+            exact
+            path="/forgot-password"
+            element={<ForgotPasswordPage />}
+          />
+        {/* </Routes>
+
         <ProtectedRoute>
-          <Routes>
+          <Routes> */}
             <Route exact path="/" element={<DashboardPage />} />
             <Route path="organizations" element={<Organizations />}>
               <Route exact path="" element={<OrganizationListPage />} />
@@ -70,7 +82,7 @@ function App() {
               <Route path="create" element={<InventoryCreatePage />} />
             </Route>
           </Routes>
-        </ProtectedRoute>
+        {/* </ProtectedRoute> */}
       </Router>
     </StyledEngineProvider>
   );

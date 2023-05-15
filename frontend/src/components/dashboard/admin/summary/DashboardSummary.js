@@ -1,167 +1,73 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import { Avatar, createTheme, ThemeProvider, Typography } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box } from '@mui/system';
+import { Divider, Grid, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
-// import { solid, regular, brands, icon } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
-import Container from '@mui/material/Container';
-
-function Item(props) {
-  const { sx, ...other } = props;
-  return (
-    <Box
-      sx={{
-        p: 1,
-        m: 1,
-        bgcolor: (theme) =>
-          theme.palette.mode === 'dark' ? '#101010' : 'grey.100',
-        color: (theme) =>
-          theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-        border: '1px solid',
-        borderColor: (theme) =>
-          theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
-        borderRadius: 2,
-        fontSize: '0.875rem',
-        fontWeight: '700',
-        ...sx,
-      }}
-      {...other}
-    />
-  );
-}
-
-Item.propTypes = {
-  /**
-   * The system prop that allows defining system overrides as well as additional CSS styles.
-   */
-  sx: PropTypes.oneOfType([
-    PropTypes.arrayOf(
-      PropTypes.oneOfType([PropTypes.func, PropTypes.object, PropTypes.bool]),
-    ),
-    PropTypes.func,
-    PropTypes.object,
-  ]),
-};
-
-const theme = createTheme({
-  typography: {
-    caption: {
-      color: '#A9A9A9',
-    },
-  },
-  card: {
-    borderRadius: '20px',
-  },
-});
+import { listDashboardData } from '../../../../redux/actions/dashboard/dashboardActions';
+import './DashboardSummary.css';
 
 export default function DashboardSummary() {
+  const dispatch = useDispatch();
+
+  const dashboardData = useSelector((state) => state.dashboardData);
+  const { dashboardData: dashboard, error } = dashboardData;
+
+  useEffect(() => {
+    dispatch(listDashboardData());
+  }, [dispatch]);
+
   return (
-    <ThemeProvider theme={theme}>
-      {/* <div style={{ width: "100%" }}> */}
-      <Container>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            p: 1,
-            m: 1,
-            bgcolor: 'background.paper',
-            borderRadius: 1,
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              p: 1,
-              m: 1,
-              bgcolor: 'background.paper',
-              borderRight: '1px solid #A9A9A9',
-            }}
-          >
-            <Typography component="b" variant="span">
-              Employees
-            </Typography>
-            <Typography component="h1" variant="h5">
-              500{' '}
-              <FontAwesomeIcon icon={faCaretUp} style={{ color: '#31DE79' }} />
-            </Typography>
-            <Typography variant="caption" display="block">
-              25 new Employee added this month
-            </Typography>
-          </Box>
+    <Box>
+      <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
+        <Grid item xs={0.5}></Grid>
+        <Grid item xs={3} classes={{ root: 'border-item' }}>
+          <Typography classes={{ root: 'item' }}>Employees</Typography>
+          <Typography classes={{ root: 'item-content' }}>
+            {dashboard?.totalEmployees}{' '}
+            <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
+          </Typography>
+          <Typography classes={{ root: 'caption-color' }}>
+            {dashboard?.newEmployeesCount} new Employee added this month
+          </Typography>
+        </Grid>
 
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              p: 1,
-              m: 1,
-              bgcolor: 'background.paper',
-              // borderRadius: 1,
-              borderRight: '1px solid grey',
-            }}
-          >
-            <Typography component="b" variant="span">
-              Inventory Items
-            </Typography>
-            <Typography component="h1" variant="h5">
-              500{' '}
-              <FontAwesomeIcon icon={faCaretUp} style={{ color: '#31DE79' }} />
-            </Typography>
-            <Typography variant="caption" display="block">
-              50 new items added this month
-            </Typography>
-          </Box>
+        <Grid item xs={3} classes={{ root: 'border-item' }}>
+          <Typography classes={{ root: 'item' }}>Inventory Items</Typography>
+          <Typography classes={{ root: 'item-content' }}>
+            {dashboard?.totalAssets}{' '}
+            <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
+          </Typography>
+          <Typography classes={{ root: 'caption-color' }}>
+            {dashboard?.newAssetsCount} new items added this month
+          </Typography>
+        </Grid>
 
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              p: 1,
-              m: 1,
-              bgcolor: 'background.paper',
-              // borderRadius: 1,
-              borderRight: '1px solid grey',
-            }}
-          >
-            <Typography component="b" variant="span">
-              Vendors
-            </Typography>
-            <Typography component="h1" variant="h5">
-              25 <FontAwesomeIcon icon={faCaretUp} style={{ color: 'red' }} />
-            </Typography>
-            <Typography variant="caption" display="block">
-              2 New Vendors added this month
-            </Typography>
-          </Box>
+        <Grid item xs={3} classes={{ root: 'border-item' }}>
+          <Typography classes={{ root: 'item' }}>Vendors</Typography>
+          <Typography classes={{ root: 'item-content' }}>
+            {dashboard?.totalVendors}{' '}
+            <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
+          </Typography>
+          <Typography classes={{ root: 'caption-color' }}>
+            {dashboard?.newVendorsCount} New Vendors added this month
+          </Typography>
+        </Grid>
 
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              p: 1,
-              m: 1,
-              bgcolor: 'background.paper',
-            }}
-          >
-            <Typography component="b" variant="span">
-              Categories
-            </Typography>
-            <Typography component="h1" variant="h5">
-              15,000{' '}
-              <FontAwesomeIcon icon={faCaretUp} style={{ color: '#31DE79' }} />
-            </Typography>
-            <Typography variant="caption" display="block">
-              1 New Category added this month
-            </Typography>
-          </Box>
-        </Box>
-      </Container>
-      {/* </div> */}
-    </ThemeProvider>
+        <Grid item xs={2.5}>
+          <Typography classes={{ root: 'item' }}>Categories</Typography>
+          <Typography classes={{ root: 'item-content' }}>
+            {dashboard?.totalCategories}{' '}
+            <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
+          </Typography>
+          <Typography classes={{ root: 'caption-color' }}>
+            {dashboard?.newCategoriesCount} New Category added this month
+          </Typography>
+        </Grid>
+
+        <Grid item xs={1}></Grid>
+      </Grid>
+      <Divider sx={{ mb: 4 }} />
+    </Box>
   );
 }

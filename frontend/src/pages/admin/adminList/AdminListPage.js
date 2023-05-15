@@ -27,10 +27,14 @@ const AdminListPage = () => {
   const dispatch = useDispatch();
 
   const userList = useSelector((state) => state.userList);
-  const { users, error: error } = userList;
+  const { users, error } = userList;
+
+  const organizationList = useSelector((state) => state.organizationList);
+  const { organizations, error: errorOrganizations } = organizationList;
 
   useEffect(() => {
     dispatch(listUsers());
+    dispatch(listOrganizations());
   }, [dispatch]);
 
   const handleChange = (event) => {
@@ -75,12 +79,15 @@ const AdminListPage = () => {
                 label="Organization"
                 onChange={handleChange}
               >
-                <MenuItem value="">
+                {organizations?.map((org) => (
+                  <MenuItem value={org.name}>{org.name}</MenuItem>
+                ))}
+                {/* <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
                 <MenuItem value="nisum">Nisum</MenuItem>
                 <MenuItem value="techswipe">Techswipe</MenuItem>
-                <MenuItem value="gigalabs">GigaLabs</MenuItem>
+                <MenuItem value="gigalabs">GigaLabs</MenuItem> */}
               </Select>
             </FormControl>
           </Stack>
