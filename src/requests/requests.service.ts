@@ -6,6 +6,7 @@ import {
   NotAcceptableException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SUPERADMIN } from 'src/constants/constants';
 import { Repository } from 'typeorm';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
@@ -20,8 +21,7 @@ export class RequestsService {
 
   async create(requests: Requests, req): Promise<Requests> {
     try {
-      console.log('Requests Data ', requests);
-      if (req.role.id === 1) {
+      if (req.role.role === SUPERADMIN) {
         throw new ForbiddenException({
           error: 'Super Admin is not allowed to create requests currently',
         });

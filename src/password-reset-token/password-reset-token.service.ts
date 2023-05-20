@@ -19,32 +19,44 @@ export class PasswordResetTokenService {
     // SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'))
   }
 
-  async create(
-    passwordReset: PasswordResetToken,
-    mail: SendGrid.MailDataRequired,
-  ): Promise<{ token: PasswordResetToken; mail: SendGrid.MailDataRequired }> {
+  async create(passwordReset: PasswordResetToken): Promise<{ email: string }> {
     const newToken = this.passwordResetRepository.create({
       ...passwordReset,
       code: Math.random().toString(28).substr(2, 12),
     });
-    mail.html = `<div>Use this Code to Reset Your Password: <br/> <b>${newToken.code}</b> </div>`;
+    const mail = {
+      to: passwordReset.email,
+      subject: 'Password Reset Code | IMS Password Reset',
+      from: 'muhammad.attique@gigalabs.co',
+      text: 'Password Reset Code | IMS Password Reset',
+      html: `<div>Use this Code to Reset Your Password: <br/> <b>${newToken.code}</b> </div>`,
+    };
     await SendGrid.send(mail);
 
     // token: await bcrypt.hash(Math.random().toString(28).substr(2, 12), 12),
     await this.passwordResetRepository.save(newToken);
-    return { token: newToken, mail };
+    return { email: passwordReset.email };
   }
 
   async verify(
     passwordReset: PasswordResetToken,
-  ): Promise<{ passwordReset: PasswordResetToken; message: string }> {
+    req,
+  ): Promise<{ passwordReset?: PasswordResetToken; message: string }> {
     const { code } = passwordReset;
+    console.log('Here  ', code);
     const codeExists = await this.passwordResetRepository.findOneBy({ code });
 
-    if (codeExists) {
+    // console.log(
+    //   'Code Existsss ',
+    //   codeExists.email,
+    //   req.query.email,
+    //   codeExists.email === req.query.email,
+    // );
+
+    if (codeExists && codeExists.email === req.query.email) {
       return { passwordReset: codeExists, message: 'success' };
     } else {
-      return { passwordReset: codeExists, message: 'Code not Found' };
+      return { message: 'Code not Found' };
     }
 
     // if (userExists && (await bcrypt.compare(password, userExists.password))) {
@@ -54,7 +66,7 @@ export class PasswordResetTokenService {
   }
 
   findAll() {
-    return `This action returns all passwordResetToken`;
+    return `This action returns all passwordResetTokennn`;
   }
 
   findOne(id: number) {

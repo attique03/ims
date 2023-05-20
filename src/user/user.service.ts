@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
   Req,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
+import { ADMIN, EMPLOYEE, SUPERADMIN } from 'src/constants/constants';
 
 @Injectable()
 export class UserService {
@@ -92,33 +94,49 @@ export class UserService {
   // @Login User
   async login(user: User): Promise<{ user: User; token: string }> {
     const { email, password } = user;
+
+    console.log(`login ${email} ${password}`);
     const userExists = await this.userRepository.findOne({
       where: { email },
       relations: ['role'],
     });
 
+    console.log(
+      `UserExistss ${await bcrypt.compare(password, userExists.password)}`,
+    );
+
     if (userExists && (await bcrypt.compare(password, userExists.password))) {
       const token = generateToken(String(userExists.id));
       return { user: userExists, token };
+    } else {
+      throw new NotAcceptableException('Email or password incorrect');
     }
   }
 
-  async resetPassword(user: User): Promise<{ user: User; message: string }> {
-    let userUpdate = await this.userRepository.findOneBy({ id: user.id });
+  async resetPassword(email: string, user?: User) {
+    const { password } = user;
+    console.log('sdlkjsdlkfj ', email, password);
+    let userFound = await this.userRepository.findOneBy({ email });
+    console.log('User ', userFound);
 
-    if (!userUpdate) {
+    if (!userFound) {
       throw new NotFoundException('User Not Found');
     } else {
-      userUpdate = user;
-      return {
-        user: await this.userRepository.save(userUpdate),
-        message: 'Password reset successfully',
-      };
+      userFound = { ...userFound, password: await bcrypt.hash(password, 12) };
+      // user.password = await bcrypt.hash(String(password), Number(12));
+      console.log('User After ', user);
+
+      return this.userRepository.save(userFound);
+
+      // return {
+      //   user: await this.userRepository.save(userUpdate),
+      //   message: 'Password reset successfully',
+      // };
     }
   }
 
   async findOne(id: number, @Req() request): Promise<User> {
-    if (request.user.role.role === 'superadmin') {
+    if (request.user.role.role === SUPERADMIN) {
       const user = await this.userRepository.findOne({
         where: { id },
         select: [
@@ -132,9 +150,9 @@ export class UserService {
         ],
         relations: ['role', 'organization'],
       });
-      const isAdmin = request.user.role.role === 'admin';
+      const isAdmin = request.user.role.role === ADMIN;
       return isAdmin ? user : null;
-    } else if (request.user.role.role === 'admin') {
+    } else if (request.user.role.role === ADMIN) {
       const user = await this.userRepository.findOne({
         where: { id },
         select: [
@@ -148,7 +166,7 @@ export class UserService {
         ],
         relations: ['role', 'oragnization'],
       });
-      const isAdmin = user.role.role === 'employee';
+      const isAdmin = user.role.role === EMPLOYEE;
       return isAdmin ? user : null;
     } else {
       throw new ForbiddenException('Not Authozied');

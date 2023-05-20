@@ -18,12 +18,53 @@ export class AssetsService {
     return await this.assetRepository.save(newAsset);
   }
 
-  findAll() {
-    return `This action returns all assets`;
+  findAll(req) {
+    console.log('kk ', req.user.organization.id);
+    return this.assetRepository
+      .createQueryBuilder('asset')
+      .leftJoin('asset.subCategory', 'category')
+      .leftJoin('category.parent', 'subcategory')
+      .select(['asset.name', 'asset.description', 'asset.price'])
+      .addSelect('asset.id', 'id')
+      .addSelect('subcategory.name', 'categoryName')
+      .addSelect('category.name', 'subcategoryName')
+      .where('asset.organizationId = :organizationId', {
+        organizationId: req.user.organization.id,
+      })
+      .getRawMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} asset`;
+  findOne(id: number, req) {
+    return this.assetRepository.findOne({
+      where: { id, organization: { id: req.user.organization.id } },
+      relations: ['subCategory', 'subCategory.parent', 'vendor', 'employee'],
+    });
+    // return (
+    //   this.assetRepository
+    //     .createQueryBuilder('asset')
+    //     .leftJoinAndSelect('asset.subCategory', 'category')
+    //     .leftJoinAndSelect('category.parent', 'subcategory')
+    //     .leftJoin('asset.vendor', 'vendor')
+    //     .leftJoin('asset.employee', 'employee')
+    //     // .leftJoin('employee.user', 'user')
+    //     .select([
+    //       'asset.id',
+    //       'category.name',
+    //       'subcategory.name',
+    //       'vendor.name',
+    //       'vendor.phone',
+    //       'employee.name',
+    //       'employee.email',
+    //       'employee.phone',
+    //     ])
+    //     .where('asset.id = :id', { id })
+    //     .andWhere('asset.organizationId = :organizationId', {
+    //       organizationId: 1,
+    //     })
+    //     .andWhere('asset.employeeId IS NOT NULL')
+    //     .andWhere('employee.roleId = :roleId', { roleId: 3 })
+    //     .getRawOne()
+    // );
   }
 
   update(id: number, updateAssetDto: UpdateAssetDto) {

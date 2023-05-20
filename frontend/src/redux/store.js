@@ -6,6 +6,7 @@ import {
   userDetailsReducer,
   userListReducer,
   userLoginReducer,
+  userResetPasswordReducer,
 } from './reducers/user/userReducers';
 import { loadingReducer } from './reducers/loading/loadingReducers';
 import { getLocalStorage } from '../utils/localStorage';
@@ -27,20 +28,29 @@ import {
   categoryListReducer,
 } from './reducers/category/categoryReducers';
 import { vendorListReducer } from './reducers/vendor/vendorReducers';
-import { assetCreateReducer } from './reducers/asset/assetReducers';
+import {
+  assetCreateReducer,
+  assetDetailsReducer,
+  assetListReducer,
+} from './reducers/asset/assetReducers';
 import { subcategoryDetailsReducer } from './reducers/subcategory/subcategoryReducers';
 import {
   dashboardDataReducer,
   dashboardStatsReducer,
 } from './reducers/dashboard/dashboardReducers';
-import { passwordResetTokenCreateReducer } from './reducers/password-reset/passwordResetReducers';
+import {
+  passwordResetTokenCreateReducer,
+  passwordResetTokenVerifyReducer,
+} from './reducers/password-reset/passwordResetReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
   userLogin: userLoginReducer,
+  userResetPassword: userResetPasswordReducer,
   userList: userListReducer,
   userDetails: userDetailsReducer,
   passwordResetTokenCreate: passwordResetTokenCreateReducer,
+  passwordResetTokenVerify: passwordResetTokenVerifyReducer,
   dashboardData: dashboardDataReducer,
   dashboardStats: dashboardStatsReducer,
   organizationCreate: organizationCreateReducer,
@@ -57,6 +67,8 @@ const reducer = combineReducers({
   subcategoryDetails: subcategoryDetailsReducer,
   vendorList: vendorListReducer,
   assetCreate: assetCreateReducer,
+  assetList: assetListReducer,
+  assetDetails: assetDetailsReducer,
   loading: loadingReducer,
 });
 

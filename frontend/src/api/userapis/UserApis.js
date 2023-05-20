@@ -8,3 +8,6 @@ export const getUsersApi = (organizationId) => {
 export const getUserApi = (id) => {
   return `/user/${id}`;
 };
+export const resetPasswordUserApi = (email) => {
+  return `/user/resetPassword?email=${email}`;
+};

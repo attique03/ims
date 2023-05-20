@@ -24,6 +24,9 @@ import InventoryListPage from './pages/inventory/inventoryList/InventoryListPage
 import ComplaintCreatePage from './pages/complaint/complaintCreate/ComplaintCreatePage';
 import SubCategoryPage from './pages/subCategory/subCategoryDetail/SubCategoryPage';
 import ForgotPasswordPage from './pages/forgot-password/ForgotPasswordPage';
+import VerifyCodePage from './pages/verify-code/VerifyCodePage';
+import ResetPasswordPage from './pages/reset-password/ResetPasswordPage';
+import InventoryPage from './pages/inventory/inventoryDetail/InventoryPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -45,43 +48,47 @@ function App() {
             path="/forgot-password"
             element={<ForgotPasswordPage />}
           />
-        {/* </Routes>
+
+          <Route exact path="/verify-code" element={<VerifyCodePage />} />
+          <Route exact path="/reset-password" element={<ResetPasswordPage />} />
+          {/* </Routes>
 
         <ProtectedRoute>
           <Routes> */}
-            <Route exact path="/" element={<DashboardPage />} />
-            <Route path="organizations" element={<Organizations />}>
-              <Route exact path="" element={<OrganizationListPage />} />
-              <Route exact path="create" element={<OrganizationCreatePage />} />
-              <Route exact path=":id" element={<OrganizationPage />} />
-            </Route>
+          <Route exact path="/" element={<DashboardPage />} />
+          <Route path="organizations" element={<Organizations />}>
+            <Route exact path="" element={<OrganizationListPage />} />
+            <Route exact path="create" element={<OrganizationCreatePage />} />
+            <Route exact path=":id" element={<OrganizationPage />} />
+          </Route>
 
-            <Route path="admins" element={<Admins />}>
-              <Route exact path="" element={<AdminListPage />} />
-              <Route exact path="create" element={<AdminCreatePage />} />
-              <Route exact path=":id" element={<AdminPage />} />
-            </Route>
+          <Route path="admins" element={<Admins />}>
+            <Route exact path="" element={<AdminListPage />} />
+            <Route exact path="create" element={<AdminCreatePage />} />
+            <Route exact path=":id" element={<AdminPage />} />
+          </Route>
 
-            <Route path="categories" element={<Category />}>
-              <Route path="" element={<CollapsibleTable />} />
-              <Route path="create" element={<CategoryCreatePage />} />
-              <Route
-                path=":id/sub-category/:subCatId"
-                element={<SubCategoryPage />}
-              />
-            </Route>
+          <Route path="categories" element={<Category />}>
+            <Route path="" element={<CollapsibleTable />} />
+            <Route path="create" element={<CategoryCreatePage />} />
+            <Route
+              path=":id/sub-category/:subCatId"
+              element={<SubCategoryPage />}
+            />
+          </Route>
 
-            <Route path="complaints" element={<Category />}>
-              <Route path="" element={<ComplaintListPage />} />
-              <Route path="create" element={<ComplaintCreatePage />} />
-              <Route path=":id" element={<ComplaintPage />} />
-            </Route>
+          <Route path="complaints" element={<Category />}>
+            <Route path="" element={<ComplaintListPage />} />
+            <Route path="create" element={<ComplaintCreatePage />} />
+            <Route path=":id" element={<ComplaintPage />} />
+          </Route>
 
-            <Route path="inventory" element={<Category />}>
-              <Route path="" element={<InventoryListPage />} />
-              <Route path="create" element={<InventoryCreatePage />} />
-            </Route>
-          </Routes>
+          <Route path="inventory" element={<Category />}>
+            <Route path="" element={<InventoryListPage />} />
+            <Route path="create" element={<InventoryCreatePage />} />
+            <Route path=":id" element={<InventoryPage />} />
+          </Route>
+        </Routes>
         {/* </ProtectedRoute> */}
       </Router>
     </StyledEngineProvider>

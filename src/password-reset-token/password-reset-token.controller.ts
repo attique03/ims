@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { PasswordResetTokenService } from './password-reset-token.service';
 import { CreatePasswordResetTokenDto } from './dto/create-password-reset-token.dto';
@@ -20,31 +21,16 @@ export class PasswordResetTokenController {
   ) {}
 
   @Post()
-  create(
-    @Body() createPasswordResetTokenDto: CreatePasswordResetTokenDto,
-    @Query('email') email,
-  ) {
-    const mail = {
-      to: email,
-      subject: 'Password Reset Code | IMS Password Reset',
-      from: 'muhammad.attique@gigalabs.co',
-      text: 'Password Reset Code | IMS Password Reset',
-      // html: '<div>Hello World from NestJS Sendgrid</div>',
-    };
-
-    console.log('Email ==> ', email);
-
-    return this.passwordResetTokenService.create(
-      createPasswordResetTokenDto,
-      mail,
-    );
+  create(@Body() createPasswordResetTokenDto: CreatePasswordResetTokenDto) {
+    return this.passwordResetTokenService.create(createPasswordResetTokenDto);
   }
 
   @Post('/verify')
-  login(
+  verify(
     @Body() passwordReset: PasswordResetToken,
-  ): Promise<{ passwordReset: PasswordResetToken }> {
-    return this.passwordResetTokenService.verify(passwordReset);
+    @Req() req,
+  ): Promise<{ passwordReset?: PasswordResetToken }> {
+    return this.passwordResetTokenService.verify(passwordReset, req);
   }
 
   // @Post('/verify')

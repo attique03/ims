@@ -17,6 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { login } from '../../redux/actions/user/userActions';
 import CardContainer from '../../components/card/CardContainer';
 import './login.css';
+import { Alert, AlertTitle } from '@mui/material';
 const theme = createTheme({
   typography: {
     caption: {
@@ -61,6 +62,8 @@ export default function LoginPage() {
     dispatch(login(email, password));
   };
 
+  console.log('Error ', error);
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -88,6 +91,12 @@ export default function LoginPage() {
           }}
         >
           <CardContainer minWid={400}>
+            {error && (
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                {error}
+              </Alert>
+            )}
             <Box
               sx={{
                 marginTop: 8,

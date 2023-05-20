@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ADMIN, EMPLOYEE, PENDING, SUPERADMIN } from 'src/constants/constants';
 import { Repository } from 'typeorm';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { UpdateComplaintDto } from './dto/update-complaint.dto';
@@ -19,14 +20,14 @@ export class ComplaintsService {
 
   async create(complaint: CreateComplaintDto, req): Promise<Complaint> {
     try {
-      if (req.user.role.id === 1) {
+      if (req.user.role.role === SUPERADMIN) {
         throw new ForbiddenException({
           error: 'Super Admin is not allowed to create compliants currently',
         });
       }
       const newComplaint = this.complaintRepository.create({
         ...complaint,
-        status: 'Pending',
+        status: PENDING,
         user: req.user.id,
         organization: req.user.organization.id,
       });
@@ -39,7 +40,7 @@ export class ComplaintsService {
 
   async findAll(req) {
     // Super Admin fetches all the complaints from Admins
-    if (req.user.role.id === 1) {
+    if (req.user.role.role === SUPERADMIN) {
       return await this.complaintRepository
         .createQueryBuilder('complaint')
         .select([
@@ -61,7 +62,7 @@ export class ComplaintsService {
         .getRawMany();
     }
     // Admin fetches all the complaints from Employee and his own complaints as well
-    else if (req.user.role.id === 2) {
+    else if (req.user.role.role === ADMIN) {
       if (req.query.employees) {
         return await this.complaintRepository
           .createQueryBuilder('complaint')
@@ -99,7 +100,7 @@ export class ComplaintsService {
         .getRawMany();
     }
     // Employee Fetches his own complaints
-    else if (req.user.role.id === 3) {
+    else if (req.user.role.role === EMPLOYEE) {
       const complaints = await this.complaintRepository
         .createQueryBuilder('complaint')
         .select([
@@ -127,11 +128,11 @@ export class ComplaintsService {
       .leftJoinAndSelect('complaint.organization', 'organization')
       .where('complaint.id = :id', { id });
 
-    if (request.user.role.role === 'superadmin') {
+    if (request.user.role.role === SUPERADMIN) {
       complaint.andWhere('user.roleId = :roleId', {
         roleId: 2,
       });
-    } else if (request.user.role.role === 'admin') {
+    } else if (request.user.role.role === ADMIN) {
       complaint.andWhere(
         '(complaint.userId = :userId OR (user.roleId = :roleId AND complaint.organizationId IN (:organizationId)))',
         {

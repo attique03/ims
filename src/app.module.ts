@@ -70,7 +70,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(authMiddleware)
-      .exclude('user/login')
+      .exclude('user/login', 'user/resetPassword')
       .forRoutes(
         'user',
         'vendor',

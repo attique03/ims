@@ -40,8 +40,8 @@ export class UserController {
   }
 
   @Patch('/resetPassword')
-  resetPassword(@Body() user: User): Promise<{ user: User }> {
-    return this.userService.resetPassword(user);
+  resetPassword(@Query('email') email, @Body() user: User) {
+    return this.userService.resetPassword(email, user);
   }
 
   @Get()

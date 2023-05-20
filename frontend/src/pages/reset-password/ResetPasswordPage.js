@@ -14,11 +14,11 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { login } from '../../redux/actions/user/userActions';
+import { login, resetPasswordUser } from '../../redux/actions/user/userActions';
 import CardContainer from '../../components/card/CardContainer';
-import './forgotPassword.css';
-import { createPasswordResetToken } from '../../redux/actions/passwordResetToken/passwordResetTokenActions';
-import { PASSWORD_RESET_TOKEN_CREATE_RESET } from '../../redux/constants/password-reset/passwordResetConstants';
+import { USER_RESET_PASSWORD_RESET } from '../../redux/constants/user/userConstants';
+import { Alert, AlertTitle } from '@mui/material';
+// import './login.css';
 
 const theme = createTheme({
   typography: {
@@ -32,35 +32,41 @@ const theme = createTheme({
   },
 });
 
-export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
+export default function ResetPasswordPage() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const passwordResetTokenCreate = useSelector(
-    (state) => state.passwordResetTokenCreate,
-  );
-  const { error, passwordResetToken, success } = passwordResetTokenCreate;
+  const userResetPassword = useSelector((state) => state.userResetPassword);
+  const { error, user, success } = userResetPassword;
 
   useEffect(() => {
-    if (passwordResetToken && success) {
-      console.log('If Effect ', passwordResetToken);
-    
-      localStorage.setItem('ResetEmail', JSON.stringify(passwordResetToken.email));
-
-      dispatch({ type: PASSWORD_RESET_TOKEN_CREATE_RESET });
-      navigate('/verify-code');
+    if (user && success) {
+      console.log('iNFO ', user);
+      dispatch({ type: USER_RESET_PASSWORD_RESET });
+      navigate('/login');
     }
-  }, [dispatch, passwordResetToken, navigate, success]);
+  }, [dispatch, user, navigate, success]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    dispatch(createPasswordResetToken(email));
-  };
+    if (password !== confirmPassword) {
+      setMessage('Passwords do not match');
+    } else {
+      setMessage(null);
+      const email = localStorage.getItem('ResetEmail')
+        ? JSON.parse(localStorage.getItem('ResetEmail'))
+        : null;
 
-  console.log('Password ', passwordResetToken);
+      localStorage.removeItem('ResetEmail');
+
+      dispatch(resetPasswordUser(email, password));
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -89,6 +95,12 @@ export default function ForgotPasswordPage() {
           }}
         >
           <CardContainer minWid={400}>
+            {message && (
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                {message}
+              </Alert>
+            )}
             <Box
               sx={{
                 marginTop: 8,
@@ -98,23 +110,10 @@ export default function ForgotPasswordPage() {
               }}
             >
               <Typography component="h1" variant="h5">
-                Forgot Password?
+                Reset Password
               </Typography>
-              <Typography
-                variant="caption"
-                display="block"
-                gutterBottom
-                sx={{
-                  mx: 0,
-                  width: '205px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                }}
-              >
-                Don't Worry, enter below your email and a verification code will
-                be sent to your mail.
+              <Typography variant="caption" display="block" gutterBottom>
+                Enter your new password
               </Typography>
             </Box>
             <Box
@@ -127,22 +126,31 @@ export default function ForgotPasswordPage() {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Enter Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                sx={{ padding: '0px 0px' }}
-                onChange={(e) => setEmail(e.target.value)}
+                name="password"
+                label="Enter Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={(e) => setPassword(e.target.value)}
               />
-
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="reset-password"
+                label="Confirm Password"
+                type="password"
+                id="re-password"
+                // autoComplete="current-password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, backgroundColor: '#31DE79' }}
               >
-                Send Verification Code
+                Reset Password
               </Button>
             </Box>
           </CardContainer>
@@ -156,10 +164,10 @@ export default function ForgotPasswordPage() {
           }}
         >
           <Typography variant="caption">
-            Entered wrong credentials? Go back to
-            <Link to={'/login'} className="login-link">
+            Forgot your Password?
+            <Link to={'/forgot-password'} className="reset-link">
               {' '}
-              Login
+              Reset Password
             </Link>
           </Typography>
         </Box>

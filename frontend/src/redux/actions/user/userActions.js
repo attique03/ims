@@ -10,6 +10,8 @@ import {
   USER_CREATE_FAIL,
   USER_DETAILS_SUCCESS,
   USER_DETAILS_FAIL,
+  USER_RESET_PASSWORD_SUCCESS,
+  USER_RESET_PASSWORD_FAIL,
 } from '../../constants/user/userConstants';
 import axiosConfig from '../../../utils/axiosConfig';
 import {
@@ -21,6 +23,7 @@ import {
   getUserApi,
   getUsersApi,
   loginApi,
+  resetPasswordUserApi,
 } from '../../../api/userapis/UserApis';
 import { errorHandler } from '../../../utils/errorHandler';
 import {
@@ -60,6 +63,38 @@ export const createUser = (user, email) => async (dispatch) => {
   });
 };
 
+export const resetPasswordUser = (email, password) => async (dispatch) => {
+  try {
+    dispatch({
+      type: LOADING_TRUE,
+    });
+
+    console.log('reset password ', email, password);
+
+    const { data } = await axiosConfig.patch(resetPasswordUserApi(email), {
+      password,
+    });
+
+    dispatch({
+      type: USER_RESET_PASSWORD_SUCCESS,
+      payload: data,
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_RESET_PASSWORD_FAIL,
+      payload: errorHandler(error),
+    });
+  }
+
+  dispatch({
+    type: LOADING_FALSE,
+  });
+};
+
 export const login = (email, password) => async (dispatch) => {
   try {
     dispatch({
@@ -83,6 +118,7 @@ export const login = (email, password) => async (dispatch) => {
     // setLocalStorage('userInfo', data);
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
+    // console.log('Error in Actions ', error?);
     dispatch({
       type: USER_LOGIN_FAIL,
       payload: errorHandler(error),
