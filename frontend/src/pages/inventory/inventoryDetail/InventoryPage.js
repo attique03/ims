@@ -51,8 +51,8 @@ const InventoryPage = () => {
 
   return (
     <CardContainer>
-      <Box display="flex" p={1}>
-        <Box p={1} flexGrow={1}>
+      <Box className={'header'}>
+        <Box className={'header-left'}>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             spacing={{ xs: 1, sm: 2, md: 4 }}
@@ -81,10 +81,6 @@ const InventoryPage = () => {
             <FontAwesomeIcon icon={faEllipsisV} />
           </IconButton>
           <MenuActions
-            id="demo-customized-menu"
-            MenuListProps={{
-              'aria-labelledby': 'demo-customized-button',
-            }}
             anchorEl={anchorEl}
             open={open}
             onClose={handleMenuClose}
@@ -123,12 +119,12 @@ const InventoryPage = () => {
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Description</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>{asset?.description}</Typography>
           </Grid>
         </Grid>
@@ -136,12 +132,12 @@ const InventoryPage = () => {
         <Divider />
 
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Category</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>{asset?.subCategory?.parent?.name}</Typography>
           </Grid>
         </Grid>
@@ -149,12 +145,12 @@ const InventoryPage = () => {
         <Divider />
 
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Sub-Category</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>{asset?.subCategory?.name}</Typography>
           </Grid>
         </Grid>
@@ -162,34 +158,34 @@ const InventoryPage = () => {
         <Divider />
 
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Date of Purchase</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>{moment(asset?.createdDate).format('L')}</Typography>
           </Grid>
         </Grid>
 
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Unit Price</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>Rs {asset?.price}</Typography>
           </Grid>
         </Grid>
 
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Current Price</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>Rs {asset?.price}</Typography>
           </Grid>
         </Grid>
@@ -202,22 +198,22 @@ const InventoryPage = () => {
           </Typography>
         </Grid>
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Name</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>{asset?.vendor?.name}</Typography>
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ py: 2, my: 2 }}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Contact Number</b>
             </Typography>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item md={9} xs={12}>
             <Typography>{asset?.vendor?.phone}</Typography>
           </Grid>
         </Grid>
@@ -230,14 +226,14 @@ const InventoryPage = () => {
               </Typography>
             </Grid>
             <Grid container spacing={2} sx={{ mt: 2 }}>
-              <Grid item xs={1.2}>
+              <Grid item md={1.2} xs={4}>
                 <Avatar
                   src={`/uploads/${asset?.employee?.image?.split('/')[3]}`}
                   className={'profile-image'}
                   alt="organization-logo"
                 />
               </Grid>
-              <Grid item xs={10.8}>
+              <Grid item md={10.8} xs={8}>
                 <Typography variant="h5" component="h5">
                   <b>{asset?.employee?.email}</b>
                 </Typography>

@@ -22,18 +22,23 @@ export class RequestsController {
   }
 
   @Get()
-  findAll() {
-    return this.requestsService.findAll();
+  findAll(@Req() req) {
+    return this.requestsService.findAll(req);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.requestsService.findOne(+id);
+  findOne(@Req() request, @Param('id') id: number) {
+    return this.requestsService.findOne(id, request);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto) {
-    return this.requestsService.update(+id, updateRequestDto);
+  update(
+    @Param('id') id: number,
+    @Req() req,
+    // @Body() status: string,
+    // @Body() returnType: string,
+  ) {
+    return this.requestsService.update(id, req);
   }
 
   @Delete(':id')

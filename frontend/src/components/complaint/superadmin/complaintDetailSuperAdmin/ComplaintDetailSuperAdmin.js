@@ -42,36 +42,33 @@ const ComplaintDetailSuperAdmin = () => {
   return (
     <CardContainer>
       {/* ______________________ Header Starts ______________________ */}
-      <Box display="flex" p={1}>
-        <Box p={1} flexGrow={1}>
+      <Box className={'header'}>
+        <Box className={'header-left'}>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             spacing={{ xs: 1, sm: 2, md: 4 }}
           >
-            <Typography
-              classes={{ root: 'title' }}
-              component="caption"
-              variant="caption"
-              onClick={handleGoBack}
-            >
-              <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />
+            <Typography classes={{ root: 'back' }} onClick={handleGoBack}>
+              <ArrowBackIcon classes={{ root: 'back-icon' }} />
               Back
             </Typography>
             <Typography variant="h5" component="h5">
-              <b>Complaint ID: {complaint?.id}</b>
+              <Typography variant="b" component="b">
+                Complaint ID: {complaint?.id}
+              </Typography>
             </Typography>
             <Typography variant="span" component="span">
               {complaint?.status === RESOLVED && (
-                <div className="resolved-status">Resolved</div>
+                <div className="resolved-status">{RESOLVED}</div>
               )}
               {complaint?.status === PENDING && (
-                <div className="pending-status">Pending</div>
+                <div className="pending-status">{PENDING}</div>
               )}
             </Typography>
           </Stack>
         </Box>
-        {complaint?.status === 'Pending' && (
-          <Box p={1}>
+        {complaint?.status === PENDING && (
+          <Box className={'mark-box'}>
             <Button
               type="submit"
               fullWidth
@@ -90,8 +87,8 @@ const ComplaintDetailSuperAdmin = () => {
       <Box sx={{ mx: 2, mt: 2, mb: 4 }}>
         <Grid container spacing={2} sx={{ py: 1, my: 3 }}>
           <Grid item xs={3}>
-            <Typography>
-              <b>Description</b>
+            <Typography variant="b" component="b">
+              Description
             </Typography>
           </Grid>
           <Grid item xs={9}>
@@ -114,7 +111,9 @@ const ComplaintDetailSuperAdmin = () => {
 
         <Grid container sx={{ mt: 3 }}>
           <Typography variant="h6" component="h6">
-            <b>Complaint Submitted By</b>
+            <Typography variant="b" component="b">
+              Complaint Submitted By
+            </Typography>
           </Typography>
         </Grid>
         <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -127,12 +126,14 @@ const ComplaintDetailSuperAdmin = () => {
           </Grid>
           <Grid item xs={10.8}>
             <Typography variant="h5" component="h5">
-              <b>{complaint?.user?.name}</b>
+              <Typography variant="b" component="b">
+                {complaint?.user?.name}
+              </Typography>
             </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
+            <Typography classes={{ root: 'back' }}>
               {complaint?.user?.email}
             </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
+            <Typography classes={{ root: 'back' }}>
               {complaint?.user?.phone}
             </Typography>
           </Grid>
@@ -140,7 +141,9 @@ const ComplaintDetailSuperAdmin = () => {
 
         <Grid container sx={{ mt: 5 }}>
           <Typography variant="h6" component="h6">
-            <b>Organization</b>
+            <Typography variant="b" component="b">
+              Organization
+            </Typography>
           </Typography>
         </Grid>
         <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -153,9 +156,11 @@ const ComplaintDetailSuperAdmin = () => {
           </Grid>
           <Grid item xs={10.8}>
             <Typography variant="h5" component="h5">
-              <b>{complaint?.organization?.name}</b>
+              <Typography variant="b" component="b">
+                {complaint?.organization?.name}
+              </Typography>
             </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
+            <Typography classes={{ root: 'back' }}>
               {complaint?.organization?.email}
             </Typography>
           </Grid>

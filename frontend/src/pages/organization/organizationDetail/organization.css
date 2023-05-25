@@ -27,26 +27,3 @@
 .icon-background:hover {
   background-color: #2979ff;
 }
-
-.customized-tab {
-  /* color: #fff; */
-  background: #2979ff;
-  margin-left: 20px;
-  margin-right: 20px;
-  border-radius: 5px;
-}
-
-/* .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
-  color: white;
-} */
-
-/* .indicator {
-    display: "flex",
-    justifyContent: "center",
-    backgroundColor: "transparent",
-    "& > span": {
-      maxWidth: 40,
-      width: "100%",
-      backgroundColor: "white"
-    }
-  } */

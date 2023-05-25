@@ -20,6 +20,8 @@ import { tableColumns, tableRows } from './adminListData';
 import CardContainer from '../../../components/card/CardContainer';
 import { listOrganizations } from '../../../redux/actions/organization/organizationActions';
 import { listUsers } from '../../../redux/actions/user/userActions';
+import './adminList.css';
+import Error from '../../../components/error/Error';
 
 const AdminListPage = () => {
   const [organization, setOrganization] = React.useState('');
@@ -47,34 +49,37 @@ const AdminListPage = () => {
 
   return (
     <CardContainer>
-      <Box display="flex" p={1} sx={{ mb: 4 }}>
-        <Box p={1} flexGrow={1}>
+      {error && <Error error={error} />}
+      {errorOrganizations && (
+        <Error
+          title={'Error Organizations Fetching'}
+          error={errorOrganizations}
+        />
+      )}
+      <Box className={'header'}>
+        <Box className={'header-left'}>
           <Stack direction="row" spacing={2}>
             <Typography variant="h5" component="h5">
               Admins
             </Typography>
             <TextField
               label="Search"
-              id="outlined-size-small"
-              defaultValue=""
+              id="search"
               size="small"
-              sx={{ width: '200px' }}
+              classes={{ root: 'icon-box' }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <FontAwesomeIcon
-                      icon={faSearch}
-                      style={{ height: '13px' }}
-                    />
+                    <FontAwesomeIcon icon={faSearch} className="icon-size" />
                   </InputAdornment>
                 ),
               }}
             />
-            <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
-              <InputLabel id="demo-select-small">Organization</InputLabel>
+            <FormControl classes={{ root: 'icon-box' }} size="small">
+              <InputLabel id="organization">Organization</InputLabel>
               <Select
-                labelId="demo-select-small"
-                id="demo-select-small"
+                labelId="organization"
+                id="organization"
                 value={organization}
                 label="Organization"
                 onChange={handleChange}
@@ -82,12 +87,6 @@ const AdminListPage = () => {
                 {organizations?.map((org) => (
                   <MenuItem value={org.name}>{org.name}</MenuItem>
                 ))}
-                {/* <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="nisum">Nisum</MenuItem>
-                <MenuItem value="techswipe">Techswipe</MenuItem>
-                <MenuItem value="gigalabs">GigaLabs</MenuItem> */}
               </Select>
             </FormControl>
           </Stack>
@@ -95,10 +94,8 @@ const AdminListPage = () => {
         <Box p={1}>
           <Button
             variant="contained"
-            startIcon={
-              <FontAwesomeIcon icon={faAdd} style={{ height: '13px' }} />
-            }
-            sx={{ backgroundColor: '#31DE79' }}
+            startIcon={<FontAwesomeIcon icon={faAdd} className="icon-size" />}
+            classes={{ root: 'add-btn' }}
             onClick={handleAdd}
           >
             Add

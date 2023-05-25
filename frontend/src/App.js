@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import Navbar from './components/navbar/Navbar';
 import LoginPage from './pages/login/LoginPage';
-import Organizations from './pages/organization/Organizations';
-import Category from './pages/categories/Category';
 import CollapsibleTable from './pages/categories/categoryList/CategoryListPage';
 import CategoryCreatePage from './pages/categories/categoryCreate/CategoryCreatePage';
 import ProtectedRoute from './components/protectedRoute/ProtectedRoute';
@@ -14,7 +12,6 @@ import OrganizationListPage from './pages/organization/organizationList/Organiza
 import OrganizationCreatePage from './pages/organization/organizationCreate/OrganizationCreatePage';
 import OrganizationPage from './pages/organization/organizationDetail/OrganizationPage';
 import AdminListPage from './pages/admin/adminList/AdminListPage';
-import Admins from './pages/admin/Admins';
 import AdminCreatePage from './pages/admin/adminCreate/AdminCreatePage';
 import AdminPage from './pages/admin/adminDetail/AdminPage';
 import ComplaintListPage from './pages/complaint/complaintList/ComplaintListPage';
@@ -27,22 +24,25 @@ import ForgotPasswordPage from './pages/forgot-password/ForgotPasswordPage';
 import VerifyCodePage from './pages/verify-code/VerifyCodePage';
 import ResetPasswordPage from './pages/reset-password/ResetPasswordPage';
 import InventoryPage from './pages/inventory/inventoryDetail/InventoryPage';
+import LoadingWrapper from './components/loadingWrapper/LoadingWrapper';
+import NotFound from './pages/notFound/NotFound';
+import OutletWrapper from './components/outlet/OutletWrapper';
+import RequestsListPage from './pages/requests/requestsList/RequestsListPage';
+import ReturnsListPage from './pages/returns/returnsList/ReturnsListPage';
+import RequestsPage from './pages/requests/requestsDetail/RequestsPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
   const { error, userInfo } = userLogin;
-
-  const ProtectedDashboard = withProtectedRoute(DashboardPage);
 
   return (
     <StyledEngineProvider injectFirst>
       <CssBaseline />
       <Router>
         {userInfo && <Navbar />}
+        {/* <LoadingWrapper> */}
         <Routes>
           <Route exact path="/login" element={<LoginPage />} />
-          {/* <Route exact path="/" element={<DashboardPage />} /> */}
-
           <Route
             exact
             path="/forgot-password"
@@ -51,45 +51,267 @@ function App() {
 
           <Route exact path="/verify-code" element={<VerifyCodePage />} />
           <Route exact path="/reset-password" element={<ResetPasswordPage />} />
-          {/* </Routes>
+          {/* </Routes> */}
 
-        <ProtectedRoute>
-          <Routes> */}
-          <Route exact path="/" element={<DashboardPage />} />
-          <Route path="organizations" element={<Organizations />}>
-            <Route exact path="" element={<OrganizationListPage />} />
-            <Route exact path="create" element={<OrganizationCreatePage />} />
-            <Route exact path=":id" element={<OrganizationPage />} />
-          </Route>
+          {/* <ProtectedRoute> */}
+          {/* <Routes> */}
+          <Route
+            exact
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="admins" element={<Admins />}>
-            <Route exact path="" element={<AdminListPage />} />
-            <Route exact path="create" element={<AdminCreatePage />} />
-            <Route exact path=":id" element={<AdminPage />} />
-          </Route>
-
-          <Route path="categories" element={<Category />}>
-            <Route path="" element={<CollapsibleTable />} />
-            <Route path="create" element={<CategoryCreatePage />} />
+          <Route
+            path="organizations"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
             <Route
-              path=":id/sub-category/:subCatId"
-              element={<SubCategoryPage />}
+              exact
+              path=""
+              element={
+                <ProtectedRoute>
+                  <OrganizationListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <OrganizationCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <OrganizationPage />
+                </ProtectedRoute>
+              }
             />
           </Route>
 
-          <Route path="complaints" element={<Category />}>
-            <Route path="" element={<ComplaintListPage />} />
-            <Route path="create" element={<ComplaintCreatePage />} />
-            <Route path=":id" element={<ComplaintPage />} />
+          <Route
+            path="admins"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              exact
+              path=""
+              element={
+                <ProtectedRoute>
+                  <AdminListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <AdminCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <AdminPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
-          <Route path="inventory" element={<Category />}>
-            <Route path="" element={<InventoryListPage />} />
-            <Route path="create" element={<InventoryCreatePage />} />
-            <Route path=":id" element={<InventoryPage />} />
+          <Route
+            path="categories"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path=""
+              element={
+                <ProtectedRoute>
+                  <CollapsibleTable />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <CategoryCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id/sub-category/:subCatId"
+              element={
+                <ProtectedRoute>
+                  <SubCategoryPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
+
+          <Route
+            path="complaints"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path=""
+              element={
+                <ProtectedRoute>
+                  <ComplaintListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <ComplaintCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <ComplaintPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
+          <Route
+            path="inventory"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path=""
+              element={
+                <ProtectedRoute>
+                  <InventoryListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <InventoryCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <InventoryPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
+          <Route
+            path="requests"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path=""
+              element={
+                <ProtectedRoute>
+                  <RequestsListPage />
+                </ProtectedRoute>
+              }
+            />
+            {/* <Route
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <InventoryCreatePage />
+                </ProtectedRoute>
+              }
+            /> */}
+            <Route
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <RequestsPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
+          <Route
+            path="returns"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path=""
+              element={
+                <ProtectedRoute>
+                  <ReturnsListPage />
+                </ProtectedRoute>
+              }
+            />
+            {/* <Route
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <InventoryCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <InventoryPage />
+                </ProtectedRoute>
+              }
+            /> */}
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
         {/* </ProtectedRoute> */}
+        {/* </LoadingWrapper> */}
       </Router>
     </StyledEngineProvider>
   );

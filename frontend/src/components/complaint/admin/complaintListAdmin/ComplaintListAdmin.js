@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
+import SwipeableViews from 'react-swipeable-views';
 import {
   Box,
   Button,
@@ -18,45 +18,21 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAdd,
   faArrowDownZA,
   faArrowUpAZ,
   faSearch,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { listComplaints } from '../../../../redux/actions/complaint/complaintActions';
 import DataTable from '../../../../components/table/Table';
 import CardContainer from '../../../../components/card/CardContainer';
 import { employeeColumns, adminColumns } from './ComplaintListDataAdmin';
-import SwipeableViews from 'react-swipeable-views';
-import { listComplaints } from '../../../../redux/actions/complaint/complaintActions';
+import TabPanel from '../../../tab/tabPanel/TabPanel';
+import Error from '../../../error/Error';
 import './complaintListAdmin.css';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
+import { PENDING, RESOLVED } from '../../../../utils/constants';
 
 function a11yProps(index) {
   return {
@@ -75,7 +51,7 @@ const ComplaintListAdmin = () => {
   const dispatch = useDispatch();
 
   const complaintList = useSelector((state) => state.complaintList);
-  const { complaints, error: errorcomplaintList } = complaintList;
+  const { complaints, error } = complaintList;
 
   useEffect(() => {
     dispatch(listComplaints(true));
@@ -95,6 +71,7 @@ const ComplaintListAdmin = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    console.log('Value ', newValue);
     if (newValue === 0) {
       dispatch(listComplaints(true));
     } else if (newValue === 1) {
@@ -103,52 +80,47 @@ const ComplaintListAdmin = () => {
   };
   return (
     <CardContainer>
-      <Box display="flex" p={1} sx={{ mb: 4 }}>
-        <Box p={1} flexGrow={1}>
+      {error && <Error error={error} />}
+      <Box className={'header'}>
+        <Box className={'header-left'}>
           <Stack direction="row" spacing={2}>
             <Typography variant="h5" component="h5">
-              Compalints
+              <Typography variant="b" component="b">
+                Complaints
+              </Typography>
             </Typography>
             <TextField
               label="Search"
-              id="outlined-size-small"
-              defaultValue=""
               size="small"
-              sx={{ width: '200px' }}
+              classes={{ root: 'icon-box' }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <FontAwesomeIcon
-                      icon={faSearch}
-                      style={{ height: '13px' }}
-                    />
+                    <FontAwesomeIcon icon={faSearch} className="icon-size" />
                   </InputAdornment>
                 ),
               }}
             />
-            <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
-              <InputLabel id="demo-select-small">Select Status</InputLabel>
+            <FormControl classes={{ root: 'icon-box' }} size="small">
+              <InputLabel id="status">Select Status</InputLabel>
               <Select
-                labelId="demo-select-small"
-                id="demo-select-small"
+                labelId="status"
+                id="status"
                 value={status}
                 label="Select Status"
                 onChange={handleChangeStatus}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="nisum">Nisum</MenuItem>
-                <MenuItem value="techswipe">Techswipe</MenuItem>
-                <MenuItem value="gigalabs">GigaLabs</MenuItem>
+                <MenuItem value=""></MenuItem>
+                <MenuItem value={PENDING}>{PENDING}</MenuItem>
+                <MenuItem value={RESOLVED}>{RESOLVED}</MenuItem>
               </Select>
             </FormControl>
           </Stack>
         </Box>
 
-        <Box p={1}>
+        <Box className={'header-right'}>
           <IconButton
-            aria-label="Example"
+            aria-label="filter"
             onClick={handleClick}
             classes={{ root: 'icon-background' }}
           >
@@ -160,13 +132,11 @@ const ComplaintListAdmin = () => {
           </IconButton>
         </Box>
         {value === 1 && (
-          <Box p={1}>
+          <Box className={'header-right'}>
             <Button
               variant="contained"
-              startIcon={
-                <FontAwesomeIcon icon={faAdd} style={{ height: '13px' }} />
-              }
-              sx={{ backgroundColor: '#31DE79' }}
+              startIcon={<FontAwesomeIcon icon={faAdd} className="icon-size" />}
+              classes={{ root: 'create-button' }}
               onClick={handleComplaintCreate}
             >
               Create Complaint
@@ -175,18 +145,14 @@ const ComplaintListAdmin = () => {
         )}
       </Box>
 
-      <Box
-        sx={{
-          display: 'flex',
-        }}
-      >
-        <Box sx={{ justifyContent: 'flex-start' }}>
+      <Box className={'content'}>
+        <Box>
           <Tabs
             orientation="vertical"
             variant="scrollable"
             value={value}
             onChange={handleChange}
-            aria-label="Vertical tabs example"
+            aria-label="Tabs"
             align="left"
             TabIndicatorProps={{
               sx: {
@@ -197,18 +163,18 @@ const ComplaintListAdmin = () => {
             <Tab
               label="Employees"
               {...a11yProps(0)}
-              classes={{ root: value === 0 && 'customized-tab' }}
+              classes={{ root: value === 0 && 'tab' }}
               selected={false}
             />
             <Tab
               label="Submitted"
               {...a11yProps(1)}
-              classes={{ root: value === 1 && 'customized-tab' }}
+              classes={{ root: value === 1 && 'tab' }}
               selected={false}
             />
           </Tabs>
         </Box>
-        <Box sx={{ flexGrow: 1, borderLeft: '1px solid #E0E0E0' }}>
+        <Box className={'tab-content'}>
           <SwipeableViews
             axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
             index={value}

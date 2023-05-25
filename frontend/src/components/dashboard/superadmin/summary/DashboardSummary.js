@@ -20,41 +20,41 @@ export default function DashboardSummary() {
   return (
     <Box>
       <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
-        <Grid item xs={0.5}></Grid>
-        <Grid item xs={3} classes={{ root: 'border-item' }}>
+        <Grid item md={0.5} xs={0}></Grid>
+        <Grid item md={3} xs={12} classes={{ root: 'border-item' }}>
           <Typography classes={{ root: 'item' }}>Organizations</Typography>
           <Typography classes={{ root: 'item-content' }}>
             {dashboard?.totalOrganizations}{' '}
             <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
           </Typography>
-          <Typography classes={{ root: 'caption-color' }}>
+          <Typography classes={{ root: 'item-caption' }}>
             {dashboard?.newOrganizationsCount} new Organizations this month
           </Typography>
         </Grid>
 
-        <Grid item xs={3} classes={{ root: 'border-item' }}>
+        <Grid item md={3} xs={12} classes={{ root: 'border-item' }}>
           <Typography classes={{ root: 'item' }}>Admins</Typography>
           <Typography classes={{ root: 'item-content' }}>
             {dashboard?.totalAdmins}{' '}
             <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
           </Typography>
-          <Typography classes={{ root: 'caption-color' }}>
+          <Typography classes={{ root: 'item-caption' }}>
             {dashboard?.newAdminsCount} Active Admins this month
           </Typography>
         </Grid>
 
-        <Grid item xs={3} classes={{ root: 'border-item' }}>
+        <Grid item md={3} xs={12} classes={{ root: 'border-item' }}>
           <Typography classes={{ root: 'item' }}>Pending Complaints</Typography>
           <Typography classes={{ root: 'item-content' }}>
             {dashboard?.pendingComplaints}{' '}
             <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
           </Typography>
-          <Typography classes={{ root: 'caption-color' }}>
+          <Typography classes={{ root: 'item-caption' }}>
             {dashboard?.pendingComplaintsCount} Complaints pending this month
           </Typography>
         </Grid>
 
-        <Grid item xs={2.5}>
+        <Grid item md={2.5} xs={12}>
           <Typography classes={{ root: 'item' }}>
             Resolved Complaints
           </Typography>
@@ -62,7 +62,7 @@ export default function DashboardSummary() {
             {dashboard?.resolvedComplaints}{' '}
             <FontAwesomeIcon icon={faCaretUp} className={'icon-green'} />
           </Typography>
-          <Typography classes={{ root: 'caption-color' }}>
+          <Typography classes={{ root: 'item-caption' }}>
             {dashboard?.resolvedComplaintsCount} Complaints resolved this month
           </Typography>
         </Grid>

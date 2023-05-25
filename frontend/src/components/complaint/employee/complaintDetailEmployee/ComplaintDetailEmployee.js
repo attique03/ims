@@ -8,7 +8,7 @@ import { Box, Stack } from '@mui/system';
 import { Divider, Grid, Typography } from '@mui/material';
 import { listComplaintDetails } from '../../../../redux/actions/complaint/complaintActions';
 import { PENDING, RESOLVED } from '../../../../utils/constants';
-import './complaintDetailEmployee.css';
+import Error from '../../../error/Error';
 
 const ComplaintDetailEmployee = () => {
   const dispatch = useDispatch();
@@ -28,31 +28,29 @@ const ComplaintDetailEmployee = () => {
 
   return (
     <CardContainer>
+      {error && <Error error={error} />}
       {/* ______________________ Header Starts ______________________ */}
-      <Box display="flex" p={1}>
-        <Box p={1} flexGrow={1}>
+      <Box className={'header'}>
+        <Box className={'header-left'}>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             spacing={{ xs: 1, sm: 2, md: 4 }}
           >
-            <Typography
-              classes={{ root: 'title' }}
-              component="caption"
-              variant="caption"
-              onClick={handleGoBack}
-            >
-              <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />
+            <Typography classes={{ root: 'back' }} onClick={handleGoBack}>
+              <ArrowBackIcon classes={{ root: 'back-icon' }} />
               Back
             </Typography>
             <Typography variant="h5" component="h5">
-              <b>Complaint ID: {complaint?.id}</b>
+              <Typography variant="b" component="b">
+                Complaint ID: {complaint?.id}
+              </Typography>
             </Typography>
             <Typography variant="span" component="span">
               {complaint?.status === RESOLVED && (
-                <div className="resolved-status">Resolved</div>
+                <div className="resolved-status">{RESOLVED}</div>
               )}
               {complaint?.status === PENDING && (
-                <div className="pending-status">Pending</div>
+                <div className="pending-status">{PENDING}</div>
               )}
             </Typography>
             <Typography
@@ -72,8 +70,8 @@ const ComplaintDetailEmployee = () => {
       <Box sx={{ mx: 2, mt: 2, mb: 4 }}>
         <Grid container spacing={2} sx={{ py: 1, my: 3 }}>
           <Grid item xs={3}>
-            <Typography>
-              <b>Title</b>
+            <Typography variant="b" component="b">
+              Title
             </Typography>
           </Grid>
           <Grid item xs={9}>
@@ -84,8 +82,8 @@ const ComplaintDetailEmployee = () => {
 
         <Grid container spacing={2} sx={{ py: 1, my: 3 }}>
           <Grid item xs={3}>
-            <Typography>
-              <b>Description</b>
+            <Typography variant="b" component="b">
+              Description
             </Typography>
           </Grid>
           <Grid item xs={9}>

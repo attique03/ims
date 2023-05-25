@@ -1,0 +1,23 @@
+.graph-header {
+  display: flex;
+  justify-content: space-around;
+}
+
+.download {
+  color: #a9a9a9;
+  text-decoration: none;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.month {
+  margin: 0 8px;
+  color: #000000;
+}
+
+.chart {
+  width: 100%;
+  height: 400px;
+}

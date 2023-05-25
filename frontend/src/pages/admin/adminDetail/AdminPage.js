@@ -24,8 +24,8 @@ const AdminPage = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [showMenu, setShowMenu] = useState(null);
+  const open = Boolean(showMenu);
 
   const userDetails = useSelector((state) => state.userDetails);
   const { user, error } = userDetails;
@@ -39,61 +39,52 @@ const AdminPage = () => {
   };
 
   const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+    setShowMenu(event.currentTarget);
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    setShowMenu(null);
   };
 
   return (
     <CardContainer>
-      <Box display="flex" p={1}>
-        <Box p={1} flexGrow={1}>
+      <Box className={'header'}>
+        <Box className={'header-left'}>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             spacing={{ xs: 1, sm: 2, md: 4 }}
           >
-            <Typography
-              classes={{ root: 'title' }}
-              component="caption"
-              variant="caption"
-              sx={{}}
-              onClick={handleGoBack}
-            >
-              <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />
+            <Typography classes={{ root: 'back' }} onClick={handleGoBack}>
+              <ArrowBackIcon classes={{ root: 'back-icon' }} />
               Back
             </Typography>
             <Typography variant="h5" component="h5">
-              <b>Admin Detail</b>
+              <Typography variant="b" component="b">
+                Admin Detail
+              </Typography>
             </Typography>
           </Stack>
         </Box>
-        <Box p={1}>
+        <Box className={'header-right'}>
           <IconButton
-            aria-label="Example"
+            aria-label="menu"
             onClick={handleMenuOpen}
             classes={{ root: 'icon-background' }}
           >
             <FontAwesomeIcon icon={faEllipsisV} />
           </IconButton>
           <MenuActions
-            id="demo-customized-menu"
-            MenuListProps={{
-              'aria-labelledby': 'demo-customized-button',
-            }}
-            anchorEl={anchorEl}
+            id="menu-actions"
+            anchorEl={showMenu}
             open={open}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleMenuClose} disableRipple>
-              <div className="edit-color">
-                <EditOutlinedIcon classes={{ root: 'edit-color' }} />
-              </div>
+            <MenuItem onClick={handleMenuClose}>
+              <EditOutlinedIcon classes={{ root: 'edit-color' }} />
               Edit
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
-            <MenuItem onClick={handleMenuClose} disableRipple>
+            <MenuItem onClick={handleMenuClose}>
               <DeleteOutlineOutlinedIcon classes={{ root: 'delete-color' }} />
               Delete
             </MenuItem>
@@ -111,19 +102,19 @@ const AdminPage = () => {
           </Grid>
           <Grid item xs={10.8}>
             <Typography variant="h5" component="h5">
-              <b>{user?.name}</b>
+              <Typography variant="b" component="b">
+                {user?.name}
+              </Typography>
             </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
-              {user?.email}
-            </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
-              {user?.phone}
-            </Typography>
+            <Typography classes={{ root: 'back' }}>{user?.email}</Typography>
+            <Typography classes={{ root: 'back' }}>{user?.phone}</Typography>
           </Grid>
         </Grid>
         <Grid container sx={{ mt: 8 }}>
           <Typography variant="h6" component="h6">
-            <b>Organization</b>
+            <Typography variant="b" component="b">
+              Organization
+            </Typography>
           </Typography>
         </Grid>
         <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -136,47 +127,53 @@ const AdminPage = () => {
           </Grid>
           <Grid item xs={10.8}>
             <Typography variant="h5" component="h5">
-              <b>{user?.organization?.name}</b>
+              <Typography variant="b" component="b">
+                {user?.organization?.name}
+              </Typography>
             </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
+            <Typography classes={{ root: 'back' }}>
               {user && user.email}
             </Typography>
           </Grid>
         </Grid>
-        <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
+        <Grid container spacing={2} classes={{ root: 'box-spacing' }}>
           <Grid item xs={3}>
             <Typography>
-              <b>Representative Name</b>
+              <Typography variant="b" component="b">
+                Representative Name
+              </Typography>
             </Typography>
           </Grid>
           <Grid item xs={9}>
             <Typography>{user?.organization?.representativeName}</Typography>
           </Grid>
         </Grid>
-        <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
+        <Grid container spacing={2} classes={{ root: 'box-spacing' }}>
           <Grid item xs={3}>
             <Typography>
-              <b>Representative Contact</b>
+              <Typography variant="b" component="b">
+                Representative Contact
+              </Typography>
             </Typography>
           </Grid>
           <Grid item xs={9}>
             <Typography>{user?.organization?.representativeContact}</Typography>
           </Grid>
         </Grid>
-        <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
+        <Grid container spacing={2} classes={{ root: 'box-spacing' }}>
           <Grid item xs={3}>
-            <Typography>
-              <b>Bio</b>
+            <Typography variant="b" component="b">
+              Bio
             </Typography>
           </Grid>
           <Grid item xs={9}>
             <Typography>{user?.organization?.bio}</Typography>
           </Grid>
         </Grid>
-        <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
+        <Grid container spacing={2} classes={{ root: 'box-spacing' }}>
           <Grid item xs={3}>
-            <Typography>
-              <b>Address</b>
+            <Typography variant="b" component="b">
+              Address
             </Typography>
           </Grid>
           <Grid item xs={9}>

@@ -2,11 +2,6 @@
   border-right: 1px solid #a9a9a9;
 }
 
-.caption-color {
-  font-size: 12px;
-  color: #a9a9a9;
-}
-
 .icon-red {
   color: red;
   font-size: 30px;
@@ -28,4 +23,9 @@
   font-size: 3rem;
   line-height: 1.167;
   letter-spacing: 0em;
+}
+
+.item-caption {
+  font-size: 12px;
+  color: #a9a9a9;
 }

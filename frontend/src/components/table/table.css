@@ -6,6 +6,11 @@
   cursor: pointer;
 }
 
+.img {
+  height: 40px;
+  width: 40px;
+}
+
 .pending {
   margin-right: 10px;
   height: 10px;
@@ -20,6 +25,15 @@
   height: 10px;
   width: 10px;
   background-color: #31de79;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.rejected {
+  margin-right: 10px;
+  height: 10px;
+  width: 10px;
+  background-color: #d50000;
   border-radius: 50%;
   display: inline-block;
 }

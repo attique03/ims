@@ -155,22 +155,6 @@ export default function ResetPasswordPage() {
             </Box>
           </CardContainer>
         </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Typography variant="caption">
-            Forgot your Password?
-            <Link to={'/forgot-password'} className="reset-link">
-              {' '}
-              Reset Password
-            </Link>
-          </Typography>
-        </Box>
       </Container>
     </ThemeProvider>
   );

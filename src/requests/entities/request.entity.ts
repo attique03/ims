@@ -1,4 +1,5 @@
 import { Category } from 'src/category/entities/category.entity';
+import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Entity,
@@ -34,6 +35,9 @@ export class Requests {
 
   @ManyToOne(() => User, (user) => user.requests)
   user: User;
+
+  @ManyToOne(() => Organization, (organization) => organization.requests)
+  organization: Organization;
 
   @CreateDateColumn()
   createdDate: Date;

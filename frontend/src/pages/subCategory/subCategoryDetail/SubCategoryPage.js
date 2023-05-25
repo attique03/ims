@@ -172,7 +172,7 @@ const SubCategoryPage = () => {
           </Typography>
         </Grid>
 
-        {subcategory?.vendornames.map((vendor) => (
+        {subcategory?.vendornames?.map((vendor) => (
           <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
             <Grid item xs={3}>
               <Typography>
@@ -192,17 +192,6 @@ const SubCategoryPage = () => {
             </Grid>
           </Grid>
         ))}
-
-        {/* <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
-          <Grid item xs={3}>
-            <Typography>
-              <b>Address</b>
-            </Typography>
-          </Grid>
-          <Grid item xs={9}>
-            <Typography>{user?.organization?.address}</Typography>
-          </Grid>
-        </Grid> */}
       </Box>
     </CardContainer>
   );

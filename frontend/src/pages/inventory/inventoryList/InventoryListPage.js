@@ -19,17 +19,29 @@ import DataTable from '../../../components/table/Table';
 import CardContainer from '../../../components/card/CardContainer';
 import { listAssets } from '../../../redux/actions/asset/assetActions';
 import { tableColumns } from './inventoryListData';
+import { listCategories } from '../../../redux/actions/category/categoryActions';
 
 const InventoryListPage = () => {
+  const [category, setCategory] = useState();
+  const [subCategory, setSubCategory] = useState();
   const [location, setLocation] = React.useState('');
+  const [searchValue, setSearchValue] = React.useState('');
+  const [filteredInventory, setFilteredInventory] = useState([]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const assetList = useSelector((state) => state.assetList);
   const { assets, error } = assetList;
 
+  const categoryList = useSelector((state) => state.categoryList);
+  const { categories, error: errorcategoryList } = categoryList;
+
   useEffect(() => {
     dispatch(listAssets());
+    dispatch(listCategories());
+
+    // Filter the requests based on the search query
   }, [dispatch]);
 
   const handleChange = (event) => {
@@ -40,11 +52,34 @@ const InventoryListPage = () => {
     navigate('create');
   };
 
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+    const subCat = categories[1].filter(
+      (cat) => cat.category_parentId === e.target.value,
+    );
+    setSubCategory(subCat);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchValue(e.target.value);
+    let search = e.target.value;
+    const filtered = assets.filter((request) =>
+      request.asset_name.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredInventory(filtered);
+  };
+
+  console.log('Filtered ', filteredInventory, category);
+
   return (
     <CardContainer>
       <Box display="flex" p={1} sx={{ mb: 4 }}>
         <Box p={1} flexGrow={1}>
-          <Stack direction="row" spacing={2}>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={{ xs: 1, sm: 2, md: 4 }}
+          >
             <Typography variant="h5" component="h5">
               Inventory
             </Typography>
@@ -54,6 +89,7 @@ const InventoryListPage = () => {
               defaultValue=""
               size="small"
               sx={{ width: '200px' }}
+              onChange={handleSearch}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -65,24 +101,23 @@ const InventoryListPage = () => {
                 ),
               }}
             />
-            <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+            <FormControl sx={{ width: 200 }} size="small">
               <InputLabel id="demo-select-small">Select Category</InputLabel>
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"
-                value={location}
+                value={category}
                 label="Location"
-                onChange={handleChange}
+                onChange={handleCategoryChange}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="lahore">Lahore</MenuItem>
-                <MenuItem value="london">London</MenuItem>
-                <MenuItem value="berlin">Berlin</MenuItem>
+                {categories[0]?.map((option) => (
+                  <MenuItem key={option.category_id} value={option.category_id}>
+                    {option.category_name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+            <FormControl sx={{ width: 200 }} size="small">
               <InputLabel id="demo-select-small">
                 Select Sub-Category
               </InputLabel>
@@ -90,15 +125,14 @@ const InventoryListPage = () => {
                 labelId="demo-select-small"
                 id="demo-select-small"
                 value={location}
-                label="Location"
+                label="Category"
                 onChange={handleChange}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="lahore">Lahore</MenuItem>
-                <MenuItem value="london">London</MenuItem>
-                <MenuItem value="berlin">Berlin</MenuItem>
+                {subCategory?.map((option) => (
+                  <MenuItem key={option.category_id} value={option.category_id}>
+                    {option.category_name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Stack>
@@ -118,7 +152,12 @@ const InventoryListPage = () => {
       </Box>
 
       <Box sx={{ m: 2 }}>
-        <DataTable columns={tableColumns} data={assets && assets} />
+        <DataTable
+          columns={tableColumns}
+          data={
+            filteredInventory.length > 0 ? filteredInventory : assets && assets
+          }
+        />
       </Box>
     </CardContainer>
   );

@@ -1,5 +1,12 @@
-import { useState } from 'react';
-import { Button, IconButton, TextField, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import {
+  Button,
+  Divider,
+  Grid,
+  IconButton,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import React from 'react';
 import CardContainer from '../../../components/card/CardContainer';
@@ -9,20 +16,29 @@ import { faAdd, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import './categoryCreate.css';
 import { createCategory } from '../../../redux/actions/category/categoryActions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import Error from '../../../components/error/Error';
 
 const CategoryCreatePage = () => {
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState([{ value: '' }]);
-  const [categories, setCategories] = useState([]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const categoryCreate = useSelector((state) => state.categoryCreate);
+  const { success, error } = categoryCreate;
 
   const handleAddField = () => {
     const newFields = [...subCategory, { value: '' }];
     setSubCategory(newFields);
   };
+
+  useEffect(() => {
+    if (success) {
+      navigate('/categories');
+    }
+  }, [success, navigate]);
 
   const handleFieldChange = (index, event) => {
     const { value } = event.target;
@@ -32,7 +48,6 @@ const CategoryCreatePage = () => {
   };
 
   const handleRemoveFields = (index) => {
-    console.log('Index ==> ', index);
     const values = [...subCategory];
     values.splice(index, 1);
     setSubCategory(values);
@@ -40,139 +55,109 @@ const CategoryCreatePage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setCategories([category, subCategory]);
 
     dispatch(createCategory([category, subCategory]));
-
-    console.log('Category  ==>   ', category);
-    console.log('SubCategories Values ==>   ', subCategory);
-    console.log('Categoriesss in handle submit ==> ', categories);
   };
 
   const handleGoBack = () => {
     navigate('/categories');
   };
 
-  console.log('Categoriesss ==> ', categories);
-
   return (
     <CardContainer>
-      {/* Header */}
-      <Box style={{ width: '100%', borderBottom: '1px solid #E0E0E0' }}>
-        <Box display="flex" p={1}>
-          <Box p={1} flexGrow={1}>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={{ xs: 1, sm: 2, md: 4 }}
-            >
-              <Typography
-                classes={{ root: 'title' }}
-                component="caption"
-                variant="caption"
-                onClick={handleGoBack}
-              >
-                <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />
-                Back
-              </Typography>
-              <Typography variant="h5" component="h5">
-                Add New Category
-              </Typography>
-            </Stack>
-          </Box>
-          <Box p={1}>
-            <Button type="submit" fullWidth variant="contained" color="info">
-              Cancel
-            </Button>
-          </Box>
-          <Box
-            p={1}
-            component="form"
-            onClick={handleSubmit}
-            noValidate
-            // sx={{ mt: 1 }}
+      {error && <Error error={error} />}
+      <Box className={'header'}>
+        <Box className={'header-left'}>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={{ xs: 1, sm: 2, md: 4 }}
           >
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ backgroundColor: '#31DE79' }}
-            >
-              Save
-            </Button>
-          </Box>
+            <Typography classes={{ root: 'back' }} onClick={handleGoBack}>
+              <ArrowBackIcon classes={{ root: 'back-icon' }} />
+              Back
+            </Typography>
+            <Typography variant="h5" component="h5">
+              Add New Category
+            </Typography>
+          </Stack>
+        </Box>
+        <Box className={'header-right'}>
+          <Button type="submit" fullWidth variant="contained" color="info">
+            Cancel
+          </Button>
+        </Box>
+        <Box p={1} component="form" onClick={handleSubmit} noValidate>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            classes={{ root: 'save-btn' }}
+          >
+            Save
+          </Button>
         </Box>
       </Box>
 
+      <Divider sx={{ mb: 3 }} />
+
       {/* Form */}
-      <Box sx={{ mt: 2 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            p: 1,
-            m: 1,
-          }}
-        >
-          <Typography sx={{ mt: 1 }} variant="b">
-            Category Name
-          </Typography>
-          <Box sx={{ ml: 16 }}>
-            <TextField
-              label="Category Name"
-              id="category"
-              defaultValue=""
-              size="small"
-              sx={{ width: '400px' }}
-              required
-              name="category"
-              autoComplete="category"
-              autoFocus
-              onChange={(e) => setCategory(e.target.value)}
-            />
-          </Box>
+      <Box>
+        <Box className={'box-spacing'}>
+          <Grid container>
+            <Grid item xs={3}>
+              <Typography sx={{ mt: 1 }}>Category Name</Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <TextField
+                label="Category Name"
+                id="category"
+                defaultValue=""
+                size="small"
+                classes={{ root: 'input-width' }}
+                required
+                name="category"
+                onChange={(e) => setCategory(e.target.value)}
+              />
+            </Grid>
+          </Grid>
         </Box>
+
         <Box variant="h3" component="h3" sx={{ ml: 2, mt: 5 }}>
           Sub-Categories
         </Box>
 
         {subCategory.map((field, index) => (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              p: 1,
-              m: 1,
-            }}
-          >
-            <Typography sx={{ mt: 1 }} variant="b">
-              Sub-Category#{index + 1} Name
-            </Typography>
-            <Box sx={{ ml: 10 }}>
-              <TextField
-                label={`subCategory#${index + 1} Name`}
-                id={`subCategory-${index + 1}`}
-                defaultValue=""
-                size="small"
-                sx={{ width: '400px' }}
-                required
-                name={`subCategory-${index + 1}`}
-                autoComplete="subCategory"
-                autoFocus
-                value={field.value}
-                onChange={(event) => handleFieldChange(index, event)}
-              />
-            </Box>
+          <Box className={'box-spacing'}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography sx={{ mt: 1 }} variant="b">
+                  Sub-Category#{index + 1} Name
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <TextField
+                  label={`subCategory#${index + 1} Name`}
+                  id={`subCategory-${index + 1}`}
+                  size="small"
+                  classes={{ root: 'input-width' }}
+                  required
+                  name={`subCategory-${index + 1}`}
+                  value={field.value}
+                  onChange={(event) => handleFieldChange(index, event)}
+                />
+              </Grid>
+            </Grid>
           </Box>
         ))}
 
-        <Box p={1} sx={{ display: 'flex' }}>
-          <Box flexGrow={1}>
+        <Box className={'header'}>
+          <Box className={'header-left'}>
             <Button
               variant="contained"
               startIcon={
-                <FontAwesomeIcon icon={faAdd} style={{ height: '13px' }} />
+                <FontAwesomeIcon icon={faAdd} className={'icon-size'} />
               }
-              sx={{ backgroundColor: '#31DE79' }}
+              classes={{ root: 'save-btn' }}
               onClick={handleAddField}
             >
               Add Sub-Category
@@ -183,10 +168,9 @@ const CategoryCreatePage = () => {
             <Button
               variant="contained"
               startIcon={
-                <FontAwesomeIcon icon={faRemove} style={{ height: '13px' }} />
+                <FontAwesomeIcon icon={faRemove} className={'icon-size'} />
               }
               color="error"
-              //   sx={{ backgroundColor: '#31DE79' }}
               onClick={handleRemoveFields}
             >
               Remove Sub-Category

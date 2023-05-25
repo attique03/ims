@@ -42,6 +42,11 @@ import {
   passwordResetTokenCreateReducer,
   passwordResetTokenVerifyReducer,
 } from './reducers/password-reset/passwordResetReducers';
+import {
+  requestsDetailsReducer,
+  requestsListReducer,
+  requestsUpdateReducer,
+} from './reducers/requests/requestsReducers';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
@@ -69,6 +74,9 @@ const reducer = combineReducers({
   assetCreate: assetCreateReducer,
   assetList: assetListReducer,
   assetDetails: assetDetailsReducer,
+  requestsList: requestsListReducer,
+  requestsDetails: requestsDetailsReducer,
+  requestsUpdate: requestsUpdateReducer,
   loading: loadingReducer,
 });
 

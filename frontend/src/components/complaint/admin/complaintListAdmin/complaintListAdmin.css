@@ -1,3 +1,15 @@
+.header-right {
+  padding: 8px;
+}
+
+.icon-box {
+  width: 200px;
+}
+
+.icon-size {
+  height: 13px;
+}
+
 .icon-background {
   background-color: #787878;
   color: #fff;
@@ -8,4 +20,17 @@
 
 .icon-background:hover {
   background-color: #787878;
+}
+
+.create-button {
+  background-color: #31de79;
+}
+
+.content {
+  display: flex;
+}
+
+.tab-content {
+  flex-grow: 1;
+  border-left: 1px solid #e0e0e0;
 }

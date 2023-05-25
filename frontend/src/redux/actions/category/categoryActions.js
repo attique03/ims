@@ -25,7 +25,6 @@ export const createCategory = (category) => async (dispatch) => {
     dispatch({
       type: LOADING_TRUE,
     });
-    console.log('category loaded ', category);
     const { data } = await axiosConfig.post(createCategoryApi, category);
 
     dispatch({

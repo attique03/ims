@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CSVLink, CSVDownload } from 'react-csv';
 import { useDispatch, useSelector } from 'react-redux';
 import { Chart } from 'react-google-charts';
 import Box from '@mui/material/Box';
@@ -10,35 +11,11 @@ import { Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { listDashboardStats } from '../../../../redux/actions/dashboard/dashboardActions';
-
-export const data = [
-  ['Element', 'Density', { role: 'style' }],
-  ['Jan', 200, '#318CE7'], // RGB value
-  ['Feb', 500, '#318CE7'], // English color name
-  ['Mar', 856, '#318CE7'],
-  ['Apr', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['May', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Jun', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Jul', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Aug', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Sep', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Oct', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Nov', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Dec', 91.45, 'color: #318CE7'], // CSS-style declaration
-];
-
-export const data2 = [
-  ['Element', 'Density', { role: 'style' }],
-  ['Copper', 8.94, '#318CE7'], // RGB value
-  ['Silver', 10.49, '#318CE7'], // English color name
-  ['Gold', 19.3, '#318CE7'],
-  ['Platinum', 21.45, 'color: #318CE7'], // CSS-style declaration
-  ['Platinum', 21.45, 'color: #318CE7'], // CSS-style declaration
-];
+import { columnChart, tabs } from './data/dashboardGraphData';
+import Error from '../../../error/Error';
 
 export function DashboardGraph() {
-  const [value, setValue] = useState('1');
-  // const [adminStats, setAdminStats] = useState([]);
+  const [tabValue, setTabValue] = useState(1);
 
   const dispatch = useDispatch();
 
@@ -53,7 +30,7 @@ export function DashboardGraph() {
   }, [dispatch]);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setTabValue(newValue);
   };
 
   if (dashboard) {
@@ -78,61 +55,49 @@ export function DashboardGraph() {
     );
   }
 
+  console.log('Organization ', tabValue);
+
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
-        <Box flexGrow={1} sx={{ display: 'flex' }}>
-          <Typography
-            component="span"
-            variant="span"
-            sx={{ marginTop: '11px', padding: '0px 15px' }}
-          >
+      {error && <Error title={'Graph Chart Error '} error={error} />}
+      <Box className={'header'}>
+        <Box className={'header-left'}>
+          <Typography component="span" variant="span" sx={{ pr: 2 }}>
             Analytics
           </Typography>
-          <Typography
-            component="span"
-            variant="span"
-            sx={{ marginTop: '11px', color: '#A9A9A9' }}
-          >
-            <FontAwesomeIcon
-              icon={faDownload}
-              style={{ paddingRight: '8px' }}
-            />
-            Download Report
+          <Typography variant="span" classes={{ root: 'download' }}>
+            <FontAwesomeIcon icon={faDownload} className={'icon'} />
+            <CSVLink
+              data={tabValue === 1 ? organizationStats : adminStats}
+              className={'download'}
+            >
+              Download Report
+            </CSVLink>
           </Typography>
         </Box>
-        <TabContext value={value}>
+        <TabContext value={tabValue}>
           <Box>
-            <TabList
-              onChange={handleChange}
-              aria-label="lab API tabs example"
-              // style={{
-              //   "& .css-1aquho2-MuiTabs-indicator": {
-              //     height: "0px",
-              //   },
-              // }}
-            >
-              <Tab label="Organizations" value="1" />
-              <Tab label="Admins" value="2" />
+            <TabList onChange={handleChange} aria-label="tabs">
+              {tabs.map((tab) => (
+                <Tab key={tab.id} label={tab.name} value={tab.id} />
+              ))}
             </TabList>
           </Box>
         </TabContext>
       </Box>
-      <Box sx={{ width: '100%' }}>
-        <TabContext value={value}>
-          <TabPanel value="1">
+      <Box>
+        <TabContext value={tabValue}>
+          <TabPanel value={1}>
             <Chart
-              chartType="ColumnChart"
-              width="100%"
-              height="400px"
+              chartType={columnChart}
+              className={'chart'}
               data={organizationStats}
             />
           </TabPanel>
-          <TabPanel value="2">
+          <TabPanel value={2}>
             <Chart
-              chartType="ColumnChart"
-              width="100%"
-              height="400px"
+              chartType={columnChart}
+              className={'chart'}
               data={adminStats}
             />
           </TabPanel>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Button, Grid, TextField, Typography } from '@mui/material';
+import { Button, Divider, Grid, TextField, Typography } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,7 +27,7 @@ const ComplaintCreatePage = () => {
   const { complaint, error } = complaintCreate;
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { error: errorUserInfo, userInfo } = userLogin;
+  const { userInfo } = userLogin;
 
   useEffect(() => {
     if (complaint?.id) {
@@ -58,7 +58,6 @@ const ComplaintCreatePage = () => {
       }
     } catch (error) {
       console.error('Error uploading image:', error);
-      // Handle the error here, e.g. show an error message to the user
     }
 
     return false; // prevent any other event listeners from firing
@@ -69,29 +68,21 @@ const ComplaintCreatePage = () => {
     dispatch(createComplaint(formData));
   };
 
-  const goBackHandler = () => {
+  const handleGoBack = () => {
     navigate('/complaints');
   };
-
-  console.log('Image ', image);
 
   return (
     <CardContainer>
       <form onSubmit={createComplaintHandler}>
-        <Box display="flex" p={1} className={'border-card'}>
-          <Box p={1} flexGrow={1}>
+        <Box className={'header'}>
+          <Box className={'header-left'}>
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 2, md: 4 }}
             >
-              <Typography
-                classes={{ root: 'title' }}
-                component="caption"
-                variant="caption"
-                sx={{}}
-                onClick={goBackHandler}
-              >
-                <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />
+              <Typography classes={{ root: 'back' }} onClick={handleGoBack}>
+                <ArrowBackIcon classes={{ root: 'back-icon' }} />
                 Back
               </Typography>
               <Typography variant="h5" component="h5">
@@ -99,20 +90,21 @@ const ComplaintCreatePage = () => {
               </Typography>
             </Stack>
           </Box>
-          <Box p={1}>
+          <Box className={'header-right'}>
             <Button
               type="submit"
-              fullWidth
               variant="contained"
-              sx={{ backgroundColor: '#31DE79' }}
+              classes={{ root: 'save-btn' }}
             >
               Submit Complaint
             </Button>
           </Box>
         </Box>
 
+        <Divider />
+
         {userInfo?.user?.role?.role !== ADMIN && (
-          <Box sx={{ p: 1, m: 1 }}>
+          <Box className={'box-spacing'}>
             <Grid container>
               <Grid item xs={3}>
                 <Typography sx={{ mt: 1 }}>
@@ -122,10 +114,9 @@ const ComplaintCreatePage = () => {
               <Grid item xs={9}>
                 <TextField
                   label="Enter Title"
-                  id="outlined-size-small"
-                  defaultValue=""
+                  id="title"
                   size="small"
-                  sx={{ width: '400px' }}
+                  classes={{ root: 'input-width' }}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
@@ -135,21 +126,20 @@ const ComplaintCreatePage = () => {
           </Box>
         )}
 
-        <Box sx={{ p: 1, m: 1, pb: 3 }}>
+        <Box className={'box-spacing'}>
           <Grid container>
             <Grid item xs={3}>
-              <Typography sx={{ mt: 1 }}>
-                <b>Description</b>
+              <Typography sx={{ mt: 1 }} variant="b" component="b">
+                Description
               </Typography>
             </Grid>
             <Grid item xs={9}>
               <TextField
-                id="outlined-multiline-static"
+                id="description"
                 label="Enter Description Here"
                 multiline
                 rows={4}
-                // defaultValue="Default Value"
-                sx={{ width: '400px' }}
+                classes={{ root: 'input-width' }}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
@@ -158,27 +148,22 @@ const ComplaintCreatePage = () => {
           </Grid>
         </Box>
 
-        <Box sx={{ p: 1, m: 1, pb: 3 }}>
+        <Box className={'box-spacing'}>
           <Grid container>
             <Grid item xs={3}>
-              <Typography sx={{ mt: 1 }}>
-                <b>Image</b>
+              <Typography sx={{ mt: 1 }} variant="b" component="b">
+                Image
               </Typography>
             </Grid>
 
             <Grid item xs={1}>
-              {/* <Avatar
-                    alt="Remy Sharp"
-                    src={'/uploads/' + image.split('/')[3]}
-                  /> */}
               <img
-                // src={'/uploads/ux.png'}
                 src={
                   image
                     ? `/uploads/${image?.split('/')[3]}`
                     : 'https://www.sourcedogg.com/wp-content/uploads/2015/05/default-placeholder.png'
                 }
-                style={{ width: '70px', height: '70px' }}
+                className={'profile-img'}
                 alt="logo"
               />
             </Grid>
@@ -187,7 +172,7 @@ const ComplaintCreatePage = () => {
                 accept="image/*"
                 type="file"
                 id="select-image"
-                style={{ display: 'none' }}
+                className="input-hide"
                 name="image"
                 onChange={handleChange}
               />
@@ -199,10 +184,7 @@ const ComplaintCreatePage = () => {
                     ml: 3,
                   }}
                   startIcon={
-                    <FontAwesomeIcon
-                      icon={faUpload}
-                      style={{ height: '13px' }}
-                    />
+                    <FontAwesomeIcon icon={faUpload} className={'icon-size'} />
                   }
                 >
                   Upload

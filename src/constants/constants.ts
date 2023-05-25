@@ -6,3 +6,4 @@ export const EMPLOYEE = 'employee';
 // For Status
 export const PENDING = 'Pending';
 export const RESOLVED = 'Resolved';
+export const REJECTED = 'Rejected';

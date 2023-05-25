@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-const Category = () => {
+const OutletWrapper = () => {
   return (
     <>
       <Outlet />
@@ -8,4 +8,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default OutletWrapper;

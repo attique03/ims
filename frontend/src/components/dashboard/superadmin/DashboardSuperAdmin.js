@@ -1,45 +1,25 @@
-import React from 'react';
-import Container from '@mui/material/Container';
-import Card from '@mui/material/Card';
-// import DashboardSummary from '../../components/dashboard/DashboardSummary';
-// import { DashboardGraph } from '../../components/dashboard/DashboardGraph';
-// import DataTable from '../../components/table/Table';
+import { useDispatch, useSelector } from 'react-redux';
 import DashboardSummary from './summary/DashboardSummary';
 import { DashboardGraph } from './graph/DashboardGraph';
 import DataTable from '../../table/Table';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import CardContainer from '../../card/CardContainer';
-
-const tableColumns = [
-  'ID',
-  'Admin Name',
-  'Organization',
-  'Description',
-  'Submission Date',
-  'Status',
-  'Action',
-];
-
-const tableRows = [
-  {
-    id: '19023867',
-    adminName: 'John Doe',
-    organization: 'Alpha',
-    description: 'Lorem Ipsum',
-    submissionDate: '11/12/12',
-    status: 'Pending',
-  },
-  {
-    id: '203928409',
-    adminName: 'Jane Doe',
-    organization: 'Beta',
-    description: 'Lorem Ipsum',
-    submissionDate: '11/12/12',
-    status: 'Completed',
-  },
-];
+import Error from '../../error/Error';
+import { tableColumns } from '../../complaint/superadmin/complaintListSuperAdmin/ComplaintListDataSuperAdmin';
+import { useEffect } from 'react';
+import { listComplaints } from '../../../redux/actions/complaint/complaintActions';
+import { Link } from 'react-router-dom';
 
 const DashboardSuperAdmin = () => {
+  const dispatch = useDispatch();
+
+  const complaintList = useSelector((state) => state.complaintList);
+  const { complaints, error } = complaintList;
+
+  useEffect(() => {
+    dispatch(listComplaints());
+  }, [dispatch]);
+
   return (
     <CardContainer>
       <Typography variant="h5" component="h5" sx={{ m: 1, p: 1 }}>
@@ -47,7 +27,20 @@ const DashboardSuperAdmin = () => {
       </Typography>
       <DashboardSummary />
       <DashboardGraph />
-      <DataTable columns={tableColumns} data={tableRows} />
+      <Box className={'header'}>
+        <Box className={'header-left'}>
+          <Typography variant="h5" component="h5">
+            Recent Complaints
+          </Typography>
+        </Box>
+        <Box className={'header-right'}>
+          <Link to={'/complaints'} className={'nav-link'}>
+            See All
+          </Link>
+        </Box>
+      </Box>
+      {error && <Error error={error} />}
+      <DataTable columns={tableColumns} data={complaints && complaints} />
     </CardContainer>
   );
 };

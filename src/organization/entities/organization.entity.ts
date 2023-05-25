@@ -1,6 +1,7 @@
 import { Asset } from 'src/assets/entities/asset.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Complaint } from 'src/complaints/entities/complaint.entity';
+import { Requests } from 'src/requests/entities/request.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
@@ -69,6 +70,10 @@ export class Organization {
   @OneToMany(() => Category, (category) => category.organization)
   @JoinColumn({ name: 'organization_id', referencedColumnName: 'id' })
   category: Category;
+
+  @OneToMany(() => Requests, (requests) => requests.organization)
+  @JoinColumn({ name: 'organization_id', referencedColumnName: 'id' })
+  requests: Requests;
 
   @CreateDateColumn()
   createdDate: Date;

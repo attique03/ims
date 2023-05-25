@@ -59,3 +59,6 @@ export const months = [
     month: 'December',
   },
 ];
+
+export const columnChart = 'ColumnChart';
+export const bar = 'Bar';

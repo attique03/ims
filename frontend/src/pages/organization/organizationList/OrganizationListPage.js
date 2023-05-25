@@ -24,6 +24,8 @@ const OrganizationListPage = () => {
   const [location, setLocation] = React.useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchValue, setSearchValue] = React.useState('');
+  const [filteredInventory, setFilteredInventory] = useState([]);
 
   const organizationList = useSelector((state) => state.organizationList);
   const { organizations, error } = organizationList;
@@ -40,6 +42,18 @@ const OrganizationListPage = () => {
     navigate('/organizations/create');
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchValue(e.target.value);
+    let search = e.target.value;
+    const filtered = organizations.filter((request) =>
+      request.name.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredInventory(filtered);
+  };
+
+  console.log('Filtered ', filteredInventory);
+
   return (
     <CardContainer>
       <Box display="flex" p={1} sx={{ mb: 4 }}>
@@ -53,6 +67,7 @@ const OrganizationListPage = () => {
               id="outlined-size-small"
               defaultValue=""
               size="small"
+              onChange={handleSearch}
               sx={{ width: '200px' }}
               InputProps={{
                 endAdornment: (
@@ -101,7 +116,11 @@ const OrganizationListPage = () => {
       <Box sx={{ m: 2 }}>
         <DataTable
           columns={tableColumns}
-          data={organizations && organizations}
+          data={
+            filteredInventory.length > 0
+              ? filteredInventory
+              : organizations && organizations
+          }
         />
       </Box>
     </CardContainer>

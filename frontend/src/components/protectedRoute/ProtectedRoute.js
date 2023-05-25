@@ -10,13 +10,17 @@ const ProtectedRoute = ({ children }) => {
   const loading = useSelector((state) => state.loading);
   const { loading: loadingState } = loading;
 
-  // console.log('Children ', children, params);
-
-  if (!userInfo && !loadingState && params.pathname === '/forgot-password') {
+  if (!userInfo && !loadingState && params.pathname === '/reset-password') {
+    return <Navigate to="/reset-password" replace />;
+  } else if (!userInfo && !loadingState && params.pathname === '/verify-code') {
+    return <Navigate to="/verify-code" replace />;
+  } else if (
+    !userInfo &&
+    !loadingState &&
+    params.pathname === '/forgot-password'
+  ) {
     return <Navigate to="/forgot-password" replace />;
-  }
-
-  if (!userInfo && !loadingState) {
+  } else if (!userInfo && !loadingState) {
     return <Navigate to="/login" replace />;
   }
 

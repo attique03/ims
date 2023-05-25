@@ -190,13 +190,13 @@ export default function OrganizationPage() {
               <Tab
                 label="General Information"
                 {...a11yProps(0)}
-                classes={{ root: value === 0 && 'customized-tab' }}
+                classes={{ root: value === 0 && 'tab' }}
                 selected={false}
               />
               <Tab
                 label="Admins"
                 {...a11yProps(1)}
-                classes={{ root: value === 1 && 'customized-tab' }}
+                classes={{ root: value === 1 && 'tab' }}
                 selected={false}
               />
             </Tabs>

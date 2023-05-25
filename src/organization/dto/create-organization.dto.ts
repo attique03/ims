@@ -2,6 +2,7 @@ import { Asset } from 'src/assets/entities/asset.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Complaint } from 'src/complaints/entities/complaint.entity';
 import { Organization } from 'src/organization/entities/organization.entity';
+import { Requests } from 'src/requests/entities/request.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Vendor } from 'src/vendor/entities/vendor.entity';
 
@@ -22,6 +23,7 @@ export class CreateOrganizationDto {
   readonly asset: Asset;
   readonly vendor: Vendor;
   readonly category: Category;
+  readonly requests: Requests;
   readonly createdDate: Date;
   readonly updatedDate: Date;
 }

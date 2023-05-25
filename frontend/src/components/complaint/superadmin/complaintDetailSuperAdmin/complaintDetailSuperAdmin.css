@@ -1,25 +1,5 @@
-.pending-status {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center;
-  background-color: #2979ff;
-  color: #fff;
-  border-radius: 5px;
-  width: 100px;
-  height: 40px;
-}
-
-.resolved-status {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center;
-  background-color: #31de79;
-  color: #fff;
-  border-radius: 5px;
-  width: 100px;
-  height: 40px;
+.mark-box {
+  padding: 8px;
 }
 
 .button-color {
