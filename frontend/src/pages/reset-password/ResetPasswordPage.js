@@ -45,7 +45,6 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     if (user && success) {
-      console.log('iNFO ', user);
       dispatch({ type: USER_RESET_PASSWORD_RESET });
       navigate('/login');
     }

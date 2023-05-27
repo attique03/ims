@@ -17,8 +17,6 @@ export class authMiddleware implements NestMiddleware {
     private userRepository: Repository<User>,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    console.log('Request ===> ', req.headers.authorization);
-
     let token;
 
     if (

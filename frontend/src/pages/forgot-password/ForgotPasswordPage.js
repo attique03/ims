@@ -45,9 +45,10 @@ export default function ForgotPasswordPage() {
 
   useEffect(() => {
     if (passwordResetToken && success) {
-      console.log('If Effect ', passwordResetToken);
-    
-      localStorage.setItem('ResetEmail', JSON.stringify(passwordResetToken.email));
+      localStorage.setItem(
+        'ResetEmail',
+        JSON.stringify(passwordResetToken.email),
+      );
 
       dispatch({ type: PASSWORD_RESET_TOKEN_CREATE_RESET });
       navigate('/verify-code');
@@ -59,8 +60,6 @@ export default function ForgotPasswordPage() {
 
     dispatch(createPasswordResetToken(email));
   };
-
-  console.log('Password ', passwordResetToken);
 
   return (
     <ThemeProvider theme={theme}>

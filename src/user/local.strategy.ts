@@ -12,7 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   async validate(user: User): Promise<any> {
     const userExists = await this.userService.login(user);
-    console.log('Inside local Strategy', userExists);
+
     if (!userExists) {
       throw new UnauthorizedException();
     }

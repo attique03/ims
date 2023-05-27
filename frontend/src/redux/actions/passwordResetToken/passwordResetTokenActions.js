@@ -48,14 +48,10 @@ export const verifyPasswordResetToken = (code, email) => async (dispatch) => {
       type: LOADING_TRUE,
     });
 
-    console.log('jkdsnkds ', code, email);
-
     const { data } = await axiosConfig.post(
       verifyPasswordResetTokenApi(email),
       { code },
     );
-
-    console.log('verifyPasswordResetToken in Actions ', data);
 
     dispatch({
       type: PASSWORD_RESET_TOKEN_VERIFY_SUCCESS,

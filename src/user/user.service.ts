@@ -15,12 +15,15 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
 import { ADMIN, EMPLOYEE, SUPERADMIN } from 'src/constants/constants';
+import { Asset } from 'src/assets/entities/asset.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Asset)
+    private readonly assetRepository: Repository<Asset>,
     private readonly configService: ConfigService,
   ) {
     SendGrid.setApiKey(process.env.SEND_GRID_KEY);
@@ -28,35 +31,36 @@ export class UserService {
 
   async findAll(req) {
     // Fetch Admins || Employees based on specific organization
-    if (req?.query?.organizationId) {
-      const organizationId = req.query.organizationId;
+    if (req?.user.role.role === ADMIN) {
+      console.log('Here ');
+      const organizationId = req?.user?.organization?.id;
       return await this.userRepository
         .createQueryBuilder('user')
-        .select([
-          'user.id',
-          'user.image',
-          'user.name',
-          'user.email',
-          'user.phone',
-        ])
+        .leftJoin('user.department', 'department')
+        .select(['user.name', 'user.email', 'user.phone'])
+        .addSelect('user.id', 'id')
+        .addSelect('department.name', 'department')
         .where('user.organizationId = :organizationId', { organizationId })
         .andWhere('user.roleId = :roleId', {
-          roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
+          roleId: 3,
+          // roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
         })
-        .getMany();
+        .getRawMany();
+    } else if (req?.user.role.role === SUPERADMIN) {
+      // Fetch only admins of any Organization if Super Admin is logged in
+      return await this.userRepository
+        .createQueryBuilder('user')
+        .select(['user.image', 'user.name', 'user.email', 'user.phone'])
+        .addSelect('user.id', 'id')
+        .addSelect('organization.name', 'organization')
+        .leftJoin('user.organization', 'organization')
+        .where('user.roleId = :roleId', {
+          roleId: 2,
+          // roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
+        })
+        .getRawMany();
     }
-
-    // Fetch only admins of any Organization if Super Admin is logged in
-    return await this.userRepository
-      .createQueryBuilder('user')
-      .select(['user.image', 'user.name', 'user.email', 'user.phone'])
-      .addSelect('user.id', 'id')
-      .addSelect('organization.name', 'organization')
-      .leftJoin('user.organization', 'organization')
-      .where('user.roleId = :roleId', {
-        roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
-      })
-      .getRawMany();
+    throw new ForbiddenException('Not Allowed to fecth users');
   }
 
   async create(
@@ -69,10 +73,10 @@ export class UserService {
       password: await bcrypt.hash(user.password, 12),
       role:
         req.user.role.id === 1
-          ? req?.user.role.id + 1
-          : req.user.role.id === 2
-          ? req.user.role.id + 1
-          : req.user.role.id - 3,
+          ? req?.user?.role?.id + 1
+          : req?.user?.role?.id === 2
+          ? req?.user?.role?.id + 1
+          : req?.user?.role?.id - 3,
     });
 
     mail.html = `<div>
@@ -95,15 +99,10 @@ export class UserService {
   async login(user: User): Promise<{ user: User; token: string }> {
     const { email, password } = user;
 
-    console.log(`login ${email} ${password}`);
     const userExists = await this.userRepository.findOne({
       where: { email },
-      relations: ['role'],
+      relations: ['role', 'organization'],
     });
-
-    console.log(
-      `UserExistss ${await bcrypt.compare(password, userExists.password)}`,
-    );
 
     if (userExists && (await bcrypt.compare(password, userExists.password))) {
       const token = generateToken(String(userExists.id));
@@ -115,16 +114,14 @@ export class UserService {
 
   async resetPassword(email: string, user?: User) {
     const { password } = user;
-    console.log('sdlkjsdlkfj ', email, password);
+
     let userFound = await this.userRepository.findOneBy({ email });
-    console.log('User ', userFound);
 
     if (!userFound) {
       throw new NotFoundException('User Not Found');
     } else {
       userFound = { ...userFound, password: await bcrypt.hash(password, 12) };
       // user.password = await bcrypt.hash(String(password), Number(12));
-      console.log('User After ', user);
 
       return this.userRepository.save(userFound);
 
@@ -150,24 +147,24 @@ export class UserService {
         ],
         relations: ['role', 'organization'],
       });
-      const isAdmin = request.user.role.role === ADMIN;
+      const isAdmin = user.role.role === ADMIN;
       return isAdmin ? user : null;
     } else if (request.user.role.role === ADMIN) {
       const user = await this.userRepository.findOne({
         where: { id },
-        select: [
-          'id',
-          'image',
-          'name',
-          'email',
-          'phone',
-          'createdDate',
-          'updatedDate',
-        ],
-        relations: ['role', 'oragnization'],
+        // select: [
+        //   'id',
+        //   'image',
+        //   'name',
+        //   'email',
+        //   'phone',
+        //   'createdDate',
+        //   'updatedDate',
+        // ],
+        relations: ['role', 'organization', 'department'],
       });
-      const isAdmin = user.role.role === EMPLOYEE;
-      return isAdmin ? user : null;
+      const isEmployee = user?.role?.role === EMPLOYEE;
+      return isEmployee ? user : null;
     } else {
       throw new ForbiddenException('Not Authozied');
     }

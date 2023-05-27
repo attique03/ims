@@ -45,8 +45,6 @@ const SubCategoryPage = () => {
     setAnchorEl(null);
   };
 
-  console.log('listSubCategoryDetails', params);
-
   return (
     <CardContainer>
       <Box display="flex" p={1}>
@@ -65,9 +63,9 @@ const SubCategoryPage = () => {
               <ArrowBackIcon sx={{ height: '15px', mt: 0.2 }} />
               Back
             </Typography>
-            <Typography variant="h5" component="h5">
+            {/* <Typography variant="h5" component="h5">
               <b>Admin Detail</b>
-            </Typography>
+            </Typography> */}
           </Stack>
         </Box>
         <Box p={1}>

@@ -11,6 +11,8 @@ import {
   updateRequestsById,
 } from '../../../api/requestsApi/Requests';
 import {
+  REQUESTS_CREATE_FAIL,
+  REQUESTS_CREATE_SUCCESS,
   REQUESTS_DETAILS_FAIL,
   REQUESTS_DETAILS_SUCCESS,
   REQUESTS_LIST_FAIL,
@@ -19,15 +21,41 @@ import {
   REQUESTS_UPDATE_SUCCESS,
 } from '../../constants/requests/requestsConstants';
 
+export const createRequest = (requests) => async (dispatch) => {
+  try {
+    dispatch({
+      type: LOADING_TRUE,
+    });
+
+    const { data } = await axiosConfig.post(createRequests, requests);
+
+    dispatch({
+      type: REQUESTS_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: REQUESTS_CREATE_FAIL,
+      payload: errorHandler(error),
+    });
+  }
+
+  dispatch({
+    type: LOADING_FALSE,
+  });
+};
+
 export const listRequests =
-  (type = '') =>
+  (type = '', userId = '') =>
   async (dispatch) => {
     try {
       dispatch({
         type: LOADING_TRUE,
       });
 
-      const { data } = await axiosConfig.get(getRequests(type));
+      console.log('Actionss ', userId);
+
+      const { data } = await axiosConfig.get(getRequests(type, userId));
 
       dispatch({
         type: REQUESTS_LIST_SUCCESS,
@@ -94,7 +122,6 @@ export const updateRequests =
         type: LOADING_FALSE,
       });
     } catch (error) {
-      console.log('Error ===> ', error);
       dispatch({
         type: REQUESTS_UPDATE_FAIL,
         payload: errorHandler(error),

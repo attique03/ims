@@ -18,34 +18,34 @@ import {
   updateComplaint,
 } from '../../../redux/actions/complaint/complaintActions';
 import { COMPLAINT_UPDATE_RESET } from '../../../redux/constants/complaint/complaintConstants';
-import { PENDING, REJECTED, RESOLVED } from '../../../utils/constants';
+import { ADMIN, PENDING, REJECTED, RESOLVED } from '../../../utils/constants';
 import {
   listRequestsDetails,
   updateRequests,
 } from '../../../redux/actions/requests/requestsActions';
 import moment from 'moment';
 import Error from '../../../components/error/Error';
+import { REQUESTS_UPDATE_RESET } from '../../../redux/constants/requests/requestsConstants';
 
 const RequestsPage = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const requestsDetails = useSelector((state) => state.requestsDetails);
   const { requests, error } = requestsDetails;
-
-  //   const complaintDetails = useSelector((state) => state.complaintDetails);
-  //   const { complaint } = complaintDetails;
 
   const requestsUpdate = useSelector((state) => state.requestsUpdate);
   const { error: errorRequestsUpdate, success } = requestsUpdate;
 
   useEffect(() => {
-    // dispatch(listComplaintDetails(params.id));
     dispatch(listRequestsDetails(params.id));
-    // if (success) {
-    //   dispatch({ type: COMPLAINT_UPDATE_RESET });
-    // }
+    if (success) {
+      dispatch({ type: REQUESTS_UPDATE_RESET });
+    }
   }, [dispatch, params, success]);
 
   const handleGoBack = () => {
@@ -91,33 +91,34 @@ const RequestsPage = () => {
             </Typography>
           </Stack>
         </Box>
-        {requests?.status === PENDING && (
-          <>
-            <Box className={'mark-box'}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                classes={{ root: 'button-color-red' }}
-                onClick={() => dispatch(updateRequests(params.id, REJECTED))}
-              >
-                Reject Request
-              </Button>
-            </Box>
+        {userInfo?.user?.role?.role === ADMIN &&
+          requests?.status === PENDING && (
+            <>
+              <Box className={'mark-box'}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  classes={{ root: 'button-color-red' }}
+                  onClick={() => dispatch(updateRequests(params.id, REJECTED))}
+                >
+                  Reject Request
+                </Button>
+              </Box>
 
-            <Box className={'mark-box'}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                classes={{ root: 'button-color' }}
-                onClick={() => dispatch(updateRequests(params.id, RESOLVED))}
-              >
-                Approve Request
-              </Button>
-            </Box>
-          </>
-        )}
+              <Box className={'mark-box'}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  classes={{ root: 'button-color' }}
+                  onClick={() => dispatch(updateRequests(params.id, RESOLVED))}
+                >
+                  Approve Request
+                </Button>
+              </Box>
+            </>
+          )}
       </Box>
       {/* ______________________ Header Ends ______________________ */}
 

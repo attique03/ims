@@ -43,15 +43,8 @@ export class PasswordResetTokenService {
     req,
   ): Promise<{ passwordReset?: PasswordResetToken; message: string }> {
     const { code } = passwordReset;
-    console.log('Here  ', code);
-    const codeExists = await this.passwordResetRepository.findOneBy({ code });
 
-    // console.log(
-    //   'Code Existsss ',
-    //   codeExists.email,
-    //   req.query.email,
-    //   codeExists.email === req.query.email,
-    // );
+    const codeExists = await this.passwordResetRepository.findOneBy({ code });
 
     if (codeExists && codeExists.email === req.query.email) {
       return { passwordReset: codeExists, message: 'success' };

@@ -69,8 +69,6 @@ export const resetPasswordUser = (email, password) => async (dispatch) => {
       type: LOADING_TRUE,
     });
 
-    console.log('reset password ', email, password);
-
     const { data } = await axiosConfig.patch(resetPasswordUserApi(email), {
       password,
     });
@@ -101,14 +99,10 @@ export const login = (email, password) => async (dispatch) => {
       type: LOADING_TRUE,
     });
 
-    console.log('credentials ', email, password);
-
     const { data } = await axiosConfig.post(loginApi, {
       email,
       password,
     });
-
-    console.log('Data ', data);
 
     dispatch({
       type: USER_LOGIN_SUCCESS,
@@ -118,7 +112,6 @@ export const login = (email, password) => async (dispatch) => {
     // setLocalStorage('userInfo', data);
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
-    // console.log('Error in Actions ', error?);
     dispatch({
       type: USER_LOGIN_FAIL,
       payload: errorHandler(error),

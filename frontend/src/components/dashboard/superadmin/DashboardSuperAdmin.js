@@ -16,9 +16,11 @@ const DashboardSuperAdmin = () => {
   const complaintList = useSelector((state) => state.complaintList);
   const { complaints, error } = complaintList;
 
+  const complaintsLength = complaints?.length === 0;
+
   useEffect(() => {
     dispatch(listComplaints());
-  }, [dispatch]);
+  }, [dispatch, complaintsLength]);
 
   return (
     <CardContainer>

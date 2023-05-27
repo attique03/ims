@@ -52,8 +52,6 @@ const OrganizationListPage = () => {
     setFilteredInventory(filtered);
   };
 
-  console.log('Filtered ', filteredInventory);
-
   return (
     <CardContainer>
       <Box display="flex" p={1} sx={{ mb: 4 }}>

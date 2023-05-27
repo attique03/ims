@@ -4,10 +4,10 @@ import './loader.css';
 export default function Loader() {
   return (
     <CircularProgress
-      size={50}
+      size={100}
       varinat={'indeterminate'}
       classes={{ root: 'loader' }}
-      thickness={2.6}
+      thickness={2.9}
       value={10}
     />
   );

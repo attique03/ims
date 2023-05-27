@@ -17,7 +17,7 @@ export class CreateUserDto {
   readonly role: Role;
   readonly vendor: Vendor;
   readonly organization: Organization;
-  // readonly department: Department;
+  readonly department: Department;
   readonly resetPassword: PasswordResetToken;
   readonly asset: Asset;
   readonly requests: Requests;

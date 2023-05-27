@@ -25,6 +25,7 @@ import { Complaint } from './complaints/entities/complaint.entity';
 import { UploadModule } from './upload/upload.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DepartmentModule } from './department/department.module';
+import { Department } from './department/entities/department.entity';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { DepartmentModule } from './department/department.module';
         Asset,
         Requests,
         Complaint,
+        Department,
       ],
       synchronize: true,
     }),
@@ -66,7 +68,6 @@ import { DepartmentModule } from './department/department.module';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  // console.log('Type orm ', typeOrmConfig);
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(authMiddleware)
@@ -80,6 +81,7 @@ export class AppModule implements NestModule {
         'organization',
         'category',
         'dashboard',
+        'department',
       );
   }
 }

@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  SetMetadata,
+  UseGuards,
+} from '@nestjs/common';
+import { RolesGuard } from 'src/utils/roles.guard';
 import { DepartmentService } from './department.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
@@ -8,8 +20,10 @@ export class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}
 
   @Post()
-  create(@Body() createDepartmentDto: CreateDepartmentDto) {
-    return this.departmentService.create(createDepartmentDto);
+  @SetMetadata('roles', 'admin')
+  @UseGuards(RolesGuard)
+  create(@Body() createDepartmentDto: CreateDepartmentDto, @Req() req) {
+    return this.departmentService.create(createDepartmentDto, req);
   }
 
   @Get()
@@ -23,7 +37,10 @@ export class DepartmentController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDepartmentDto: UpdateDepartmentDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateDepartmentDto: UpdateDepartmentDto,
+  ) {
     return this.departmentService.update(+id, updateDepartmentDto);
   }
 

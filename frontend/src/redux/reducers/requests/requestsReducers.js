@@ -1,4 +1,7 @@
 import {
+  REQUESTS_CREATE_FAIL,
+  REQUESTS_CREATE_RESET,
+  REQUESTS_CREATE_SUCCESS,
   REQUESTS_DETAILS_FAIL,
   REQUESTS_DETAILS_SUCCESS,
   REQUESTS_LIST_FAIL,
@@ -8,6 +11,19 @@ import {
   REQUESTS_UPDATE_RESET,
   REQUESTS_UPDATE_SUCCESS,
 } from '../../constants/requests/requestsConstants';
+
+export const requestsCreateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case REQUESTS_CREATE_SUCCESS:
+      return { success: true, requests: action.payload };
+    case REQUESTS_CREATE_FAIL:
+      return { error: action.payload };
+    case REQUESTS_CREATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
 
 export const requestsListReducer = (state = { requests: [] }, action) => {
   switch (action.type) {

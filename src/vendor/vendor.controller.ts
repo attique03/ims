@@ -19,7 +19,6 @@ export class VendorController {
 
   @Post()
   create(@Body() createVendorDto: CreateVendorDto, @Req() req) {
-    // console.log('Req in Vendor ===> ', req.user);
     return this.vendorService.create(createVendorDto, req.user);
   }
 

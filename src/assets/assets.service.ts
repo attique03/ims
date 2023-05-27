@@ -19,7 +19,23 @@ export class AssetsService {
   }
 
   findAll(req) {
-    console.log('kk ', req.user.organization.id);
+    if (req.query.employeeId) {
+      return this.assetRepository
+        .createQueryBuilder('asset')
+        .leftJoin('asset.subCategory', 'category')
+        .leftJoin('category.parent', 'subcategory')
+        .select(['asset.name', 'asset.updatedDate'])
+        .addSelect('asset.id', 'id')
+        .addSelect('subcategory.name', 'categoryName')
+        .addSelect('category.name', 'subcategoryName')
+        .where('asset.organizationId = :organizationId', {
+          organizationId: req.user.organization.id,
+        })
+        .andWhere('asset.employeeId = :employeeId', {
+          employeeId: req.query.employeeId,
+        })
+        .getRawMany();
+    }
     return this.assetRepository
       .createQueryBuilder('asset')
       .leftJoin('asset.subCategory', 'category')

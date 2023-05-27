@@ -42,8 +42,8 @@ export class User {
   @ManyToOne(() => Role, (role) => role.user)
   role: Role;
 
-  // @ManyToOne(() => Department, (department) => department.user)
-  // department: Department;
+  @ManyToOne(() => Department, (department) => department.user)
+  department: Department;
 
   @ManyToOne(() => Organization, (organization) => organization.user)
   organization: Organization;

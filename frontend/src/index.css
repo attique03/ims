@@ -68,6 +68,15 @@
   justify-content: center;
 }
 
+.cancel-btn {
+  color: #616161;
+  background: #eeeeee;
+}
+
+.cancel-btn:hover {
+  background: #eeeeee;
+}
+
 .tab {
   background: #2979ff;
   margin: 0 20px;

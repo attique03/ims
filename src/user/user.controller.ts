@@ -35,7 +35,6 @@ export class UserController {
 
   @Post('/login')
   login(@Body() user: User): Promise<{ user: User }> {
-    console.log('Login Controller ', user);
     return this.userService.login(user);
   }
 

@@ -1,7 +1,7 @@
 export const createRequests = '/requests';
 
-export const getRequests = (type) => {
-  return `/requests?type=${type}`;
+export const getRequests = (type, userId) => {
+  return `/requests?type=${type}&userId=${userId}`;
 };
 
 export const getRequestsById = (id) => {

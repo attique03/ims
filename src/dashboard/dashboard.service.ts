@@ -166,7 +166,6 @@ export class DashboardService {
 
   // Admin Dashboard
   async getTotalEmployees(request): Promise<number> {
-    console.log(request.user.organization);
     const count = await this.userRepository
       .createQueryBuilder('user')
       .select('COUNT(*) as count')
@@ -183,7 +182,6 @@ export class DashboardService {
   }
 
   async getNewEmployeesCount(request): Promise<number> {
-    console.log(request.user.organization);
     const organizationId = request.user.organization.id;
 
     const currentDate = new Date();

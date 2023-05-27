@@ -27,8 +27,8 @@ export class OrganizationController {
   }
 
   @Get()
-  @SetMetadata('roles', 'superadmin')
-  @UseGuards(RolesGuard)
+  // @SetMetadata('roles', 'superadmin')
+  // @UseGuards(RolesGuard)
   findAll() {
     return this.organizationService.findAll();
   }

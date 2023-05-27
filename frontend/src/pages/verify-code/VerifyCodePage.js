@@ -49,8 +49,6 @@ export default function VerifyCodePage() {
 
   useEffect(() => {
     if (tokenVerify?.message === 'success') {
-      console.log('If Effect ', tokenVerify);
-
       dispatch({ type: PASSWORD_RESET_TOKEN_VERIFY_RESET });
       navigate('/reset-password');
     }
@@ -62,8 +60,6 @@ export default function VerifyCodePage() {
 
     dispatch(verifyPasswordResetToken(code, email));
   };
-
-  console.log('Password ', code, tokenVerify);
 
   return (
     <ThemeProvider theme={theme}>

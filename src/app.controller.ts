@@ -9,7 +9,6 @@ export class AppController {
   // @UseGuards(AuthGuard('local'))
   // @Post('user')
   // async login(@Request() req) {
-  //   console.log('Inside App Controller ', req);
   //   return req.user;
   // }
 

@@ -24,10 +24,11 @@ export function DashboardGraph() {
 
   let adminStats = [];
   let organizationStats = [];
+  const dashboardLength = dashboard?.length === 0;
 
   useEffect(() => {
     dispatch(listDashboardStats());
-  }, [dispatch]);
+  }, [dispatch, dashboardLength]);
 
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
@@ -54,8 +55,6 @@ export function DashboardGraph() {
       ]),
     );
   }
-
-  console.log('Organization ', tabValue);
 
   return (
     <>

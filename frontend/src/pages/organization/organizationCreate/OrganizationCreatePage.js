@@ -88,12 +88,10 @@ const OrganizationCreatePage = () => {
   // }, [selectedImage]);
 
   const handleFiles = (files) => {
-    console.log(files[0]);
     // setImage(files[0]);
   };
 
   const handleChange = async (e) => {
-    console.log('dlk ', e);
     e.preventDefault();
     const file = e.target.files[0];
     const formData = new FormData();
@@ -124,11 +122,7 @@ const OrganizationCreatePage = () => {
         image: data,
       });
     }
-    console.log('Daata ', data);
   };
-
-  // console.log('Image ', image, '/uploads/' + image.split('/')[3]);
-  console.log('Form Data ', formData);
 
   return (
     <>

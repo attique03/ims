@@ -8,15 +8,13 @@ const DashboardPage = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { error, userInfo } = userLogin;
 
-  console.log('DashboardPage');
-
   return (
     <div>
-      {userInfo?.user.role.role === SUPERADMIN ? (
+      {userInfo?.user?.role?.role === SUPERADMIN ? (
         <DashboardSuperAdmin />
-      ) : userInfo?.user.role.role === ADMIN ? (
+      ) : userInfo?.user?.role?.role === ADMIN ? (
         <DashboardAdmin />
-      ) : userInfo?.user.role.role === EMPLOYEE ? (
+      ) : userInfo?.user?.role?.role === EMPLOYEE ? (
         <DashboardEmployee />
       ) : (
         <h1>Not Found</h1>

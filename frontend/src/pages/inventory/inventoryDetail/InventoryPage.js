@@ -47,8 +47,6 @@ const InventoryPage = () => {
     setAnchorEl(null);
   };
 
-  console.log('Asset ', asset);
-
   return (
     <CardContainer>
       <Box className={'header'}>

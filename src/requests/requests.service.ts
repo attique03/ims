@@ -11,6 +11,7 @@ import { Asset } from 'src/assets/entities/asset.entity';
 import {
   ADMIN,
   EMPLOYEE,
+  PENDING,
   REJECTED,
   RESOLVED,
   SUPERADMIN,
@@ -30,15 +31,19 @@ export class RequestsService {
   ) {}
 
   async create(requests: Requests, req): Promise<Requests> {
+    console.log('Here ', requests);
     try {
-      if (req.role.role === SUPERADMIN) {
+      if (req.role.role === SUPERADMIN || req.role.role === ADMIN) {
         throw new ForbiddenException({
-          error: 'Super Admin is not allowed to create requests currently',
+          error: 'Not allowed to create requests currently',
         });
       }
       const newRequest = this.requestRepository.create({
         ...requests,
         user: req.id,
+        organization: { id: req.organization.id },
+        returnType: '',
+        status: PENDING,
       });
 
       return await this.requestRepository.save(newRequest);
@@ -48,6 +53,7 @@ export class RequestsService {
   }
 
   async findAll(req) {
+    console.log();
     if (req.user.role.role === EMPLOYEE) {
       return this.requestRepository
         .createQueryBuilder('requests')
@@ -70,6 +76,7 @@ export class RequestsService {
         })
         .getRawMany();
     } else if (req.user.role.role === ADMIN) {
+      // ADMIN Fetches all the requets
       if (req.query.type === 'faulty') {
         return this.requestRepository
           .createQueryBuilder('requests')
@@ -93,8 +100,30 @@ export class RequestsService {
             type: req.query.type,
           })
           .getRawMany();
+      }
+      // Requests of Individual Employee
+      else if (req.query.userId) {
+        console.log('Here ', req.query.userId);
+        return (
+          this.requestRepository
+            .createQueryBuilder('requests')
+            .leftJoin('requests.subCategory', 'category')
+            .leftJoin('category.parent', 'subcategory')
+            .leftJoin('requests.user', 'user')
+            .select(['requests.itemName', 'requests.status'])
+            .addSelect('requests.id', 'id')
+            .addSelect('subcategory.name', 'categoryName')
+            .addSelect('category.name', 'subcategoryName')
+            // .addSelect('user.name', 'employee')
+            .where('requests.organizationId = :organizationId', {
+              organizationId: req.user.organization.id,
+            })
+            .andWhere('requests.userId = :userId', {
+              userId: req.query.userId,
+            })
+            .getRawMany()
+        );
       } else {
-        console.log('Here  ');
         return this.requestRepository
           .createQueryBuilder('requests')
           .leftJoin('requests.subCategory', 'category')
@@ -155,12 +184,10 @@ export class RequestsService {
   }
 
   async update(id: number, req) {
-    console.log('Updating ==> ', req.query);
     const requestResolved = await this.requestRepository.findOne({
       where: { id },
       relations: ['subCategory', 'user', 'organization'],
     });
-    console.log('REqqq ==> ', requestResolved);
 
     if (
       requestResolved &&
@@ -220,14 +247,9 @@ export class RequestsService {
 
     // return;
 
-    // console.log('Asset ==> ', asset);
-
-    // console.log('Updated Asset ==> ', updatedAsset);
-
     // if (req.query.status === 'Resolved' && assets.length > 0) {
     //   assets.map((asset, index) => {
     //     if (asset.employee !== null) {
-    //       console.log('Single Asset ===> ', asset);
     //     } else {
     //       throw new NotFoundException(
     //         'Inventory not available at the moment to be assigned',

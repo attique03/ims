@@ -1,3 +1,4 @@
+import { Organization } from 'src/organization/entities/organization.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -18,9 +19,12 @@ export class Department {
   @Column()
   name: string;
 
-  //   @OneToMany(() => User, (user) => user.department)
-  //   @JoinColumn({ name: 'department', referencedColumnName: 'id' })
-  //   user: User;
+  @ManyToOne(() => Organization, (organization) => organization.department)
+  organization: Organization;
+
+  @OneToMany(() => User, (user) => user.department)
+  @JoinColumn({ name: 'department', referencedColumnName: 'id' })
+  user: User;
 
   @CreateDateColumn()
   createdDate: Date;

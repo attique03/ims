@@ -40,7 +40,6 @@ export const storage = {
     const extnamee = filetypes.test(extname(file.originalname).toLowerCase());
 
     if (mimetype && extnamee) {
-      console.log('akjakna ds => ', mimetype, extnamee);
       return cb(null, true);
     }
     cb(new Error('Images Only'));
@@ -64,7 +63,6 @@ export class UploadController {
     @UploadedFile()
     image: Express.Multer.File,
   ) {
-    console.log('File Uploaded ===> ', image);
     return image.path;
   }
 

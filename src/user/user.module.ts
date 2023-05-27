@@ -8,9 +8,10 @@ import { PassportModule } from '@nestjs/passport';
 import { authMiddleware } from 'src/utils/authMiddleware';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { Asset } from 'src/assets/entities/asset.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User, Asset])],
   controllers: [UserController],
   providers: [UserService, ConfigService],
   exports: [TypeOrmModule.forFeature([User])],

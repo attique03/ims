@@ -10,7 +10,6 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
-    console.log('Roles ==> ', roles);
 
     if (request?.user?.role?.role === 'admin') {
       return true;

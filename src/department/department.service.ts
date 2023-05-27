@@ -1,15 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotAcceptableException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EMPLOYEE, SUPERADMIN } from 'src/constants/constants';
+import { Repository } from 'typeorm';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { Department } from './entities/department.entity';
 
 @Injectable()
 export class DepartmentService {
-  create(createDepartmentDto: CreateDepartmentDto) {
-    return 'This action adds a new department';
+  constructor(
+    @InjectRepository(Department)
+    private departmentRepository: Repository<Department>,
+  ) {}
+
+  async create(department: CreateDepartmentDto, req): Promise<Department> {
+    try {
+      if (
+        req.user.role.role === SUPERADMIN ||
+        req.user.role.role === EMPLOYEE
+      ) {
+        throw new ForbiddenException({
+          error: 'Not allowed to create Departments currently',
+        });
+      }
+      const newDepartment = this.departmentRepository.create({
+        ...department,
+
+        organization: req.user.organization.id,
+      });
+
+      return await this.departmentRepository.save(newDepartment);
+    } catch (error) {
+      throw new NotAcceptableException('Error Creating Department ' + error);
+    }
   }
 
-  findAll() {
-    return `This action returns all department`;
+  async findAll() {
+    return await this.departmentRepository.find({
+      relations: ['organization'],
+    });
   }
 
   findOne(id: number) {

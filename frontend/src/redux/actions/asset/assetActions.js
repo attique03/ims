@@ -1,4 +1,8 @@
-import { createAssetApi, getAssetApi } from '../../../api/assetApi/AssetApi';
+import {
+  createAssetApi,
+  getAllAssets,
+  getAssetApi,
+} from '../../../api/assetApi/AssetApi';
 import {
   LOADING_FALSE,
   LOADING_TRUE,
@@ -39,33 +43,35 @@ export const createAsset = (asset) => async (dispatch) => {
   });
 };
 
-export const listAssets = () => async (dispatch) => {
-  try {
-    dispatch({
-      type: LOADING_TRUE,
-    });
+export const listAssets =
+  (employeeId = '') =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: LOADING_TRUE,
+      });
 
-    const { data } = await axiosConfig.get(createAssetApi);
+      const { data } = await axiosConfig.get(getAllAssets(employeeId));
 
-    dispatch({
-      type: ASSET_LIST_SUCCESS,
-      payload: data,
-    });
+      dispatch({
+        type: ASSET_LIST_SUCCESS,
+        payload: data,
+      });
 
-    dispatch({
-      type: LOADING_FALSE,
-    });
-  } catch (error) {
-    dispatch({
-      type: ASSET_LIST_FAIL,
-      payload: errorHandler(error),
-    });
+      dispatch({
+        type: LOADING_FALSE,
+      });
+    } catch (error) {
+      dispatch({
+        type: ASSET_LIST_FAIL,
+        payload: errorHandler(error),
+      });
 
-    dispatch({
-      type: LOADING_FALSE,
-    });
-  }
-};
+      dispatch({
+        type: LOADING_FALSE,
+      });
+    }
+  };
 
 export const listAssetDetails = (id) => async (dispatch) => {
   try {

@@ -30,6 +30,11 @@ import OutletWrapper from './components/outlet/OutletWrapper';
 import RequestsListPage from './pages/requests/requestsList/RequestsListPage';
 import ReturnsListPage from './pages/returns/returnsList/ReturnsListPage';
 import RequestsPage from './pages/requests/requestsDetail/RequestsPage';
+import RequestsCreatePage from './pages/requests/requestsCreate/RequestsCreatePage';
+import ReturnsPage from './pages/returns/returnsDetail/ReturnsPage';
+import EmployeeListPage from './pages/employee/employeeList/EmployeeListPage';
+import EmployeePage from './pages/employee/employeeDetail/EmployeePage';
+import EmployeeCreatePage from './pages/employee/employeeCreate/EmployeeCreatePage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -134,6 +139,43 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
+          <Route
+            path="employees"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              exact
+              path=""
+              element={
+                <ProtectedRoute>
+                  <EmployeeListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <EmployeeCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <EmployeePage />
                 </ProtectedRoute>
               }
             />
@@ -257,14 +299,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            {/* <Route
+            <Route
               path="create"
               element={
                 <ProtectedRoute>
-                  <InventoryCreatePage />
+                  <RequestsCreatePage />
                 </ProtectedRoute>
               }
-            /> */}
+            />
             <Route
               path=":id"
               element={
@@ -291,22 +333,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            {/* <Route
-              path="create"
-              element={
-                <ProtectedRoute>
-                  <InventoryCreatePage />
-                </ProtectedRoute>
-              }
-            />
             <Route
               path=":id"
               element={
                 <ProtectedRoute>
-                  <InventoryPage />
+                  <ReturnsPage />
                 </ProtectedRoute>
               }
-            /> */}
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

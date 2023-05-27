@@ -79,8 +79,6 @@ const RequestsListPage = () => {
     setFilteredInventory(filtered);
   };
 
-  console.log('Filtered ', filteredInventory, category);
-
   return (
     <CardContainer>
       <Box display="flex" p={1} sx={{ mb: 4 }}>

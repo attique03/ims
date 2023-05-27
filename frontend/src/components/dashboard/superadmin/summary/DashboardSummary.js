@@ -13,9 +13,11 @@ export default function DashboardSummary() {
   const dashboardData = useSelector((state) => state.dashboardData);
   const { dashboardData: dashboard, error } = dashboardData;
 
+  const dashboardLength = dashboard?.length === 0;
+
   useEffect(() => {
     dispatch(listDashboardData());
-  }, [dispatch]);
+  }, [dispatch, dashboardLength]);
 
   return (
     <Box>

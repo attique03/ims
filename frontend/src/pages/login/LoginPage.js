@@ -42,7 +42,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (userInfo && success) {
-      console.log('iNFO ', userInfo);
       navigate('/');
     }
   }, [userInfo, navigate, success]);
@@ -62,7 +61,7 @@ export default function LoginPage() {
     dispatch(login(email, password));
   };
 
-  console.log('Error ', error);
+  console.log('UserInfo ', userInfo);
 
   return (
     <ThemeProvider theme={theme}>

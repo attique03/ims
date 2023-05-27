@@ -1,4 +1,7 @@
-import { LOADING_FALSE, LOADING_TRUE } from "../../constants/loading/loadingConstants";
+import {
+  LOADING_FALSE,
+  LOADING_TRUE,
+} from '../../constants/loading/loadingConstants';
 
 export const loadingReducer = (state = {}, action) => {
   switch (action.type) {

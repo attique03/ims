@@ -156,6 +156,7 @@ const AdminCreatePage = () => {
               />
               <label htmlFor="select-image">
                 <Button
+                  component="span"
                   variant="contained"
                   startIcon={
                     <FontAwesomeIcon icon={faUpload} className="upload-icon" />

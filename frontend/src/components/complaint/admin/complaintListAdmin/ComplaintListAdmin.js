@@ -71,7 +71,6 @@ const ComplaintListAdmin = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    console.log('Value ', newValue);
     if (newValue === 0) {
       dispatch(listComplaints(true));
     } else if (newValue === 1) {
