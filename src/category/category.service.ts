@@ -15,7 +15,7 @@ export class CategoryService {
   async create(category: Category, req): Promise<Category> {
     const newCategory = this.categoryRepository.create({
       name: category[0],
-      // organization: req.user.organization.id,
+      organization: req.user.organization.id,
     });
     const createdCategory = await this.categoryRepository.save(newCategory);
 
@@ -26,7 +26,7 @@ export class CategoryService {
         newSubCategory = this.categoryRepository.create({
           name: cat.value,
           parent: createdCategory,
-          // organization: req.user.organization.id,
+          organization: req.user.organization.id,
         });
         await this.categoryRepository.save(newSubCategory);
       });

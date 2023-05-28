@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import { MultiSelect } from 'react-multi-select-component';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -21,37 +21,67 @@ import { ADMIN } from '../../../utils/constants';
 import { listCategories } from '../../../redux/actions/category/categoryActions';
 import { REQUESTS_CREATE_RESET } from '../../../redux/constants/requests/requestsConstants';
 import Error from '../../../components/error/Error';
+import { VENDOR_CREATE_RESET } from '../../../redux/constants/vendor/vendorConstants';
+import { createVendor } from '../../../redux/actions/vendor/vendorActions';
+import Loader from '../../../components/loader/Loader';
+
+export const options = [
+  { label: 'Grapes', value: 'grapes' },
+  { label: 'Mango', value: 'mango' },
+  { label: 'Strawberry', value: 'strawberry', disabled: true },
+];
 
 const VendorCreatePage = () => {
   const [formData, setFormData] = useState({
-    itemName: null,
-    type: null,
-    description: null,
+    name: null,
+    phone: null,
     subCategory: null,
   });
 
   const [category, setCategory] = useState();
-  const [subCategory, setSubCategory] = useState();
+  const [subCategory, setSubCategory] = useState([]);
+  const [selectedSubCategory, setSelectedSubCategory] = useState([]);
+
+  const [selected, setSelected] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const requestsCreate = useSelector((state) => state.requestsCreate);
-  const { requests, success, error } = requestsCreate;
+  const vendorCreate = useSelector((state) => state.vendorCreate);
+  const { vendor, success, error } = vendorCreate;
 
   const categoryList = useSelector((state) => state.categoryList);
   const { categories, error: errorcategoryList } = categoryList;
 
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
+  let subCategoryList = [];
+  let subLength = subCategoryList.length > 0;
+
   useEffect(() => {
     dispatch(listCategories());
-    if (requests?.id && success) {
-      dispatch({ type: REQUESTS_CREATE_RESET });
-      navigate('/requests');
+
+    if (vendor?.id && success) {
+      dispatch({ type: VENDOR_CREATE_RESET });
+      navigate('/vendors');
     }
-  }, [requests?.id, dispatch, success, navigate]);
+  }, [vendor?.id, dispatch, success, navigate, subLength]);
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
+    categories[1].forEach((cat) => {
+      if (cat.category_parentId === e.target.value) {
+        console.log('In Depth', cat);
+        subCategoryList.push({
+          label: cat.category_name,
+          value: cat.category_id,
+        });
+      }
+      console.log('In Depth 2', subCategoryList);
+      setSelectedSubCategory(subCategoryList);
+    });
+
     const subCat = categories[1].filter(
       (cat) => cat.category_parentId === e.target.value,
     );
@@ -60,17 +90,36 @@ const VendorCreatePage = () => {
 
   const createRequestsHandler = (e) => {
     e.preventDefault();
-    dispatch(createRequest(formData));
+    let tmp = [];
+    if (selected) {
+      selected.map((s) => tmp.push(s.value));
+
+      console.log('Array', {
+        name: formData.name,
+        phone: formData.phone,
+        subCategory: tmp,
+      });
+    }
+    dispatch(
+      createVendor({
+        name: formData.name,
+        phone: formData.phone,
+        subCategory: tmp,
+      }),
+    );
   };
 
   const handleGoBack = () => {
-    navigate('/requests');
+    navigate('/vendors');
   };
+
+  console.log('Selected ', selected);
 
   return (
     <CardContainer>
       {error && <Error error={error} />}
       {errorcategoryList && <Error error={errorcategoryList} />}
+      {loadingState && <Loader />}
 
       <form onSubmit={createRequestsHandler}>
         <Box className={'header'}>
@@ -94,7 +143,7 @@ const VendorCreatePage = () => {
               type="submit"
               variant="contained"
               classes={{ root: 'cancel-btn' }}
-              onClick={() => navigate('/requests')}
+              onClick={handleGoBack}
             >
               Cancel
             </Button>
@@ -117,17 +166,38 @@ const VendorCreatePage = () => {
           <Grid container>
             <Grid item xs={3}>
               <Typography sx={{ mt: 1 }}>
-                <b>Item Name</b>
+                <b>Name</b>
               </Typography>
             </Grid>
             <Grid item xs={9}>
               <TextField
-                label="Enter Item Name"
+                label="Full Name"
                 id="item"
                 size="small"
                 classes={{ root: 'input-width' }}
                 onChange={(e) =>
-                  setFormData({ ...formData, itemName: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Box className={'box-spacing'}>
+          <Grid container>
+            <Grid item xs={3}>
+              <Typography sx={{ mt: 1 }}>
+                <b>Contact Number</b>
+              </Typography>
+            </Grid>
+            <Grid item xs={9}>
+              <TextField
+                label="Contact Number"
+                id="item"
+                size="small"
+                classes={{ root: 'input-width' }}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
                 }
               />
             </Grid>
@@ -170,7 +240,14 @@ const VendorCreatePage = () => {
               </Typography>
             </Grid>
             <Grid item md={9} xs={12}>
-              <TextField
+              <MultiSelect
+                className="input-width"
+                options={selectedSubCategory}
+                value={selected}
+                onChange={setSelected}
+                labelledBy="Select"
+              />
+              {/* <TextField
                 id="outlined-select-country"
                 select
                 label="Select Sub-Category"
@@ -180,62 +257,31 @@ const VendorCreatePage = () => {
                   setFormData({ ...formData, subCategory: e.target.value })
                 }
               >
+                {subCategory.length === 0 && (
+                  <Error error="Please First Select Category" />
+                )}
                 {subCategory?.map((option) => (
                   <MenuItem key={option.category_id} value={option.category_id}>
                     {option.category_name}
                   </MenuItem>
                 ))}
-              </TextField>
+              </TextField> */}
             </Grid>
           </Grid>
         </Box>
 
-        <Box sx={{ p: 1, m: 1 }}>
-          <Grid container>
-            <Grid item md={3} xs={12}>
-              <Typography sx={{ mt: 1 }}>
-                <b>Request Type</b>
-              </Typography>
-            </Grid>
-            <Grid item md={9} xs={12}>
-              <TextField
-                id="request"
-                select
-                label="Select Request Type"
-                sx={{ width: '400px' }}
-                size="small"
-                onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value })
-                }
-              >
-                <MenuItem value="acquisition">Acquisition</MenuItem>
-                <MenuItem value="faulty">Faulty</MenuItem>
-              </TextField>
-            </Grid>
-          </Grid>
-        </Box>
+        <Box sx={{ m: 40 }} />
 
-        <Box className={'box-spacing'}>
-          <Grid container>
-            <Grid item xs={3}>
-              <Typography sx={{ mt: 1 }} variant="b" component="b">
-                Description
-              </Typography>
-            </Grid>
-            <Grid item xs={9}>
-              <TextField
-                id="description"
-                label="Enter Description Here"
-                multiline
-                rows={4}
-                classes={{ root: 'input-width' }}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
-            </Grid>
-          </Grid>
-        </Box>
+        {/* <Box>
+          <h1>Select Fruits</h1>
+          <pre>{JSON.stringify(selected)}</pre>
+          <MultiSelect
+            options={selectedSubCategory}
+            value={selected}
+            onChange={setSelected}
+            labelledBy="Select"
+          />
+        </Box>*/}
       </form>
     </CardContainer>
   );

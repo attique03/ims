@@ -94,6 +94,12 @@
   width: 400px;
 }
 
+/* .dropdown-content {
+  display: block !important;
+  height: 50vh !important;
+  overflow-y: auto !important;
+} */
+
 .input-hide {
   display: none;
 }

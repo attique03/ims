@@ -27,12 +27,19 @@ export class VendorService {
   ): Promise<Vendor> {
     const vendor = new Vendor();
     vendor.name = name;
+    vendor.phone = phone;
 
-    console.log('Here => ', name, phone, subCategory);
+    console.log('Here => ', name, phone, subCategory[0]);
 
     const subCategories = await this.categoryRepository.findBy({
       id: In(subCategory),
     });
+
+    if (subCategories.length === 0) {
+      throw new NotAcceptableException(
+        'Please select at least one sub-category',
+      );
+    }
 
     console.log('SubCategories', subCategory);
     vendor.subCategory = subCategories;
@@ -42,6 +49,8 @@ export class VendorService {
       user: req.id,
       organization: req.organization.id,
     });
+
+    // return newVendor;
 
     return await this.vendorRepository.save(newVendor);
   }

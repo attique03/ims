@@ -384,8 +384,8 @@ function App() {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {/* </ProtectedRoute> */}
         {/* </LoadingWrapper> */}
+        {/* </ProtectedRoute> */}
       </Router>
     </StyledEngineProvider>
   );

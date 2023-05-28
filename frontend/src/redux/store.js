@@ -27,7 +27,10 @@ import {
   categoryDetailsReducer,
   categoryListReducer,
 } from './reducers/category/categoryReducers';
-import { vendorListReducer } from './reducers/vendor/vendorReducers';
+import {
+  vendorCreateReducer,
+  vendorListReducer,
+} from './reducers/vendor/vendorReducers';
 import {
   assetCreateReducer,
   assetDetailsReducer,
@@ -72,6 +75,7 @@ const reducer = combineReducers({
   categoryDetailsList: categoryDetailsListReducer,
   categoryDetails: categoryDetailsReducer,
   subcategoryDetails: subcategoryDetailsReducer,
+  vendorCreate: vendorCreateReducer,
   vendorList: vendorListReducer,
   assetCreate: assetCreateReducer,
   assetList: assetListReducer,
