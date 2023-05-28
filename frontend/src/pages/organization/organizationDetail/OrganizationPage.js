@@ -33,7 +33,15 @@ import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import MenuActions from '../../../components/menu/Menu';
 
-const tableColumns = ['ID', 'Image', 'Name', 'Email', 'Contact No.', 'Action'];
+const tableColumns = [
+  'ID',
+  'Image',
+  'Name',
+  'Email',
+  'Contact No.',
+  'Organization',
+  'Action',
+];
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

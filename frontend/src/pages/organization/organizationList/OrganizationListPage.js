@@ -19,24 +19,28 @@ import DataTable from '../../../components/table/Table';
 import { tableColumns, tableRows } from './organizationListData';
 import CardContainer from '../../../components/card/CardContainer';
 import { listOrganizations } from '../../../redux/actions/organization/organizationActions';
+import Error from '../../../components/error/Error';
 
 const OrganizationListPage = () => {
-  const [location, setLocation] = React.useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredOnSearch, setFilteredOnSearch] = useState([]);
+  const [location, setLocation] = useState('');
+  const [filteredOnLocation, setFilteredOnLocation] = useState([]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [searchValue, setSearchValue] = React.useState('');
-  const [filteredInventory, setFilteredInventory] = useState([]);
 
   const organizationList = useSelector((state) => state.organizationList);
   const { organizations, error } = organizationList;
+  let locations = [];
 
   useEffect(() => {
     dispatch(listOrganizations());
-  }, [dispatch]);
+  }, [dispatch, organizations]);
 
-  const handleChange = (event) => {
-    setLocation(event.target.value);
-  };
+  if (organizations) {
+    organizations.map((org) => locations.push(org.location));
+  }
 
   const handleAdd = () => {
     navigate('/organizations/create');
@@ -44,16 +48,32 @@ const OrganizationListPage = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    setFilteredOnLocation('');
     setSearchValue(e.target.value);
+
     let search = e.target.value;
-    const filtered = organizations.filter((request) =>
-      request.name.toLowerCase().includes(search.toLowerCase()),
+    const filtered = organizations.filter((oragnization) =>
+      oragnization.name.toLowerCase().includes(search.toLowerCase()),
     );
-    setFilteredInventory(filtered);
+    setFilteredOnSearch(filtered);
+  };
+
+  const handleChangeLocation = (e) => {
+    e.preventDefault();
+    setSearchValue('');
+    setFilteredOnSearch('');
+    setLocation(e.target.value);
+
+    let search = e.target.value;
+    const filtered = organizations.filter((oragnization) =>
+      oragnization.location.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnLocation(filtered);
   };
 
   return (
     <CardContainer>
+      {error && <Error title={'Error Fetching Organization'} error={error} />}
       <Box display="flex" p={1} sx={{ mb: 4 }}>
         <Box p={1} flexGrow={1}>
           <Stack direction="row" spacing={2}>
@@ -62,8 +82,8 @@ const OrganizationListPage = () => {
             </Typography>
             <TextField
               label="Search"
-              id="outlined-size-small"
-              defaultValue=""
+              id="value"
+              value={searchValue}
               size="small"
               onChange={handleSearch}
               sx={{ width: '200px' }}
@@ -85,14 +105,20 @@ const OrganizationListPage = () => {
                 id="demo-select-small"
                 value={location}
                 label="Location"
-                onChange={handleChange}
+                onChange={handleChangeLocation}
               >
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                <MenuItem value="lahore">Lahore</MenuItem>
+                {locations.length > 0 &&
+                  locations?.map((loc, index) => (
+                    <MenuItem key={index} value={loc}>
+                      {loc}
+                    </MenuItem>
+                  ))}
+                {/* <MenuItem value="lahore">Lahore</MenuItem>
                 <MenuItem value="london">London</MenuItem>
-                <MenuItem value="berlin">Berlin</MenuItem>
+                <MenuItem value="berlin">Berlin</MenuItem> */}
               </Select>
             </FormControl>
           </Stack>
@@ -115,8 +141,10 @@ const OrganizationListPage = () => {
         <DataTable
           columns={tableColumns}
           data={
-            filteredInventory.length > 0
-              ? filteredInventory
+            filteredOnSearch.length > 0
+              ? filteredOnSearch
+              : filteredOnLocation.length > 0
+              ? filteredOnLocation
               : organizations && organizations
           }
         />

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { listDashboardData } from '../../../../redux/actions/dashboard/dashboardActions';
 import './DashboardSummary.css';
+import Loader from '../../../loader/Loader';
 
 export default function DashboardSummary() {
   const dispatch = useDispatch();
@@ -13,14 +14,23 @@ export default function DashboardSummary() {
   const dashboardData = useSelector((state) => state.dashboardData);
   const { dashboardData: dashboard, error } = dashboardData;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo, success } = userLogin;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
   const dashboardLength = dashboard?.length === 0;
 
   useEffect(() => {
+    // if (userInfo?.user?.id && success) {
     dispatch(listDashboardData());
-  }, [dispatch, dashboardLength]);
+    // }
+  }, [dispatch, userInfo, dashboardLength, success]);
 
   return (
     <Box>
+      {loadingState && <Loader />}
       <Grid container spacing={2} sx={{ py: 1, my: 1 }}>
         <Grid item md={0.5} xs={0}></Grid>
         <Grid item md={3} xs={12} classes={{ root: 'border-item' }}>

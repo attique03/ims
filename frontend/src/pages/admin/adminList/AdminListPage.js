@@ -24,7 +24,11 @@ import './adminList.css';
 import Error from '../../../components/error/Error';
 
 const AdminListPage = () => {
-  const [organization, setOrganization] = React.useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredOnSearch, setFilteredOnSearch] = useState([]);
+  const [organization, setOrganization] = useState('');
+  const [filteredOnOrganization, setFilteredOnOrganization] = useState([]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -39,8 +43,28 @@ const AdminListPage = () => {
     dispatch(listOrganizations());
   }, [dispatch]);
 
-  const handleChange = (event) => {
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setFilteredOnOrganization('');
+    setSearchValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = users.filter((user) =>
+      user.user_name.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnSearch(filtered);
+  };
+
+  const handleChangeOrganization = (event) => {
+    event.preventDefault();
+    setFilteredOnSearch('');
     setOrganization(event.target.value);
+
+    let search = event.target.value;
+    const filtered = users.filter((user) =>
+      user.organization.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnOrganization(filtered);
   };
 
   const handleAdd = () => {
@@ -67,6 +91,7 @@ const AdminListPage = () => {
               id="search"
               size="small"
               classes={{ root: 'icon-box' }}
+              onChange={handleSearch}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -82,7 +107,7 @@ const AdminListPage = () => {
                 id="organization"
                 value={organization}
                 label="Organization"
-                onChange={handleChange}
+                onChange={handleChangeOrganization}
               >
                 {organizations?.map((org) => (
                   <MenuItem value={org.name}>{org.name}</MenuItem>
@@ -104,7 +129,16 @@ const AdminListPage = () => {
       </Box>
 
       <Box sx={{ m: 2 }}>
-        <DataTable columns={tableColumns} data={users && users} />
+        <DataTable
+          columns={tableColumns}
+          data={
+            filteredOnSearch.length > 0
+              ? filteredOnSearch
+              : filteredOnOrganization.length > 0
+              ? filteredOnOrganization
+              : users && users
+          }
+        />
       </Box>
     </CardContainer>
   );

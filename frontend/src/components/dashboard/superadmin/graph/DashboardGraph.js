@@ -13,6 +13,7 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { listDashboardStats } from '../../../../redux/actions/dashboard/dashboardActions';
 import { columnChart, tabs } from './data/dashboardGraphData';
 import Error from '../../../error/Error';
+import Loader from '../../../loader/Loader';
 
 export function DashboardGraph() {
   const [tabValue, setTabValue] = useState(1);
@@ -21,6 +22,9 @@ export function DashboardGraph() {
 
   const dashboardStats = useSelector((state) => state.dashboardStats);
   const { dashboardStats: dashboard, error } = dashboardStats;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
 
   let adminStats = [];
   let organizationStats = [];
@@ -59,6 +63,7 @@ export function DashboardGraph() {
   return (
     <>
       {error && <Error title={'Graph Chart Error '} error={error} />}
+      {loadingState && <Loader />}
       <Box className={'header'}>
         <Box className={'header-left'}>
           <Typography component="span" variant="span" sx={{ pr: 2 }}>

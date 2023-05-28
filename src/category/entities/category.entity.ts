@@ -32,9 +32,12 @@ export class Category {
   @ManyToOne(() => Organization, (organization) => organization.category)
   organization: Organization;
 
-  @OneToMany(() => Vendor, (vendor) => vendor.subCategory)
-  @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
+  @ManyToMany(() => Vendor, (vendor) => vendor.subCategory)
   vendor: Vendor;
+
+  // @OneToMany(() => Vendor, (vendor) => vendor.subCategory)
+  // @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
+  // vendor: Vendor;
 
   @OneToMany(() => Asset, (asset) => asset.subCategory)
   @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })

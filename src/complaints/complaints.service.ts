@@ -59,6 +59,7 @@ export class ComplaintsService {
           roleId: 2,
           // roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
         })
+        .orderBy('complaint.id', 'DESC')
         .getRawMany();
     }
     // Admin fetches all the complaints from Employee and his own complaints as well
@@ -83,6 +84,7 @@ export class ComplaintsService {
           .andWhere('user.roleId = :roleId', {
             roleId: 3,
           })
+          .orderBy('complaint.id', 'DESC')
           .getRawMany();
       }
       return await this.complaintRepository
@@ -97,6 +99,7 @@ export class ComplaintsService {
         .where('complaint.userId = :userId', {
           userId: req.user.id,
         })
+        .orderBy('complaint.id', 'DESC')
         .getRawMany();
     }
     // Employee Fetches his own complaints
@@ -113,6 +116,7 @@ export class ComplaintsService {
         .where('complaint.userId = :userId', {
           userId: req.user.id,
         })
+        .orderBy('complaint.id', 'DESC')
         .getRawMany();
 
       return complaints;

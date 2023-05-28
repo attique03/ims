@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, IsNull } from 'typeorm';
+import { Repository, Not, IsNull, In } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
@@ -12,8 +12,11 @@ export class CategoryService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async create(category: Category): Promise<Category> {
-    const newCategory = this.categoryRepository.create({ name: category[0] });
+  async create(category: Category, req): Promise<Category> {
+    const newCategory = this.categoryRepository.create({
+      name: category[0],
+      // organization: req.user.organization.id,
+    });
     const createdCategory = await this.categoryRepository.save(newCategory);
 
     let newSubCategory;
@@ -23,12 +26,19 @@ export class CategoryService {
         newSubCategory = this.categoryRepository.create({
           name: cat.value,
           parent: createdCategory,
+          // organization: req.user.organization.id,
         });
         await this.categoryRepository.save(newSubCategory);
       });
     }
 
     return createdCategory;
+  }
+
+  async findByIds(ids: number[]): Promise<Category[]> {
+    return this.categoryRepository.findBy({ id: In(ids) });
+
+    // return this.categoryRepository.findBy({ id: In([1, 2, 3]) });
   }
 
   async findAll() {
@@ -128,9 +138,9 @@ export class CategoryService {
     return result;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} category`;
+  // }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {
     return `This action updates a #${id} category`;

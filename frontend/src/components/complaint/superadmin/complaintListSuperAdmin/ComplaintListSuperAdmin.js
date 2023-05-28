@@ -23,7 +23,12 @@ import Error from '../../../error/Error';
 
 const ComplaintListSuperAdmin = () => {
   const [organization, setOrganization] = useState('');
+  const [filteredOnOrganization, setFilteredOnOrganization] = useState([]);
   const [status, setStatus] = useState('');
+  const [filteredOnStatus, setFilteredOnStatus] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredOnSearch, setFilteredOnSearch] = useState([]);
+
   const dispatch = useDispatch();
 
   const complaintList = useSelector((state) => state.complaintList);
@@ -37,12 +42,45 @@ const ComplaintListSuperAdmin = () => {
     dispatch(listComplaints());
   }, [dispatch]);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setFilteredOnStatus('');
+    setFilteredOnOrganization('');
+    setSearchValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = complaints.filter((complaint) =>
+      complaint.complaint_description
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+    );
+    setFilteredOnSearch(filtered);
+  };
+
   const handleChangeOrganization = (event) => {
+    event.preventDefault();
+    setFilteredOnSearch('');
+    setFilteredOnStatus('');
     setOrganization(event.target.value);
+
+    let search = event.target.value;
+    const filtered = complaints.filter((complaint) =>
+      complaint.organization.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnOrganization(filtered);
   };
 
   const handleChangeStatus = (event) => {
+    event.preventDefault();
+    setFilteredOnSearch('');
+    setFilteredOnOrganization('');
     setStatus(event.target.value);
+
+    let search = event.target.value;
+    const filtered = complaints.filter((complaint) =>
+      complaint.complaint_status.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnStatus(filtered);
   };
 
   return (
@@ -64,6 +102,7 @@ const ComplaintListSuperAdmin = () => {
               label="Search"
               size="small"
               classes={{ root: 'icon-box' }}
+              onChange={handleSearch}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -84,8 +123,9 @@ const ComplaintListSuperAdmin = () => {
                 label="Organization"
                 onChange={handleChangeOrganization}
               >
+                <MenuItem value="">None</MenuItem>
                 {organizations?.map((organization) => (
-                  <MenuItem key={organization.id} value={organization.id}>
+                  <MenuItem key={organization.id} value={organization.name}>
                     {organization.name}
                   </MenuItem>
                 ))}
@@ -100,7 +140,7 @@ const ComplaintListSuperAdmin = () => {
                 label="Select Status"
                 onChange={handleChangeStatus}
               >
-                <MenuItem value=""></MenuItem>
+                <MenuItem value="">None</MenuItem>
                 <MenuItem value={PENDING}>{PENDING}</MenuItem>
                 <MenuItem value={RESOLVED}>{RESOLVED}</MenuItem>
               </Select>
@@ -110,7 +150,18 @@ const ComplaintListSuperAdmin = () => {
       </Box>
 
       <Box sx={{ m: 2 }}>
-        <DataTable columns={tableColumns} data={complaints && complaints} />
+        <DataTable
+          columns={tableColumns}
+          data={
+            filteredOnSearch.length > 0
+              ? filteredOnSearch
+              : filteredOnOrganization.length > 0
+              ? filteredOnOrganization
+              : filteredOnStatus.length > 0
+              ? filteredOnStatus
+              : complaints && complaints
+          }
+        />
       </Box>
     </CardContainer>
   );

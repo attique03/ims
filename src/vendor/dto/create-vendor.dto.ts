@@ -7,7 +7,7 @@ export class CreateVendorDto {
   readonly id: number;
   readonly name: string;
   readonly phone: string;
-  readonly subCategory: Category;
+  readonly subCategory: Category[];
   readonly organization: Organization;
   readonly user: User;
   readonly asset: Asset;

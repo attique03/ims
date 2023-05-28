@@ -79,6 +79,8 @@ const AdminCreatePage = () => {
     navigate('/admins');
   };
 
+  console.log('Form Data ', formData);
+
   return (
     <CardContainer>
       {error && <Error error={error} />}
@@ -147,10 +149,11 @@ const AdminCreatePage = () => {
             </Grid>
             <Grid item xs={7.5}>
               <input
+                hidden
                 accept="image/*"
                 type="file"
                 id="select-image"
-                className={'input-img'}
+                // className={'input-img'}
                 name="image"
                 onChange={handleChange}
               />

@@ -30,14 +30,13 @@ const EmployeeCreatePage = () => {
   const { userInfo } = userLogin;
 
   const [formData, setFormData] = useState({
-    image:
-      'https://www.sourcedogg.com/wp-content/uploads/2015/05/default-placeholder.png',
+    image: null,
     name: '',
     email: '',
     password: '',
     phone: '',
     organization: userInfo?.user?.organization?.id,
-    department: 0,
+    department: null,
   });
   const [image, setImage] = useState('');
   const [email, setEmail] = useState();
@@ -53,66 +52,64 @@ const EmployeeCreatePage = () => {
   const departmentList = useSelector((state) => state.departmentList);
   const { departments, error: errorDepartmentList } = departmentList;
 
+  const imgCheck = !image;
+
   useEffect(() => {
     dispatch(listDepartments());
     if (user?.id) {
       dispatch({ type: USER_CREATE_RESET });
       navigate('/employees');
     }
-  }, [user?.id, dispatch, navigate, formData?.image]);
+  }, [user?.id, dispatch, navigate]);
 
   const createUserHandler = (e) => {
     e.preventDefault();
     dispatch(createUser(formData, email));
   };
 
-  const handleChange = async (e) => {
-    // e.preventDefault();
-    const file = e.target.files[0];
-    const formData2 = new FormData();
-    formData2.append('image', file);
-
-    const apiURL = 'http://127.0.0.1:4000/upload';
-
-    try {
-      const { data } = await axios.post(apiURL, formData2);
-
-      // if (data) {
-      //   setImage(data);
-      // }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   // const handleChange = async (e) => {
-  //   // e.preventDefault();
+  //   e.preventDefault();
   //   const file = e.target.files[0];
   //   const formData2 = new FormData();
   //   formData2.append('image', file);
 
-  //   const { data } = await axios.post(
-  //     'http://127.0.0.1:4000/upload',
-  //     formData2,
-  //   );
+  //   const apiURL = 'http://127.0.0.1:4000/upload';
 
-  //   console.log('Data of Imagee', data);
-  //   return;
+  //   try {
+  //     const { data } = await axios.post(apiURL, formData2);
 
-  //   // if (data) {
-  //   //   // setFormData({
-  //   //   //   ...formData,
-  //   //   //   image: data,
-  //   //   // });
-  //   //   setImage(data);
-  //   // }
+  //     if (data) {
+  //       setImage(data);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
   // };
+
+  const handleChange = async (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    const formData2 = new FormData();
+    formData2.append('image', file);
+
+    const { data } = await axios.post(
+      'http://127.0.0.1:4000/upload',
+      formData2,
+    );
+
+    if (data) {
+      setFormData({
+        ...formData,
+        image: data,
+      });
+    }
+  };
 
   const handleGoBack = () => {
     navigate('/employees');
   };
 
-  console.log('Image ====> ', image);
+  console.log('Image ====> ', formData);
 
   return (
     <CardContainer>
@@ -124,7 +121,8 @@ const EmployeeCreatePage = () => {
         />
       )}
 
-      <form onSubmit={createUserHandler}>
+      {/* <form onSubmit={createUserHandler}> */}
+      <Box component="form" onSubmit={createUserHandler} id="vendor-form">
         <Box className={'header header-border'}>
           <Box className={'header-left'}>
             <Stack
@@ -165,25 +163,15 @@ const EmployeeCreatePage = () => {
         <Box className={'box-spacing'}>
           <Grid container spacing={2}>
             <Grid item xs={1}>
-              {/* <img
-              // src={
-              //   formData?.image
-              //     ? `/uploads/${formData?.image?.split('/')[3]}`
-              //     : imgUrl
-              // }
-              // src={image ? `/uploads/${image?.split('/')[3]}` : imgUrl}
-              src={imgUrl}
-              className={'profile-img'}
-              alt="organization_logo"
-            /> */}
-
-              <div className="profile-img-container">
-                <img
-                  src={image ? URL.createObjectURL(image) : imgUrl}
-                  className="profile-img"
-                  alt="organization_logo"
-                />
-              </div>
+              <img
+                src={
+                  formData?.image
+                    ? `/uploads/${formData?.image?.split('/')[3]}`
+                    : imgUrl
+                }
+                className={'profile-img'}
+                alt="organization_logo"
+              />
             </Grid>
             <Grid item xs={3.5}>
               <Typography>Employee's Picture</Typography>
@@ -195,9 +183,10 @@ const EmployeeCreatePage = () => {
               <input
                 accept="image/*"
                 type="file"
+                hidden
                 id="select-image"
                 // style={{ display: 'none' }}
-                className={'input-img'}
+                // className={'input-img'}
                 name="image"
                 onChange={handleChange}
               />
@@ -271,6 +260,7 @@ const EmployeeCreatePage = () => {
                   setFormData({ ...formData, department: e.target.value })
                 }
               >
+                <MenuItem value=""></MenuItem>
                 {departments?.map((dept) => (
                   <MenuItem key={dept.id} value={dept.id}>
                     {dept.name}
@@ -351,7 +341,8 @@ const EmployeeCreatePage = () => {
             </Grid>
           </Grid>
         </Box>
-      </form>
+      </Box>
+      {/* </form> */}
     </CardContainer>
   );
 };

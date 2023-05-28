@@ -22,6 +22,7 @@ import { createOrganization } from '../../../redux/actions/organization/organiza
 import { ORGANIZATION_CREATE_RESET } from '../../../redux/constants//organization/organizationConstants';
 import Loader from '../../../components/loader/Loader';
 import axios from 'axios';
+import Error from '../../../components/error/Error';
 
 const countries = [
   {
@@ -63,9 +64,18 @@ const OrganizationCreatePage = () => {
   const { loading: loadingState } = loading;
 
   useEffect(() => {
+    // dispatch({ type: ORGANIZATION_CREATE_RESET });
+
+    if (image) {
+      setFormData({
+        ...formData,
+        image: image,
+      });
+    }
+
     if (success) {
       dispatch({ type: ORGANIZATION_CREATE_RESET });
-      navigate('/');
+      navigate('/organizations');
     }
   }, [success, dispatch, navigate, image]);
 
@@ -124,11 +134,18 @@ const OrganizationCreatePage = () => {
     }
   };
 
+  console.log('Form Data ', formData);
+
   return (
     <>
       {loadingState && <Loader />}
       <Container className={'wrapper'}>
         <Card className={'card'}>
+          <Box sx={{ m: 1, p: 1 }}>
+            {error && (
+              <Error title={'Error Creating Organization'} error={error} />
+            )}
+          </Box>
           <form
             onSubmit={createOrgnizationHandler}
             // encType="multipart/form-data"
@@ -213,7 +230,25 @@ const OrganizationCreatePage = () => {
                     //     image: URL.createObjectURL(e.target.files[0]),
                     //   })
                     // }
-                    onChange={handleChange}
+                    onChange={async (e) => {
+                      e.preventDefault();
+                      const file = e.target.files[0];
+                      const formData2 = new FormData();
+                      formData2.append('image', file);
+
+                      const { data } = await axios.post(
+                        'http://127.0.0.1:4000/upload',
+                        formData2,
+                      );
+
+                      if (data) {
+                        setImage(data);
+                        // setFormData({
+                        //   ...formData,
+                        //   image: data,
+                        // });
+                      }
+                    }}
                   />
                   <label htmlFor="select-image">
                     <Button
@@ -249,7 +284,11 @@ const OrganizationCreatePage = () => {
                     size="small"
                     sx={{ width: '400px' }}
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setFormData({
+                        ...formData,
+                        name: e.target.value,
+                        image: image,
+                      })
                     }
                   />
                 </Grid>
@@ -269,7 +308,11 @@ const OrganizationCreatePage = () => {
                     size="small"
                     sx={{ width: '400px' }}
                     onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
+                      setFormData({
+                        ...formData,
+                        email: e.target.value,
+                        image: image,
+                      })
                     }
                   />
                 </Grid>
@@ -290,7 +333,11 @@ const OrganizationCreatePage = () => {
                     defaultValue="Default Value"
                     sx={{ width: '400px' }}
                     onChange={(e) =>
-                      setFormData({ ...formData, bio: e.target.value })
+                      setFormData({
+                        ...formData,
+                        bio: e.target.value,
+                        image: image,
+                      })
                     }
                   />
                 </Grid>
@@ -313,7 +360,11 @@ const OrganizationCreatePage = () => {
                     defaultValue=""
                     size="small"
                     onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
+                      setFormData({
+                        ...formData,
+                        address: e.target.value,
+                        image: image,
+                      })
                     }
                     sx={{ width: '400px' }}
                   />
@@ -327,7 +378,11 @@ const OrganizationCreatePage = () => {
                     size="small"
                     sx={{ width: '400px' }}
                     onChange={(e) =>
-                      setFormData({ ...formData, city: e.target.value })
+                      setFormData({
+                        ...formData,
+                        city: e.target.value,
+                        image: image,
+                      })
                     }
                   />
                 </Grid>
@@ -342,7 +397,11 @@ const OrganizationCreatePage = () => {
                     size="small"
                     // helperText="Select Country"
                     onChange={(e) =>
-                      setFormData({ ...formData, country: e.target.value })
+                      setFormData({
+                        ...formData,
+                        country: e.target.value,
+                        image: image,
+                      })
                     }
                   >
                     {countries.map((option) => (
@@ -361,7 +420,11 @@ const OrganizationCreatePage = () => {
                     size="small"
                     sx={{ width: '400px' }}
                     onChange={(e) =>
-                      setFormData({ ...formData, zip: e.target.value })
+                      setFormData({
+                        ...formData,
+                        zip: e.target.value,
+                        image: image,
+                      })
                     }
                   />
                 </Grid>
@@ -384,6 +447,7 @@ const OrganizationCreatePage = () => {
                       setFormData({
                         ...formData,
                         representativeName: e.target.value,
+                        image: image,
                       })
                     }
                   />
@@ -407,6 +471,7 @@ const OrganizationCreatePage = () => {
                       setFormData({
                         ...formData,
                         representativeContact: e.target.value,
+                        image: image,
                       })
                     }
                   />

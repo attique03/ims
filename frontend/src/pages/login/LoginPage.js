@@ -18,6 +18,7 @@ import { login } from '../../redux/actions/user/userActions';
 import CardContainer from '../../components/card/CardContainer';
 import './login.css';
 import { Alert, AlertTitle } from '@mui/material';
+import Loader from '../../components/loader/Loader';
 const theme = createTheme({
   typography: {
     caption: {
@@ -40,8 +41,11 @@ export default function LoginPage() {
   const userLogin = useSelector((state) => state.userLogin);
   const { error, userInfo, success } = userLogin;
 
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
   useEffect(() => {
-    if (userInfo && success) {
+    if (userInfo?.user?.id && success) {
       navigate('/');
     }
   }, [userInfo, navigate, success]);
@@ -81,6 +85,8 @@ export default function LoginPage() {
             style={{ width: '100px', height: '100px' }}
           />
         </Box>
+
+        {loadingState && <Loader />}
         <Box
           sx={{
             marginTop: 4,

@@ -35,6 +35,9 @@ import ReturnsPage from './pages/returns/returnsDetail/ReturnsPage';
 import EmployeeListPage from './pages/employee/employeeList/EmployeeListPage';
 import EmployeePage from './pages/employee/employeeDetail/EmployeePage';
 import EmployeeCreatePage from './pages/employee/employeeCreate/EmployeeCreatePage';
+import VendorListPage from './pages/vendor/vendorList/VendorListPage';
+import VendorCreatePage from './pages/vendor/vendorCreate/VendorCreatePage';
+import VendorPage from './pages/vendor/vendorDetail/VendorPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -338,6 +341,43 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ReturnsPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
+          <Route
+            path="vendors"
+            element={
+              <ProtectedRoute>
+                <OutletWrapper />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              exact
+              path=""
+              element={
+                <ProtectedRoute>
+                  <VendorListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path="create"
+              element={
+                <ProtectedRoute>
+                  <VendorCreatePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <VendorPage />
                 </ProtectedRoute>
               }
             />

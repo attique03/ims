@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   getDashboardDataAdminApi,
   getDashboardDataSuperAdminApi,
@@ -28,11 +29,25 @@ export const listDashboardData = () => async (dispatch, getState) => {
       userLogin: { userInfo },
     } = getState();
 
-    const { data } = await axiosConfig.get(
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
       userInfo?.user?.role?.role === SUPERADMIN
-        ? getDashboardDataSuperAdminApi
-        : getDashboardDataAdminApi,
+        ? `http://127.0.0.1:4000${getDashboardDataSuperAdminApi}`
+        : `http://127.0.0.1:4000${getDashboardDataAdminApi}`,
+      config,
     );
+
+    // const { data } = await axiosConfig.get(
+    //   userInfo?.user?.role?.role === SUPERADMIN
+    //     ? getDashboardDataSuperAdminApi
+    //     : getDashboardDataAdminApi,
+    // );
 
     dispatch({
       type: DASHBOARD_DATA_SUCCESS,
@@ -64,11 +79,25 @@ export const listDashboardStats = () => async (dispatch, getState) => {
       userLogin: { userInfo },
     } = getState();
 
-    const { data } = await axiosConfig.get(
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
       userInfo?.user?.role?.role === SUPERADMIN
-        ? getDashboardStatsSuperAdminApi
-        : getDashboardStatsAdminApi,
+        ? `http://127.0.0.1:4000${getDashboardStatsSuperAdminApi}`
+        : `http://127.0.0.1:4000${getDashboardStatsAdminApi}`,
+      config,
     );
+
+    // const { data } = await axiosConfig.get(
+    //   userInfo?.user?.role?.role === SUPERADMIN
+    //     ? getDashboardStatsSuperAdminApi
+    //     : getDashboardStatsAdminApi,
+    // );
 
     dispatch({
       type: DASHBOARD_STATS_SUCCESS,

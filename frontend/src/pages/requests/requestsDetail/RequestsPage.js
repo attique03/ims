@@ -43,9 +43,9 @@ const RequestsPage = () => {
 
   useEffect(() => {
     dispatch(listRequestsDetails(params.id));
-    if (success) {
+    // if (success) {
       dispatch({ type: REQUESTS_UPDATE_RESET });
-    }
+    // }
   }, [dispatch, params, success]);
 
   const handleGoBack = () => {

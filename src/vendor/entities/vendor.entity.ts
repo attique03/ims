@@ -11,6 +11,8 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -24,8 +26,14 @@ export class Vendor {
   @Column()
   phone: string;
 
-  @ManyToOne(() => Category, (subCategory) => subCategory.vendor)
-  subCategory: Category;
+  // @ManyToOne(() => Category, (subCategory) => subCategory.vendor)
+  // subCategory: Category[];
+
+  @ManyToMany(() => Category, (subCategory) => subCategory.vendor, {
+    cascade: true,
+  })
+  @JoinTable()
+  subCategory: Category[];
 
   @ManyToOne(() => User, (user) => user.vendor)
   user: User;

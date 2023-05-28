@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -13,12 +17,40 @@ export class OrganizationService {
   ) {}
 
   async create(organization: Organization): Promise<Organization> {
-    const newOrganization = this.organizationRepository.create(organization);
-    return await this.organizationRepository.save(newOrganization);
+    const {
+      name,
+      email,
+      image,
+      bio,
+      address,
+      city,
+      country,
+      zip,
+      representativeName,
+      representativeContact,
+    } = organization;
+
+    if (
+      name &&
+      email &&
+      image &&
+      bio &&
+      address &&
+      city &&
+      country &&
+      zip &&
+      representativeName &&
+      representativeContact
+    ) {
+      const newOrganization = this.organizationRepository.create(organization);
+      return await this.organizationRepository.save(newOrganization);
+    } else throw new NotAcceptableException('All Fields are required');
   }
 
   async findAll() {
-    const organizations = await this.organizationRepository.find();
+    const organizations = await this.organizationRepository.find({
+      order: { id: 'DESC' },
+    });
 
     return organizations.map((organization) => {
       return {

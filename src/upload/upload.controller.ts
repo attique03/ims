@@ -35,6 +35,7 @@ export const storage = {
   }),
 
   fileFilter: (req, file, cb) => {
+    console.log('File ', file, cb);
     const filetypes = /jpeg|jpg|png/;
     const mimetype = filetypes.test(file.mimetype);
     const extnamee = filetypes.test(extname(file.originalname).toLowerCase());

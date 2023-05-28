@@ -45,9 +45,27 @@ export class UserService {
           roleId: 3,
           // roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
         })
+        .orderBy('user.id', 'DESC')
         .getRawMany();
     } else if (req?.user.role.role === SUPERADMIN) {
       // Fetch only admins of any Organization if Super Admin is logged in
+
+      if (req.query.organizationId) {
+        return await this.userRepository
+          .createQueryBuilder('user')
+          .select(['user.image', 'user.name', 'user.email', 'user.phone'])
+          .addSelect('user.id', 'id')
+          .addSelect('organization.name', 'organization')
+          .leftJoin('user.organization', 'organization')
+          .where('user.roleId = :roleId', {
+            roleId: 2,
+          })
+          .where('user.organizationId = :organizationId', {
+            organizationId: req.query.organizationId,
+          })
+          .orderBy('user.id', 'DESC')
+          .getRawMany();
+      }
       return await this.userRepository
         .createQueryBuilder('user')
         .select(['user.image', 'user.name', 'user.email', 'user.phone'])
@@ -58,6 +76,7 @@ export class UserService {
           roleId: 2,
           // roleId: req?.user.role.id === 1 ? 2 : req?.user.role.id === 2 ? 3 : 0,
         })
+        .orderBy('user.id', 'DESC')
         .getRawMany();
     }
     throw new ForbiddenException('Not Allowed to fecth users');
@@ -68,31 +87,46 @@ export class UserService {
     req,
     mail: SendGrid.MailDataRequired,
   ): Promise<User> {
-    const newUser = this.userRepository.create({
-      ...user,
-      password: await bcrypt.hash(user.password, 12),
-      role:
-        req.user.role.id === 1
-          ? req?.user?.role?.id + 1
-          : req?.user?.role?.id === 2
-          ? req?.user?.role?.id + 1
-          : req?.user?.role?.id - 3,
-    });
+    console.log('sdlkasj ', user);
+    if (
+      user.email &&
+      user.image &&
+      user.password &&
+      user.name &&
+      user.organization &&
+      user.phone &&
+      req.query.email
+    ) {
+      const newUser = this.userRepository.create({
+        ...user,
+        password: await bcrypt.hash(user.password, 12),
+        role:
+          req.user.role.id === 1
+            ? req?.user?.role?.id + 1
+            : req?.user?.role?.id === 2
+            ? req?.user?.role?.id + 1
+            : req?.user?.role?.id - 3,
+      });
 
-    mail.html = `<div>
-                  <h1>Welcome to the Inventory Management System</h1>
-                  <br/>
-                  <span>Below is your Login Credentials to login to IMS</span>
-                  <br/>
-                  <span>Remember not to share this with anyone.</span>
-                  <br/> 
-                  Email: <b>${user.email}</b> 
-                  <br/> 
-                  Password: <b>${user.password}</b>
-                </div>`;
-    await SendGrid.send(mail);
+      mail.html = `<div>
+                    <h1>Welcome to the Inventory Management System</h1>
+                    <br/>
+                    <span>Below is your Login Credentials to login to IMS</span>
+                    <br/>
+                    <span>Remember not to share this with anyone.</span>
+                    <br/> 
+                    Email: <b>${user.email}</b> 
+                    <br/> 
+                    Password: <b>${user.password}</b>
+                  </div>`;
+      await SendGrid.send(mail);
 
-    return await this.userRepository.save(newUser);
+      return await this.userRepository.save(newUser);
+    } else {
+      throw new NotAcceptableException(
+        'Please fill all of the required fields',
+      );
+    }
   }
 
   // @Login User
