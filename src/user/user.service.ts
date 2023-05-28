@@ -100,6 +100,7 @@ export class UserService {
       const newUser = this.userRepository.create({
         ...user,
         password: await bcrypt.hash(user.password, 12),
+        organization: req.user.organization.id,
         role:
           req.user.role.id === 1
             ? req?.user?.role?.id + 1
@@ -204,11 +205,41 @@ export class UserService {
     }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: CreateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (updateUserDto.password) {
+      console.log('update user password', updateUserDto.password);
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);
+    }
+
+    Object.assign(user, updateUserDto);
+
+    return this.userRepository.save(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = await this.userRepository.findOne({
+      relations: ['vendor', 'complaint', 'asset', 'requests'],
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.complaint = null;
+    user.asset = null;
+    user.vendor = null;
+    user.requests = null;
+
+    await this.userRepository.save(user);
+    return await this.userRepository.remove(user);
   }
 }

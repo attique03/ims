@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   NotAcceptableException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EMPLOYEE, SUPERADMIN } from 'src/constants/constants';
@@ -29,7 +30,6 @@ export class DepartmentService {
       }
       const newDepartment = this.departmentRepository.create({
         ...department,
-
         organization: req.user.organization.id,
       });
 
@@ -45,15 +45,43 @@ export class DepartmentService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} department`;
+  async findOne(id: number) {
+    const department = await this.departmentRepository.findOneBy({ id });
+
+    if (!department) throw new NotFoundException('Departmetn Not Found');
+    return department;
   }
 
-  update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
-    return `This action updates a #${id} department`;
+  async update(
+    id: number,
+    updateDepartmentDto: CreateDepartmentDto,
+  ): Promise<Department> {
+    const department = await this.departmentRepository.findOneBy({
+      id,
+    });
+
+    if (!department) {
+      throw new NotFoundException('Deparment not found');
+    }
+
+    Object.assign(department, updateDepartmentDto);
+
+    return this.departmentRepository.save(department);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} department`;
+  async remove(id: number) {
+    const department = await this.departmentRepository.findOne({
+      relations: ['user'],
+      where: { id },
+    });
+
+    department.user = null;
+
+    if (!department) {
+      throw new NotFoundException('Department not found');
+    }
+
+    await this.departmentRepository.save(department);
+    return await this.departmentRepository.remove(department);
   }
 }

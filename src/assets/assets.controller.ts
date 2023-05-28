@@ -9,6 +9,7 @@ import {
   Req,
   SetMetadata,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { ADMIN } from 'src/constants/constants';
 import { RolesGuard } from 'src/utils/roles.guard';
@@ -21,8 +22,8 @@ export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
   @Post()
-  create(@Body() createAssetDto: CreateAssetDto) {
-    return this.assetsService.create(createAssetDto);
+  create(@Body() createAssetDto: CreateAssetDto, @Req() req) {
+    return this.assetsService.create(createAssetDto, req);
   }
 
   @Get()
@@ -39,12 +40,16 @@ export class AssetsController {
     return this.assetsService.findOne(id, req);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAssetDto: UpdateAssetDto) {
+  @Put(':id')
+  @SetMetadata('roles', ADMIN)
+  @UseGuards(RolesGuard)
+  update(@Param('id') id: string, @Body() updateAssetDto: CreateAssetDto) {
     return this.assetsService.update(+id, updateAssetDto);
   }
 
   @Delete(':id')
+  @SetMetadata('roles', ADMIN)
+  @UseGuards(RolesGuard)
   remove(@Param('id') id: string) {
     return this.assetsService.remove(+id);
   }

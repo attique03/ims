@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   SetMetadata,
+  Put,
 } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -40,10 +41,10 @@ export class OrganizationController {
     return this.organizationService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() updateOrganizationDto: UpdateOrganizationDto,
+    @Body() updateOrganizationDto: CreateOrganizationDto,
   ) {
     return this.organizationService.update(+id, updateOrganizationDto);
   }

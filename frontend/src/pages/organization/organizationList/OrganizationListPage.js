@@ -49,6 +49,7 @@ const OrganizationListPage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setFilteredOnLocation('');
+    setLocation('');
     setSearchValue(e.target.value);
 
     let search = e.target.value;

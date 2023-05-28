@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   Query,
+  Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -53,8 +54,8 @@ export class UserController {
     return await this.userService.findOne(id, request);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: CreateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 

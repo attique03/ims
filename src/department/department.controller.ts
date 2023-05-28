@@ -9,6 +9,7 @@ import {
   Req,
   SetMetadata,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { RolesGuard } from 'src/utils/roles.guard';
 import { DepartmentService } from './department.service';
@@ -36,10 +37,10 @@ export class DepartmentController {
     return this.departmentService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() updateDepartmentDto: UpdateDepartmentDto,
+    @Body() updateDepartmentDto: CreateDepartmentDto,
   ) {
     return this.departmentService.update(+id, updateDepartmentDto);
   }

@@ -38,6 +38,7 @@ import EmployeeCreatePage from './pages/employee/employeeCreate/EmployeeCreatePa
 import VendorListPage from './pages/vendor/vendorList/VendorListPage';
 import VendorCreatePage from './pages/vendor/vendorCreate/VendorCreatePage';
 import VendorPage from './pages/vendor/vendorDetail/VendorPage';
+import VendorEditPage from './pages/vendor/vendorEdit/VendorEditPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -378,6 +379,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <VendorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <VendorEditPage />
                 </ProtectedRoute>
               }
             />

@@ -29,7 +29,10 @@ import {
 } from './reducers/category/categoryReducers';
 import {
   vendorCreateReducer,
+  vendorDeleteReducer,
+  vendorDetailsReducer,
   vendorListReducer,
+  vendorUpdateReducer,
 } from './reducers/vendor/vendorReducers';
 import {
   assetCreateReducer,
@@ -77,7 +80,10 @@ const reducer = combineReducers({
   subcategoryDetails: subcategoryDetailsReducer,
   vendorCreate: vendorCreateReducer,
   vendorList: vendorListReducer,
+  vendorDetails: vendorDetailsReducer,
+  vendorDelete: vendorDeleteReducer,
   assetCreate: assetCreateReducer,
+  vendorUpdate: vendorUpdateReducer,
   assetList: assetListReducer,
   assetDetails: assetDetailsReducer,
   requestsCreate: requestsCreateReducer,

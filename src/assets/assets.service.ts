@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
@@ -10,12 +15,29 @@ export class AssetsService {
   constructor(
     @InjectRepository(Asset)
     private assetRepository: Repository<Asset>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  async create(asset: Asset): Promise<Asset> {
-    const newAsset = this.assetRepository.create(asset);
+  async create(asset: Asset, req): Promise<Asset> {
+    const { description, name, price, serial_number, subCategory, vendor } =
+      asset;
+    if (
+      description &&
+      name &&
+      price &&
+      serial_number &&
+      subCategory &&
+      vendor
+    ) {
+      const newAsset = this.assetRepository.create({
+        ...asset,
+        organization: req.organization.id,
+      });
 
-    return await this.assetRepository.save(newAsset);
+      return await this.assetRepository.save(newAsset);
+    } else
+      throw new NotAcceptableException('Please Fill all the required fields');
   }
 
   findAll(req) {
@@ -83,11 +105,38 @@ export class AssetsService {
     // );
   }
 
-  update(id: number, updateAssetDto: UpdateAssetDto) {
-    return `This action updates a #${id} asset`;
+  async update(id: number, updateAssetDto: CreateAssetDto): Promise<Asset> {
+    const asset = await this.assetRepository.findOne({
+      where: { id },
+    });
+
+    // console.log('salkdj ', updateAssetDto);
+
+    // if (updateAssetDto.employee) {
+    //   const user = await this.userRepository.findOneBy({
+    //     id: updateAssetDto.employee,
+    //   });
+    //   asset.employee = user;
+    // }
+
+    if (!asset) {
+      throw new NotFoundException('Asset not found');
+    }
+
+    Object.assign(asset, updateAssetDto);
+
+    return this.assetRepository.save(asset);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} asset`;
+  async remove(id: number) {
+    const asset = await this.assetRepository.findOneBy({
+      id,
+    });
+
+    if (!asset) {
+      throw new NotFoundException('Asset not found');
+    }
+
+    return await this.assetRepository.remove(asset);
   }
 }

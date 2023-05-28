@@ -59,7 +59,7 @@ export class VendorService {
     const vendors = await this.vendorRepository.find({
       relations: ['subCategory', 'subCategory.parent', 'organization'],
       where: {
-        organization: req.user.organization.id,
+        organization: { id: req.user.organization.id },
       },
       order: {
         id: 'DESC',
@@ -73,7 +73,9 @@ export class VendorService {
       categoryName: vendor?.subCategory[0]?.parent?.name
         ? vendor?.subCategory[0]?.parent?.name
         : null,
-      subCategories: vendor.subCategory.map((subCategory) => subCategory.name),
+      subCategories: vendor.subCategory.map(
+        (subCategory) => subCategory.name + ', ',
+      ),
     }));
   }
 
@@ -88,13 +90,23 @@ export class VendorService {
   }
 
   async remove(id: number) {
-    const vendor = await this.vendorRepository.findOneBy({ id });
+    const vendor = await this.vendorRepository.findOne({
+      relations: ['subCategory', 'asset'],
+      where: { id },
+    });
+
     if (!vendor) throw new NotFoundException('Vendor Not Found');
+
+    vendor.subCategory = null;
+    vendor.asset = null;
+
+    await this.vendorRepository.save(vendor);
     return this.vendorRepository.remove(vendor);
   }
 
   async update(id: number, updateVendorDto: CreateVendorDto): Promise<Vendor> {
-    const { name, phone, subCategory } = updateVendorDto;
+    console.log('Here ');
+    const { name, phone } = updateVendorDto;
 
     const vendor = await this.vendorRepository.findOne({
       relations: ['subCategory'],
@@ -108,10 +120,14 @@ export class VendorService {
     vendor.name = name;
     vendor.phone = phone;
 
-    const subCategories = await this.categoryRepository.findBy({
-      id: In(subCategory),
-    });
-    vendor.subCategory = subCategories;
+    // if (subCategory) {
+    //   const subCategories = await this.categoryRepository.findBy({
+    //     id: In(subCategory),
+    //   });
+    //   if (subCategories.length > 0) {
+    //     vendor.subCategory = subCategories;
+    //   }
+    // }
 
     return this.vendorRepository.save(vendor);
   }

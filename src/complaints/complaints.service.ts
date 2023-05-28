@@ -164,7 +164,15 @@ export class ComplaintsService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} complaint`;
+  async remove(id: number) {
+    const complaint = await this.complaintRepository.findOneBy({
+      id,
+    });
+
+    if (!complaint) {
+      throw new NotFoundException('Compliant not found');
+    }
+
+    return await this.complaintRepository.remove(complaint);
   }
 }

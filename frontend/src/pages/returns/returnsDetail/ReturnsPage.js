@@ -58,7 +58,7 @@ const ReturnsPage = () => {
   }, [dispatch, params, success]);
 
   const handleGoBack = () => {
-    navigate('/requests');
+    navigate('/returns');
   };
 
   const handleReturnTypeChange = (e) => {

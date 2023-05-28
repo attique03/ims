@@ -267,7 +267,13 @@ export class RequestsService {
     // }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} request`;
+  async remove(id: number) {
+    const requests = await this.requestRepository.findOneBy({ id });
+
+    if (!requests) {
+      throw new NotFoundException('Request not found');
+    }
+
+    return await this.requestRepository.remove(requests);
   }
 }

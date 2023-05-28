@@ -20,6 +20,7 @@ import { listCategories } from '../../../redux/actions/category/categoryActions'
 import { ASSET_CREATE_RESET } from '../../../redux/constants/asset/assetConstants';
 import { useNavigate } from 'react-router-dom';
 import { createAsset } from '../../../redux/actions/asset/assetActions';
+import Error from '../../../components/error/Error';
 
 const InventoryCreatePage = () => {
   const [formData, setFormData] = useState({
@@ -87,6 +88,7 @@ const InventoryCreatePage = () => {
   return (
     <ThemeProvider theme={theme}>
       <CardContainer>
+        {error && <Error error={error} />}
         <form onSubmit={createAssetHandler}>
           <Box display="flex" p={1} className={'border-card'}>
             <Box p={1} flexGrow={1}>
