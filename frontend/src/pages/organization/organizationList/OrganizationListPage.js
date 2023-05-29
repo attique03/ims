@@ -36,7 +36,7 @@ const OrganizationListPage = () => {
 
   useEffect(() => {
     dispatch(listOrganizations());
-  }, [dispatch, organizations]);
+  }, [dispatch]);
 
   if (organizations) {
     organizations.map((org) => locations.push(org.location));

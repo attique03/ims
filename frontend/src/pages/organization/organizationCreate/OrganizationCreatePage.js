@@ -30,8 +30,16 @@ const countries = [
     label: 'Pakistan',
   },
   {
+    value: 'United Kingdom',
+    label: 'United Kingdom',
+  },
+  {
     value: 'United States',
     label: 'United States',
+  },
+  {
+    value: 'China',
+    label: 'China',
   },
 ];
 
@@ -64,7 +72,7 @@ const OrganizationCreatePage = () => {
   const { loading: loadingState } = loading;
 
   useEffect(() => {
-    // dispatch({ type: ORGANIZATION_CREATE_RESET });
+    dispatch({ type: ORGANIZATION_CREATE_RESET });
 
     if (image) {
       setFormData({
@@ -127,10 +135,10 @@ const OrganizationCreatePage = () => {
 
     if (data) {
       setImage(data);
-      setFormData({
-        ...formData,
-        image: data,
-      });
+      // setFormData({
+      //   ...formData,
+      //   image: data,
+      // });
     }
   };
 
@@ -176,6 +184,7 @@ const OrganizationCreatePage = () => {
                   fullWidth
                   variant="contained"
                   color="info"
+                  onClick={goBackHandler}
                 >
                   Cancel
                 </Button>
@@ -196,11 +205,20 @@ const OrganizationCreatePage = () => {
             <Box sx={{ p: 1, m: 1 }}>
               <Grid container spacing={2}>
                 <Grid item xs={1}>
-                  {/* <Avatar
+                  <Avatar
                     alt="Remy Sharp"
-                    src={'/uploads/' + image.split('/')[3]}
-                  /> */}
-                  <img
+                    src={
+                      image
+                        ? `/uploads/${image?.split('/')[3]}`
+                        : 'https://www.sourcedogg.com/wp-content/uploads/2015/05/default-placeholder.png'
+                    }
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '5px',
+                    }}
+                  />
+                  {/* <img
                     // src={'/uploads/ux.png'}
                     src={
                       image
@@ -209,7 +227,7 @@ const OrganizationCreatePage = () => {
                     }
                     style={{ width: '70px', height: '70px' }}
                     alt="logo"
-                  />
+                  /> */}
                 </Grid>
                 <Grid item xs={3.5}>
                   <Typography>Organization Logo</Typography>
@@ -230,25 +248,7 @@ const OrganizationCreatePage = () => {
                     //     image: URL.createObjectURL(e.target.files[0]),
                     //   })
                     // }
-                    onChange={async (e) => {
-                      e.preventDefault();
-                      const file = e.target.files[0];
-                      const formData2 = new FormData();
-                      formData2.append('image', file);
-
-                      const { data } = await axios.post(
-                        'http://127.0.0.1:4000/upload',
-                        formData2,
-                      );
-
-                      if (data) {
-                        setImage(data);
-                        // setFormData({
-                        //   ...formData,
-                        //   image: data,
-                        // });
-                      }
-                    }}
+                    onChange={handleChange}
                   />
                   <label htmlFor="select-image">
                     <Button
@@ -330,7 +330,6 @@ const OrganizationCreatePage = () => {
                     label="Multiline"
                     multiline
                     rows={4}
-                    defaultValue="Default Value"
                     sx={{ width: '400px' }}
                     onChange={(e) =>
                       setFormData({
@@ -389,13 +388,11 @@ const OrganizationCreatePage = () => {
                 <Grid item xs={3}></Grid>
                 <Grid item xs={9}>
                   <TextField
-                    id="outlined-select-country"
+                    id="country"
                     select
                     label="Select Country"
-                    defaultValue="Pakistan"
                     sx={{ width: '400px' }}
                     size="small"
-                    // helperText="Select Country"
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -415,7 +412,7 @@ const OrganizationCreatePage = () => {
                 <Grid item xs={9}>
                   <TextField
                     label="Zip Code"
-                    id="outlined-size-small"
+                    id="zip"
                     defaultValue=""
                     size="small"
                     sx={{ width: '400px' }}

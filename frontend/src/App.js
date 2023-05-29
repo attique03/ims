@@ -39,6 +39,8 @@ import VendorListPage from './pages/vendor/vendorList/VendorListPage';
 import VendorCreatePage from './pages/vendor/vendorCreate/VendorCreatePage';
 import VendorPage from './pages/vendor/vendorDetail/VendorPage';
 import VendorEditPage from './pages/vendor/vendorEdit/VendorEditPage';
+import OrganizationEditPage from './pages/organization/organizationEdit/OrganizationEditPage';
+import AdminEditPage from './pages/admin/adminEdit/AdminEditPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -109,6 +111,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              exact
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <OrganizationEditPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           <Route
@@ -143,6 +155,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <AdminEditPage />
                 </ProtectedRoute>
               }
             />

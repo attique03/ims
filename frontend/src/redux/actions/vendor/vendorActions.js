@@ -194,7 +194,6 @@ export const getVendorDetails = (id) => async (dispatch, getState) => {
   });
 };
 
-// Delete Product from Admin Side
 export const deleteVendor = (id) => async (dispatch, getState) => {
   try {
     dispatch({

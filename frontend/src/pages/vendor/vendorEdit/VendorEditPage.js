@@ -146,6 +146,7 @@ const VendorEditPage = () => {
   return (
     <CardContainer>
       {error && <Error error={error} />}
+      {vendorDetailError && <Error error={vendorDetailError} />}
       {errorcategoryList && <Error error={errorcategoryList} />}
       {loadingState && <Loader />}
 

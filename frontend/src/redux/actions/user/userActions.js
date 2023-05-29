@@ -12,6 +12,10 @@ import {
   USER_DETAILS_FAIL,
   USER_RESET_PASSWORD_SUCCESS,
   USER_RESET_PASSWORD_FAIL,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL,
+  USER_DELETE_SUCCESS,
+  USER_DELETE_FAIL,
 } from '../../constants/user/userConstants';
 import axiosConfig from '../../../utils/axiosConfig';
 import {
@@ -34,6 +38,7 @@ import {
   DASHBOARD_DATA_RESET,
   DASHBOARD_STATS_RESET,
 } from '../../constants/dashboard/dashboardConstants';
+import axios from 'axios';
 
 export const createUser = (user, email) => async (dispatch) => {
   try {
@@ -169,6 +174,96 @@ export const getUserDetails = (id) => async (dispatch) => {
     dispatch({
       type: USER_DETAILS_FAIL,
       payload: errorHandler(error),
+    });
+  }
+
+  dispatch({
+    type: LOADING_FALSE,
+  });
+};
+
+export const updateUser = (id, user) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: LOADING_TRUE,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    console.log('User in Actions  ', id, user);
+
+    const { data } = await axios.put(
+      `http://127.0.0.1:4000${getUserApi(id)}`,
+      user,
+      config,
+    );
+
+    dispatch({
+      type: USER_UPDATE_SUCCESS,
+      payload: data,
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_UPDATE_FAIL,
+      payload: errorHandler(error),
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  }
+};
+
+// Delete Product from Admin Side
+export const deleteUser = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: LOADING_TRUE,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.delete(
+      `http://127.0.0.1:4000${getUserApi(id)}`,
+      config,
+    );
+
+    dispatch({
+      type: USER_DELETE_SUCCESS,
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_DELETE_FAIL,
+      payload: errorHandler(error),
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
     });
   }
 

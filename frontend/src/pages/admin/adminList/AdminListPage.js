@@ -46,6 +46,7 @@ const AdminListPage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setFilteredOnOrganization('');
+    setOrganization('')
     setSearchValue(e.target.value);
 
     let search = e.target.value;
@@ -58,6 +59,7 @@ const AdminListPage = () => {
   const handleChangeOrganization = (event) => {
     event.preventDefault();
     setFilteredOnSearch('');
+    setSearchValue('')
     setOrganization(event.target.value);
 
     let search = event.target.value;

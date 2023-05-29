@@ -3,17 +3,21 @@ import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import {
   userCreateReducer,
+  userDeleteReducer,
   userDetailsReducer,
   userListReducer,
   userLoginReducer,
   userResetPasswordReducer,
+  userUpdateReducer,
 } from './reducers/user/userReducers';
 import { loadingReducer } from './reducers/loading/loadingReducers';
 import { getLocalStorage } from '../utils/localStorage';
 import {
   organizationCreateReducer,
+  organizationDeleteReducer,
   organizationDetailsReducer,
   organizationListReducer,
+  organizationUpdateReducer,
 } from './reducers/organization/organizationReducers';
 import {
   complaintCreateReducer,
@@ -62,6 +66,8 @@ const reducer = combineReducers({
   userResetPassword: userResetPasswordReducer,
   userList: userListReducer,
   userDetails: userDetailsReducer,
+  userUpdate: userUpdateReducer,
+  userDelete: userDeleteReducer,
   passwordResetTokenCreate: passwordResetTokenCreateReducer,
   passwordResetTokenVerify: passwordResetTokenVerifyReducer,
   dashboardData: dashboardDataReducer,
@@ -69,6 +75,8 @@ const reducer = combineReducers({
   organizationCreate: organizationCreateReducer,
   organizationList: organizationListReducer,
   organizationDetails: organizationDetailsReducer,
+  organizationUpdate: organizationUpdateReducer,
+  organizationDelete: organizationDeleteReducer,
   complaintCreate: complaintCreateReducer,
   complaintList: complaintListReducer,
   complaintDetails: complaintDetailsReducer,

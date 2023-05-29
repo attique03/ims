@@ -19,7 +19,10 @@ import {
 } from '@mui/material';
 import DataTable from '../../../components/table/Table';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { listOrganizationDetails } from '../../../redux/actions/organization/organizationActions';
+import {
+  deleteOrganization,
+  listOrganizationDetails,
+} from '../../../redux/actions/organization/organizationActions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV, faPen } from '@fortawesome/free-solid-svg-icons';
 import { styled, alpha } from '@mui/material/styles';
@@ -32,6 +35,7 @@ import './organization.css';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import MenuActions from '../../../components/menu/Menu';
+import Error from '../../../components/error/Error';
 
 const tableColumns = [
   'ID',
@@ -96,13 +100,19 @@ export default function OrganizationPage() {
   const organizationDetails = useSelector((state) => state.organizationDetails);
   const { organization, error } = organizationDetails;
 
+  const organizationDelete = useSelector((state) => state.organizationDelete);
+  const { success, error: errorOrganizationDelete } = organizationDelete;
+
   const userList = useSelector((state) => state.userList);
   const { users, error: errorUserList } = userList;
 
   useEffect(() => {
     dispatch(listOrganizationDetails(params.id));
     dispatch(listUsers(params.id));
-  }, [dispatch, params]);
+    if (success) {
+      navigate('/organizations');
+    }
+  }, [dispatch, params, success, navigate]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -119,6 +129,8 @@ export default function OrganizationPage() {
   return (
     <Container style={{ maxWidth: '1200px', mb: 3 }}>
       <Card sx={{ borderRadius: '15px', boxShadow: 3, my: 5 }}>
+        {error && <Error error={error} />}
+        {errorOrganizationDelete && <Error error={errorOrganizationDelete} />}
         <Box display="flex" p={1}>
           <Box p={1} flexGrow={1}>
             <Stack direction="row" spacing={2}>
@@ -144,37 +156,44 @@ export default function OrganizationPage() {
             </Stack>
           </Box>
 
-          <Box p={1}>
-            <IconButton
-              aria-label="Example"
-              onClick={handleClick}
-              classes={{ root: 'icon-background' }}
-            >
-              <FontAwesomeIcon icon={faEllipsisV} />
-            </IconButton>
-            <MenuActions
-              id="demo-customized-menu"
-              MenuListProps={{
-                'aria-labelledby': 'demo-customized-button',
-              }}
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleClose} disableRipple>
-                <div className="edit-color">
-                  {/* <FontAwesomeIcon icon={faPen} className={'edit-color'} /> */}
-                  <EditOutlinedIcon classes={{ root: 'edit-color' }} />
-                </div>
-                Edit
-              </MenuItem>
-              <Divider sx={{ my: 0.5 }} />
-              <MenuItem onClick={handleClose} disableRipple>
-                <DeleteOutlineOutlinedIcon classes={{ root: 'delete-color' }} />
-                Delete
-              </MenuItem>
-            </MenuActions>
-          </Box>
+          {value === 0 && (
+            <Box p={1}>
+              <IconButton
+                aria-label="Example"
+                onClick={handleClick}
+                classes={{ root: 'icon-background' }}
+              >
+                <FontAwesomeIcon icon={faEllipsisV} />
+              </IconButton>
+              <MenuActions
+                id="demo-customized-menu"
+                MenuListProps={{
+                  'aria-labelledby': 'demo-customized-button',
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={() => navigate('edit')} disableRipple>
+                  <div className="edit-color">
+                    {/* <FontAwesomeIcon icon={faPen} className={'edit-color'} /> */}
+                    <EditOutlinedIcon classes={{ root: 'edit-color' }} />
+                  </div>
+                  Edit
+                </MenuItem>
+                <Divider sx={{ my: 0.5 }} />
+                <MenuItem
+                  onClick={() => dispatch(deleteOrganization(params.id))}
+                  disableRipple
+                >
+                  <DeleteOutlineOutlinedIcon
+                    classes={{ root: 'delete-color' }}
+                  />
+                  Delete
+                </MenuItem>
+              </MenuActions>
+            </Box>
+          )}
         </Box>
         <Box
           sx={{

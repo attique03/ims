@@ -12,13 +12,18 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import { getUserDetails } from '../../../redux/actions/user/userActions';
+import {
+  deleteUser,
+  getUserDetails,
+} from '../../../redux/actions/user/userActions';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MenuActions from '../../../components/menu/Menu';
 import './admin.css';
+import Error from '../../../components/error/Error';
+import Loader from '../../../components/loader/Loader';
 
 const AdminPage = () => {
   const dispatch = useDispatch();
@@ -30,9 +35,19 @@ const AdminPage = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { user, error } = userDetails;
 
+  const userDelete = useSelector((state) => state.userDelete);
+  const { success, error: errorUserDelete } = userDelete;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
   useEffect(() => {
     dispatch(getUserDetails(params.id));
-  }, [dispatch, params]);
+
+    if (success) {
+      navigate('/admins');
+    }
+  }, [dispatch, params, success, navigate]);
 
   const handleGoBack = () => {
     navigate('/admins');
@@ -48,6 +63,12 @@ const AdminPage = () => {
 
   return (
     <CardContainer>
+      {error && <Error error={error} />}
+      {errorUserDelete && (
+        <Error title={'Error Deleting User'} error={errorUserDelete} />
+      )}
+
+      {loadingState && <Loader />}
       <Box className={'header'}>
         <Box className={'header-left'}>
           <Stack
@@ -79,12 +100,12 @@ const AdminPage = () => {
             open={open}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleMenuClose}>
+            <MenuItem onClick={() => navigate('edit')}>
               <EditOutlinedIcon classes={{ root: 'edit-color' }} />
               Edit
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
-            <MenuItem onClick={handleMenuClose}>
+            <MenuItem onClick={() => dispatch(deleteUser(params.id))}>
               <DeleteOutlineOutlinedIcon classes={{ root: 'delete-color' }} />
               Delete
             </MenuItem>

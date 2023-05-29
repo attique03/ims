@@ -13,6 +13,11 @@ import {
   USER_RESET_PASSWORD_SUCCESS,
   USER_RESET_PASSWORD_FAIL,
   USER_RESET_PASSWORD_RESET,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAIL,
+  USER_UPDATE_RESET,
+  USER_DELETE_SUCCESS,
+  USER_DELETE_FAIL,
 } from '../../constants/user/userConstants';
 
 export const userCreateReducer = (state = {}, action) => {
@@ -74,6 +79,32 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
     case USER_DETAILS_SUCCESS:
       return { user: action.payload };
     case USER_DETAILS_FAIL:
+      return { error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userUpdateReducer = (state = { user: {} }, action) => {
+  switch (action.type) {
+    case USER_UPDATE_SUCCESS:
+      return { success: true, user: action.payload };
+    case USER_UPDATE_FAIL:
+      return { error: action.payload };
+    case USER_UPDATE_RESET:
+      return {
+        user: {},
+      };
+    default:
+      return state;
+  }
+};
+
+export const userDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_DELETE_SUCCESS:
+      return { success: true };
+    case USER_DELETE_FAIL:
       return { error: action.payload };
     default:
       return state;
