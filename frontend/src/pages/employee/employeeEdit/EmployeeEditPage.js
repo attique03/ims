@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -17,116 +18,138 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@mui/material/Grid';
 import { listOrganizations } from '../../../redux/actions/organization/organizationActions';
-import { USER_CREATE_RESET } from '../../../redux/constants/user/userConstants';
-import { createUser } from '../../../redux/actions/user/userActions';
-import './adminCreate.css';
+import {
+  USER_CREATE_RESET,
+  USER_UPDATE_RESET,
+} from '../../../redux/constants/user/userConstants';
+import {
+  createUser,
+  getUserDetails,
+  updateUser,
+} from '../../../redux/actions/user/userActions';
 import axios from 'axios';
 import CardContainer from '../../../components/card/CardContainer';
 import Error from '../../../components/error/Error';
-import { listDepartments } from '../../../redux/actions/department/departmentActions';
+import Loader from '../../../components/loader/Loader';
 
-const EmployeeCreatePage = () => {
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
+const EmployeeEditPage = () => {
   const [formData, setFormData] = useState({
-    image: null,
+    image: '',
     name: '',
     email: '',
-    password: '',
     phone: '',
-    organization: userInfo?.user?.organization?.id,
-    department: null,
     designation: null,
     education: null,
     companyExperience: null,
     totalExperience: null,
   });
-  const [image, setImage] = useState('');
   const [email, setEmail] = useState();
+  const [image, setImage] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const params = useParams();
+
   const imgUrl =
     'https://www.sourcedogg.com/wp-content/uploads/2015/05/default-placeholder.png';
 
-  const userCreate = useSelector((state) => state.userCreate);
-  const { user, error } = userCreate;
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user: userDetail, error: errorUserDetail } = userDetails;
 
-  const departmentList = useSelector((state) => state.departmentList);
-  const { departments, error: errorDepartmentList } = departmentList;
+  const userUpdate = useSelector((state) => state.userUpdate);
+  const { user, success, error: errorUserUpdated } = userUpdate;
 
-  const imgCheck = !image;
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
+  //   useEffect(() => {
+  //     dispatch(listOrganizations());
+  //     if (user?.id) {
+  //       dispatch({ type: USER_CREATE_RESET });
+  //       navigate('/admins');
+  //     }
+  //    }, [user?.id, dispatch, navigate, formData?.image]);
 
   useEffect(() => {
-    dispatch(listDepartments());
-    if (user?.id) {
-      dispatch({ type: USER_CREATE_RESET });
-      navigate('/employees');
+    if (image) {
+      setFormData({
+        ...formData,
+        image: image,
+      });
     }
-  }, [user?.id, dispatch, navigate]);
 
-  const createUserHandler = (e) => {
+    if (user?.id && success) {
+      dispatch({ type: USER_UPDATE_RESET });
+      navigate('/employees');
+    } else {
+      if (!userDetail.name || !userDetail.id) {
+        dispatch(getUserDetails(params.id));
+      } else {
+        setFormData({
+          image: userDetail.image,
+          name: userDetail.name,
+          email: userDetail.email,
+          phone: userDetail.phone,
+          designation: userDetail.designation,
+          education: userDetail.education,
+          companyExperience: userDetail.companyExperience,
+          totalExperience: userDetail.totalExperience,
+        });
+      }
+    }
+  }, [
+    dispatch,
+    success,
+    navigate,
+    params.id,
+    image,
+    user,
+    userDetail,
+    // !formData.name,
+  ]);
+
+  const updateUserHandler = (e) => {
     e.preventDefault();
-    dispatch(createUser(formData, email));
+    dispatch(
+      updateUser(params.id, {
+        ...formData,
+        image: image ? image : formData.image,
+      }),
+    );
   };
-
-  // const handleChange = async (e) => {
-  //   e.preventDefault();
-  //   const file = e.target.files[0];
-  //   const formData2 = new FormData();
-  //   formData2.append('image', file);
-
-  //   const apiURL = 'http://127.0.0.1:4000/upload';
-
-  //   try {
-  //     const { data } = await axios.post(apiURL, formData2);
-
-  //     if (data) {
-  //       setImage(data);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   const handleChange = async (e) => {
     e.preventDefault();
     const file = e.target.files[0];
-    const formData2 = new FormData();
-    formData2.append('image', file);
+    const formData = new FormData();
+    formData.append('image', file);
 
-    const { data } = await axios.post(
-      'http://127.0.0.1:4000/upload',
-      formData2,
-    );
+    const { data } = await axios.post('http://127.0.0.1:4000/upload', formData);
 
     if (data) {
-      setFormData({
-        ...formData,
-        image: data,
-      });
+      setImage(data);
+      //   setFormData({
+      //     ...formData,
+      //     image: data,
+      //   });
     }
   };
 
   const handleGoBack = () => {
-    navigate('/employees');
+    navigate(-1);
   };
 
-  console.log('Image ====> ', formData);
+  console.log('Form Data ', formData);
 
   return (
     <CardContainer>
-      {error && <Error error={error} />}
-      {errorDepartmentList && (
-        <Error
-          title={'Error Departments Fetching'}
-          error={errorDepartmentList}
-        />
+      {errorUserDetail && <Error error={errorUserDetail} />}
+      {errorUserUpdated && (
+        <Error title={'Error Updating User'} error={errorUserUpdated} />
       )}
 
-      {/* <form onSubmit={createUserHandler}> */}
-      <Box component="form" onSubmit={createUserHandler} id="vendor-form">
+      {loadingState && <Loader />}
+      <form onSubmit={updateUserHandler}>
         <Box className={'header header-border'}>
           <Box className={'header-left'}>
             <Stack
@@ -138,7 +161,7 @@ const EmployeeCreatePage = () => {
                 Back
               </Typography>
               <Typography variant="h5" component="h5">
-                Add New Employee
+                Edit ({userDetail?.name})
               </Typography>
             </Stack>
           </Box>
@@ -157,7 +180,6 @@ const EmployeeCreatePage = () => {
               type="submit"
               variant="contained"
               classes={{ root: 'save-btn' }}
-              // onClick={createUserHandler}
             >
               Save
             </Button>
@@ -167,7 +189,20 @@ const EmployeeCreatePage = () => {
         <Box className={'box-spacing'}>
           <Grid container spacing={2}>
             <Grid item xs={1}>
-              <img
+              <Avatar
+                alt="Remy Sharp"
+                src={
+                  !image
+                    ? `/uploads/${formData?.image?.split('/')[3]}`
+                    : `/uploads/${image?.split('/')[3]}`
+                }
+                style={{
+                  width: '65px',
+                  height: '65px',
+                  borderRadius: '5px',
+                }}
+              />
+              {/* <img
                 src={
                   formData?.image
                     ? `/uploads/${formData?.image?.split('/')[3]}`
@@ -175,7 +210,7 @@ const EmployeeCreatePage = () => {
                 }
                 className={'profile-img'}
                 alt="organization_logo"
-              />
+              /> */}
             </Grid>
             <Grid item xs={3.5}>
               <Typography>Employee's Picture</Typography>
@@ -185,11 +220,10 @@ const EmployeeCreatePage = () => {
             </Grid>
             <Grid item xs={7.5}>
               <input
+                hidden
                 accept="image/*"
                 type="file"
-                hidden
                 id="select-image"
-                // style={{ display: 'none' }}
                 // className={'input-img'}
                 name="image"
                 onChange={handleChange}
@@ -219,6 +253,7 @@ const EmployeeCreatePage = () => {
                 label="Full Name"
                 id="name"
                 size="small"
+                value={formData.name}
                 classes={{ root: 'input-width' }}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -237,6 +272,7 @@ const EmployeeCreatePage = () => {
               <TextField
                 label="Email Address"
                 id="email"
+                value={formData.email}
                 size="small"
                 classes={{ root: 'input-width' }}
                 onChange={(e) =>
@@ -247,33 +283,32 @@ const EmployeeCreatePage = () => {
           </Grid>
         </Box>
 
-        <Box className={'box-spacing'}>
+        {/* <Box className={'box-spacing'}>
           <Grid container>
             <Grid item xs={3}>
-              <Typography sx={{ mt: 1 }}>Department</Typography>
+              <Typography sx={{ mt: 1 }}>Organization</Typography>
             </Grid>
             <Grid item xs={9}>
               <TextField
-                id="department"
+                id="organization"
                 select
-                label="Select Department"
+                label="Select Organization"
                 required
                 classes={{ root: 'input-width' }}
                 size="small"
                 onChange={(e) =>
-                  setFormData({ ...formData, department: e.target.value })
+                  setFormData({ ...formData, organization: e.target.value })
                 }
               >
-                <MenuItem value=""></MenuItem>
-                {departments?.map((dept) => (
-                  <MenuItem key={dept.id} value={dept.id}>
-                    {dept.name}
+                {organizations?.map((organization) => (
+                  <MenuItem key={organization.id} value={organization.id}>
+                    {organization.name}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
           </Grid>
-        </Box>
+        </Box> */}
 
         <Box className={'box-spacing'}>
           <Grid container>
@@ -284,6 +319,7 @@ const EmployeeCreatePage = () => {
               <TextField
                 label="Contact Number"
                 id="phone"
+                value={formData.phone}
                 size="small"
                 classes={{ root: 'input-width' }}
                 onChange={(e) =>
@@ -306,9 +342,9 @@ const EmployeeCreatePage = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
-                label="Designation"
                 id="designation"
                 size="small"
+                value={formData.designation}
                 classes={{ root: 'input-width' }}
                 onChange={(e) =>
                   setFormData({
@@ -328,9 +364,9 @@ const EmployeeCreatePage = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
-                label="Education"
                 id="education"
                 size="small"
+                value={formData.education}
                 classes={{ root: 'input-width' }}
                 onChange={(e) =>
                   setFormData({
@@ -350,9 +386,9 @@ const EmployeeCreatePage = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
-                label="Company Experience"
                 id="education"
                 size="small"
+                value={formData.companyExperience}
                 classes={{ root: 'input-width' }}
                 onChange={(e) =>
                   setFormData({
@@ -372,7 +408,7 @@ const EmployeeCreatePage = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
-                label="Total Experience"
+                value={formData.totalExperience}
                 id="education"
                 size="small"
                 classes={{ root: 'input-width' }}
@@ -387,17 +423,15 @@ const EmployeeCreatePage = () => {
           </Grid>
         </Box>
 
-        <Divider sx={{ my: 5 }} />
-
-        <Box className={'box-spacing'}>
+        {/* <Box className={'box-spacing'}>
           <Typography variant="h5">Credentials</Typography>
           <Typography classes={{ root: 'caption' }}>
             Below are one-time created credentials. These will be sent to
             mentioned email.
           </Typography>
-        </Box>
+        </Box> */}
 
-        <Box className={'box-spacing'}>
+        {/* <Box className={'box-spacing'}>
           <Grid container>
             <Grid item xs={3}>
               <Typography sx={{ mt: 1 }}>Email Address</Typography>
@@ -412,9 +446,9 @@ const EmployeeCreatePage = () => {
               />
             </Grid>
           </Grid>
-        </Box>
+        </Box> */}
 
-        <Box className={'box-spacing'}>
+        {/* <Box className={'box-spacing'}>
           <Grid container>
             <Grid item xs={3}>
               <Typography sx={{ mt: 1 }}>Password</Typography>
@@ -434,11 +468,10 @@ const EmployeeCreatePage = () => {
               />
             </Grid>
           </Grid>
-        </Box>
-      </Box>
-      {/* </form> */}
+        </Box> */}
+      </form>
     </CardContainer>
   );
 };
 
-export default EmployeeCreatePage;
+export default EmployeeEditPage;

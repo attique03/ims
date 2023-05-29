@@ -40,8 +40,10 @@ import {
 } from './reducers/vendor/vendorReducers';
 import {
   assetCreateReducer,
+  assetDeleteReducer,
   assetDetailsReducer,
   assetListReducer,
+  assetUpdateReducer,
 } from './reducers/asset/assetReducers';
 import { subcategoryDetailsReducer } from './reducers/subcategory/subcategoryReducers';
 import {
@@ -90,10 +92,12 @@ const reducer = combineReducers({
   vendorList: vendorListReducer,
   vendorDetails: vendorDetailsReducer,
   vendorDelete: vendorDeleteReducer,
-  assetCreate: assetCreateReducer,
   vendorUpdate: vendorUpdateReducer,
+  assetCreate: assetCreateReducer,
   assetList: assetListReducer,
   assetDetails: assetDetailsReducer,
+  assetUpdate: assetUpdateReducer,
+  assetDelete: assetDeleteReducer,
   requestsCreate: requestsCreateReducer,
   requestsList: requestsListReducer,
   requestsDetails: requestsDetailsReducer,

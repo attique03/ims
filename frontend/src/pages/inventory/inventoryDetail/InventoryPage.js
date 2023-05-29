@@ -18,7 +18,12 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MenuActions from '../../../components/menu/Menu';
-import { listAssetDetails } from '../../../redux/actions/asset/assetActions';
+import {
+  deleteAsset,
+  listAssetDetails,
+} from '../../../redux/actions/asset/assetActions';
+import Error from '../../../components/error/Error';
+import Loader from '../../../components/loader/Loader';
 
 const InventoryPage = () => {
   const dispatch = useDispatch();
@@ -30,10 +35,20 @@ const InventoryPage = () => {
   const assetDetails = useSelector((state) => state.assetDetails);
   const { asset, error } = assetDetails;
 
+  const assetDelete = useSelector((state) => state.assetDelete);
+  const { success, error: errorAssetDelete } = assetDelete;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
   useEffect(() => {
     // dispatch(getUserDetails(params.id));
     dispatch(listAssetDetails(params.id));
-  }, [dispatch, params]);
+
+    if (success) {
+      navigate('/inventory');
+    }
+  }, [dispatch, params, success, navigate]);
 
   const handleGoBack = () => {
     navigate('/inventory');
@@ -49,6 +64,12 @@ const InventoryPage = () => {
 
   return (
     <CardContainer>
+      {error && <Error error={error} />}
+      {errorAssetDelete && (
+        <Error title={'Error Deleting Asset'} error={errorAssetDelete} />
+      )}
+
+      {loadingState && <Loader />}
       <Box className={'header'}>
         <Box className={'header-left'}>
           <Stack
@@ -83,14 +104,17 @@ const InventoryPage = () => {
             open={open}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleMenuClose} disableRipple>
+            <MenuItem onClick={() => navigate('edit')} disableRipple>
               <div className="edit-color">
                 <EditOutlinedIcon classes={{ root: 'edit-color' }} />
               </div>
               Edit
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
-            <MenuItem onClick={handleMenuClose} disableRipple>
+            <MenuItem
+              onClick={() => dispatch(deleteAsset(params.id))}
+              disableRipple
+            >
               <DeleteOutlineOutlinedIcon classes={{ root: 'delete-color' }} />
               Delete
             </MenuItem>

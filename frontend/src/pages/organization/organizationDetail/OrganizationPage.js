@@ -36,6 +36,7 @@ import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import MenuActions from '../../../components/menu/Menu';
 import Error from '../../../components/error/Error';
+import { ORGANIZATION_DELETE_RESET } from '../../../redux/constants/organization/organizationConstants';
 
 const tableColumns = [
   'ID',
@@ -110,6 +111,7 @@ export default function OrganizationPage() {
     dispatch(listOrganizationDetails(params.id));
     dispatch(listUsers(params.id));
     if (success) {
+      dispatch({ type: ORGANIZATION_DELETE_RESET });
       navigate('/organizations');
     }
   }, [dispatch, params, success, navigate]);

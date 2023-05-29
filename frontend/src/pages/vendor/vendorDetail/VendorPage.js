@@ -26,6 +26,7 @@ import {
 import Error from '../../../components/error/Error';
 import Loader from '../../../components/loader/Loader';
 import './vendorPage.css';
+import { VENDOR_DELETE_RESET } from '../../../redux/constants/vendor/vendorConstants';
 
 const VendorPage = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,9 @@ const VendorPage = () => {
   useEffect(() => {
     dispatch(getVendorDetails(params.id));
     if (success) {
+      dispatch({
+        type: VENDOR_DELETE_RESET,
+      });
       navigate('/vendors');
     }
   }, [dispatch, params, success, navigate]);

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,11 +14,13 @@ import {
 import CardContainer from '../../card/CardContainer';
 import DataTable from '../../table/Table';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import { listComplaints } from '../../../redux/actions/complaint/complaintActions';
 import Error from '../../error/Error';
 import { employeeColumns } from '../../complaint/admin/complaintListAdmin/ComplaintListDataAdmin';
 import './dashboardEmployee.css';
+import { getUserDetails } from '../../../redux/actions/user/userActions';
+import { USER_DETAILS_RESET } from '../../../redux/constants/user/userConstants';
+import Loader from '../../loader/Loader';
 
 export const requestColumns = [
   'ID',
@@ -36,9 +39,20 @@ const DashboardEmployee = () => {
   const complaintList = useSelector((state) => state.complaintList);
   const { complaints, error } = complaintList;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user, error: errorUserDetails } = userDetails;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
   useEffect(() => {
+    dispatch({ type: USER_DETAILS_RESET });
+    dispatch(getUserDetails(userInfo?.user?.id));
     dispatch(listComplaints());
-  }, [dispatch]);
+  }, [dispatch, userInfo?.user?.id]);
 
   const handleProfileEdit = () => {
     navigate('profile/edit');
@@ -46,6 +60,9 @@ const DashboardEmployee = () => {
 
   return (
     <CardContainer>
+      {errorUserDetails && <Error error={errorUserDetails} />}
+
+      {loadingState && <Loader />}
       <Box className={'header'}>
         <Box className={'header-left'}>
           <Stack direction="row" spacing={2}>
@@ -73,35 +90,41 @@ const DashboardEmployee = () => {
         className={'box-spacing'}
       >
         <Grid item xs={1.5}>
-          <Avatar
-            // src={`/uploads/${complaint?.image?.split('/')[3]}`}
+          {/* <Avatar
+            src={`/uploads/${complaint?.image?.split('/')[3]}`}
             src="/uploads/image-1681766268555.jpg"
             className={'user-profile'}
             alt="attachments"
+          /> */}
+
+          <Avatar
+            src={`/uploads/${user?.image?.split('/')[3]}`}
+            className={'profile-image'}
+            alt="profile-image"
           />
         </Grid>
         <Grid item xs={3}>
           <Typography>Full Name</Typography>
           <Typography variant="b" component="b">
-            John Doe
+            {user?.name}
           </Typography>
         </Grid>
         <Grid item xs={3}>
           <Typography>Designation</Typography>
           <Typography variant="b" component="b">
-            Jr. Software Engineer
+            {user?.designation}
           </Typography>
         </Grid>
         <Grid item xs={2}>
           <Typography>Contact Number</Typography>
           <Typography variant="b" component="b">
-            +92304234618
+            {user?.phone}
           </Typography>
         </Grid>
         <Grid item xs={2}>
           <Typography>Company Experience</Typography>
           <Typography variant="b" component="b">
-            2 Years
+            {user?.companyExperience} Year(s)
           </Typography>
         </Grid>
       </Grid>
@@ -111,25 +134,25 @@ const DashboardEmployee = () => {
         <Grid item xs={3}>
           <Typography>Email Address</Typography>
           <Typography variant="b" component="b">
-            john@gmail.com
+            {user?.email}
           </Typography>
         </Grid>
         <Grid item xs={3}>
           <Typography>Department</Typography>
           <Typography variant="b" component="b">
-            Development
+            {user?.department?.name}
           </Typography>
         </Grid>
         <Grid item xs={2}>
           <Typography>Education</Typography>
           <Typography variant="b" component="b">
-            BSCS
+            {user?.education}
           </Typography>
         </Grid>
         <Grid item xs={2}>
           <Typography>Total Experience</Typography>
           <Typography variant="b" component="b">
-            6 Years
+            {user?.totalExperience} Years
           </Typography>
         </Grid>
       </Grid>

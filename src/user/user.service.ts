@@ -200,18 +200,22 @@ export class UserService {
       });
       const isEmployee = user?.role?.role === EMPLOYEE;
       return isEmployee ? user : null;
-    } else {
-      throw new ForbiddenException('Not Authozied');
-    }
+    } else if (request.user.role.role === EMPLOYEE) {
+      return await this.userRepository.findOne({
+        where: { id },
+        relations: ['department'],
+      });
+    } else throw new ForbiddenException('Not Authozied');
   }
 
   async update(id: number, updateUserDto: CreateUserDto): Promise<User> {
+    console.log('updateUser ', updateUserDto, id);
     const user = await this.userRepository.findOne({
       where: { id },
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('User Not Found');
     }
 
     if (updateUserDto.password) {

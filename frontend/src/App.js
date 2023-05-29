@@ -41,6 +41,9 @@ import VendorPage from './pages/vendor/vendorDetail/VendorPage';
 import VendorEditPage from './pages/vendor/vendorEdit/VendorEditPage';
 import OrganizationEditPage from './pages/organization/organizationEdit/OrganizationEditPage';
 import AdminEditPage from './pages/admin/adminEdit/AdminEditPage';
+import InventoryEditPage from './pages/inventory/inventoryEdit/InventoryEditPage';
+import EmployeeEditPage from './pages/employee/employeeEdit/EmployeeEditPage';
+import ProfileEditPage from './pages/profile/ProfileEditPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -204,6 +207,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              exact
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <EmployeeEditPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           <Route
@@ -303,6 +315,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <InventoryPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <InventoryEditPage />
                 </ProtectedRoute>
               }
             />
@@ -413,6 +434,14 @@ function App() {
               }
             />
           </Route>
+          <Route
+            path="/profile/edit"
+            element={
+              <ProtectedRoute>
+                <ProfileEditPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
         {/* </LoadingWrapper> */}

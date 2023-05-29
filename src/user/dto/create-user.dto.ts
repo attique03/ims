@@ -14,6 +14,10 @@ export class CreateUserDto {
   password: string;
   readonly phone: string;
   readonly image: string;
+  readonly designation: string;
+  readonly education: string;
+  readonly companyExperience: string;
+  readonly totalExperience: string;
   readonly role: Role;
   readonly vendor: Vendor;
   readonly organization: Organization;

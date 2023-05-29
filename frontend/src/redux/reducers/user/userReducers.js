@@ -18,6 +18,8 @@ import {
   USER_UPDATE_RESET,
   USER_DELETE_SUCCESS,
   USER_DELETE_FAIL,
+  USER_DELETE_RESET,
+  USER_DETAILS_RESET,
 } from '../../constants/user/userConstants';
 
 export const userCreateReducer = (state = {}, action) => {
@@ -80,6 +82,8 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
       return { user: action.payload };
     case USER_DETAILS_FAIL:
       return { error: action.payload };
+    case USER_DETAILS_RESET:
+      return {};
     default:
       return state;
   }
@@ -106,6 +110,8 @@ export const userDeleteReducer = (state = {}, action) => {
       return { success: true };
     case USER_DELETE_FAIL:
       return { error: action.payload };
+    case USER_DELETE_RESET:
+      return {};
     default:
       return state;
   }

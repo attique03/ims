@@ -24,6 +24,7 @@ import MenuActions from '../../../components/menu/Menu';
 import './admin.css';
 import Error from '../../../components/error/Error';
 import Loader from '../../../components/loader/Loader';
+import { USER_DELETE_RESET } from '../../../redux/constants/user/userConstants';
 
 const AdminPage = () => {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const AdminPage = () => {
     dispatch(getUserDetails(params.id));
 
     if (success) {
+      dispatch({ type: USER_DELETE_RESET });
       navigate('/admins');
     }
   }, [dispatch, params, success, navigate]);

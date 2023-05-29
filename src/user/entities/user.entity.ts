@@ -39,6 +39,18 @@ export class User {
   @Column()
   phone: string;
 
+  @Column({ nullable: true })
+  designation: string;
+
+  @Column({ nullable: true })
+  education: string;
+
+  @Column({ nullable: true })
+  companyExperience: string;
+
+  @Column({ nullable: true })
+  totalExperience: string;
+
   @ManyToOne(() => Role, (role) => role.user)
   role: Role;
 

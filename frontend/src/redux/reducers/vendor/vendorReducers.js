@@ -3,6 +3,7 @@ import {
   VENDOR_CREATE_RESET,
   VENDOR_CREATE_SUCCESS,
   VENDOR_DELETE_FAIL,
+  VENDOR_DELETE_RESET,
   VENDOR_DELETE_SUCCESS,
   VENDOR_DETAILS_FAIL,
   VENDOR_DETAILS_SUCCESS,
@@ -74,6 +75,8 @@ export const vendorDeleteReducer = (state = {}, action) => {
       return { success: true };
     case VENDOR_DELETE_FAIL:
       return { error: action.payload };
+    case VENDOR_DELETE_RESET:
+      return {};
     default:
       return state;
   }

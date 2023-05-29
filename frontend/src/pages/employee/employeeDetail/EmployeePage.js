@@ -42,11 +42,15 @@ import {
 import MenuActions from '../../../components/menu/Menu';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { getUserDetails } from '../../../redux/actions/user/userActions';
+import {
+  deleteUser,
+  getUserDetails,
+} from '../../../redux/actions/user/userActions';
 import { listAssets } from '../../../redux/actions/asset/assetActions';
 import { assetColumns, requestColumns } from './employeeData';
 import { listRequests } from '../../../redux/actions/requests/requestsActions';
 import { listCategories } from '../../../redux/actions/category/categoryActions';
+import { USER_DELETE_RESET } from '../../../redux/constants/user/userConstants';
 // import { listComplaints } from '../../../../redux/actions/complaint/complaintActions';
 // import DataTable from '../../../../components/table/Table';
 // import CardContainer from '../../../../components/card/CardContainer';
@@ -78,6 +82,9 @@ const EmployeePage = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { user, error } = userDetails;
 
+  const userDelete = useSelector((state) => state.userDelete);
+  const { success, error: errorUserDelete } = userDelete;
+
   const assetList = useSelector((state) => state.assetList);
   const { assets, error: errorAssetList } = assetList;
 
@@ -92,7 +99,13 @@ const EmployeePage = () => {
     dispatch(listAssets(params.id));
     dispatch(listRequests('', params.id));
     dispatch(listCategories());
-  }, [dispatch, params]);
+
+    if (success) {
+      dispatch({ type: USER_DELETE_RESET });
+      navigate('/employees');
+      return;
+    }
+  }, [dispatch, params, success, navigate]);
 
   const handleChangeIndex = (index) => {
     setValue(index);
@@ -163,14 +176,17 @@ const EmployeePage = () => {
             open={open}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose} disableRipple>
+            <MenuItem onClick={() => navigate('edit')} disableRipple>
               <div className="edit-color">
                 <EditOutlinedIcon classes={{ root: 'edit-color' }} />
               </div>
               Edit
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
-            <MenuItem onClick={handleClose} disableRipple>
+            <MenuItem
+              onClick={() => dispatch(deleteUser(params.id))}
+              disableRipple
+            >
               <DeleteOutlineOutlinedIcon classes={{ root: 'delete-color' }} />
               Delete
             </MenuItem>
