@@ -20,6 +20,7 @@ export class AssetsService {
   ) {}
 
   async create(asset: Asset, req): Promise<Asset> {
+    console.log('Asset ', asset);
     const { description, name, price, serial_number, subCategory, vendor } =
       asset;
     if (
@@ -32,7 +33,7 @@ export class AssetsService {
     ) {
       const newAsset = this.assetRepository.create({
         ...asset,
-        organization: req.organization.id,
+        organization: req.user.organization.id,
       });
 
       return await this.assetRepository.save(newAsset);
@@ -56,6 +57,7 @@ export class AssetsService {
         .andWhere('asset.employeeId = :employeeId', {
           employeeId: req.query.employeeId,
         })
+        .orderBy('asset.id', 'DESC')
         .getRawMany();
     }
     return this.assetRepository
@@ -69,10 +71,12 @@ export class AssetsService {
       .where('asset.organizationId = :organizationId', {
         organizationId: req.user.organization.id,
       })
+      .orderBy('asset.id', 'DESC')
       .getRawMany();
   }
 
   findOne(id: number, req) {
+    console.log('findOne ', id);
     return this.assetRepository.findOne({
       where: { id, organization: { id: req.user.organization.id } },
       relations: ['subCategory', 'subCategory.parent', 'vendor', 'employee'],
@@ -134,7 +138,7 @@ export class AssetsService {
     });
 
     if (!asset) {
-      throw new NotFoundException('Asset not found');
+      throw new NotFoundException('Asset Not Found');
     }
 
     return await this.assetRepository.remove(asset);

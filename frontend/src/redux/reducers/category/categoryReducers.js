@@ -7,6 +7,9 @@ import {
   CATEGORY_DETAILS_LIST_RESET,
   CATEGORY_DETAILS_LIST__SUCCESS,
   CATEGORY_DETAILS__SUCCESS,
+  CATEGORY_FETCH_FAIL,
+  CATEGORY_FETCH_RESET,
+  CATEGORY_FETCH__SUCCESS,
   CATEGORY_LIST_FAIL,
   CATEGORY_LIST_RESET,
   CATEGORY_LIST_SUCCESS,
@@ -64,6 +67,22 @@ export const categoryDetailsReducer = (state = { category: {} }, action) => {
       return { category: action.payload };
     case CATEGORY_DETAILS_FAIL:
       return { error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const categoryFetchReducer = (
+  state = { categoryFetched: {} },
+  action,
+) => {
+  switch (action.type) {
+    case CATEGORY_FETCH__SUCCESS:
+      return { categoryFetched: action.payload };
+    case CATEGORY_FETCH_FAIL:
+      return { error: action.payload };
+    case CATEGORY_FETCH_RESET:
+      return {};
     default:
       return state;
   }

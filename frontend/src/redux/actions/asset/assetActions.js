@@ -23,14 +23,34 @@ import {
   ASSET_UPDATE_SUCCESS,
 } from '../../constants/asset/assetConstants';
 import axios from 'axios';
+import { baseURL } from '../../../utils/constants';
 
-export const createAsset = (asset) => async (dispatch) => {
+export const createAsset = (asset) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.post(createAssetApi, asset);
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `${baseURL}${createAssetApi}`,
+      asset,
+      config,
+    );
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.post(createAssetApi, asset);
 
     dispatch({
       type: ASSET_CREATE_SUCCESS,
@@ -50,13 +70,29 @@ export const createAsset = (asset) => async (dispatch) => {
 
 export const listAssets =
   (employeeId = '') =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
       dispatch({
         type: LOADING_TRUE,
       });
 
-      const { data } = await axiosConfig.get(getAllAssets(employeeId));
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `${baseURL}${getAllAssets(employeeId)}`,
+        config,
+      );
+
+      // const { data } = await axiosConfig.get(getAllAssets(employeeId));
 
       dispatch({
         type: ASSET_LIST_SUCCESS,
@@ -78,13 +114,29 @@ export const listAssets =
     }
   };
 
-export const listAssetDetails = (id) => async (dispatch) => {
+export const listAssetDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.get(getAssetApi(id));
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${baseURL}${getAssetApi(id)}`, config);
+
+    // axiosConfig.defaults.headers.common[
+    //   'Authorization'
+    // ] = `Bearer ${userInfo.token}`;
+    // const { data } = await axiosConfig.get(getAssetApi(id));
 
     dispatch({
       type: ASSET_DETAILS_SUCCESS,

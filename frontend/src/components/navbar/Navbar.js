@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
@@ -23,16 +24,19 @@ import {
   SuperAdmin,
   superAdminPages,
 } from './navbarData/navbarData';
-import './navbar.css';
 import { ADMIN, EMPLOYEE, SUPERADMIN } from '../../utils/constants';
+import './navbar.css';
 
 function Navbar() {
   const [showNavbar, setShowNavbar] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  const [selectedNav, setSelectedNav] = useState(null);
+  const [selectedNav, setSelectedNav] = useState(0);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  console.log('dslkfjd', location.pathname.split('/')[1]);
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -139,8 +143,17 @@ function Navbar() {
                 <Link
                   key={index}
                   to={page.route}
-                  onClick={() => handleSelectedNav(index)}
-                  className={(selectedNav === index && 'active', 'nav-link')}
+                  // onClick={() => handleSelectedNav(index)}
+                  className={`nav-link ${
+                    location.pathname.split('/')[1] === page.route.split('/')[1]
+                      ? 'active'
+                      : ''
+                  }`}
+
+                  // className={`nav-link ${
+                  //   selectedNav === index ? 'active' : ''
+                  // }`}
+                  // className={(selectedNav === index && 'active', 'nav-link')}
                 >
                   {page.title}
                 </Link>
@@ -150,13 +163,36 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open Profile">
               <IconButton onClick={handleOpenUserMenu}>
-                <Avatar alt="Remy Sharp" src="/avatar0.jpg" />
+                {userInfo?.user?.image?.split ? (
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={`/uploads/${userInfo?.user?.image?.split('/')[3]}`}
+                  />
+                ) : (
+                  <Avatar sx={{ bgcolor: '#c62828' }}>
+                    {userInfo?.user?.name[0]}
+                  </Avatar>
+                )}
+
+                {/* <Avatar alt="Remy Sharp" src={"/avatar0.jpg"} /> */}
+
                 <Typography sx={{ mx: 1, color: 'black' }}>
                   {checkRole(userInfo?.user?.role?.role)}
                 </Typography>
+
                 <FontAwesomeIcon icon={faChevronDown} className="fa-light" />
+                {userInfo?.user?.organization?.name && (
+                  <Typography
+                    sx={{ ml: 1 }}
+                    variant="caption"
+                    component="caption"
+                  >
+                    {userInfo?.user?.organization?.name}
+                  </Typography>
+                )}
               </IconButton>
             </Tooltip>
+
             <Menu
               classes={{ root: 'menu' }}
               id="menu-appbar"

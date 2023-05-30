@@ -44,7 +44,7 @@ const RequestsPage = () => {
   useEffect(() => {
     dispatch(listRequestsDetails(params.id));
     // if (success) {
-      dispatch({ type: REQUESTS_UPDATE_RESET });
+    //   dispatch({ type: REQUESTS_UPDATE_RESET });
     // }
   }, [dispatch, params, success]);
 
@@ -52,9 +52,20 @@ const RequestsPage = () => {
     navigate('/requests');
   };
 
+  const handleRejectRequest = () => {
+    dispatch(updateRequests(params.id, REJECTED));
+  };
+
+  const handleResolveRequest = () => {
+    console.log('Resolve');
+    dispatch(updateRequests(params.id, RESOLVED));
+  };
+
   return (
     <CardContainer>
-      {errorRequestsUpdate && <Error error={errorRequestsUpdate} />}
+      {errorRequestsUpdate && (
+        <Error title="Error Updating" error={errorRequestsUpdate} />
+      )}
       {/* ______________________ Header Starts ______________________ */}
       <Box className={'header'}>
         <Box className={'header-left'}>
@@ -100,7 +111,7 @@ const RequestsPage = () => {
                   fullWidth
                   variant="contained"
                   classes={{ root: 'button-color-red' }}
-                  onClick={() => dispatch(updateRequests(params.id, REJECTED))}
+                  onClick={handleRejectRequest}
                 >
                   Reject Request
                 </Button>
@@ -112,7 +123,7 @@ const RequestsPage = () => {
                   fullWidth
                   variant="contained"
                   classes={{ root: 'button-color' }}
-                  onClick={() => dispatch(updateRequests(params.id, RESOLVED))}
+                  onClick={handleResolveRequest}
                 >
                   Approve Request
                 </Button>

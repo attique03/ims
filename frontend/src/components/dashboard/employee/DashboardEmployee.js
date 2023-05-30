@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import {
   Avatar,
   Box,
@@ -21,6 +22,8 @@ import './dashboardEmployee.css';
 import { getUserDetails } from '../../../redux/actions/user/userActions';
 import { USER_DETAILS_RESET } from '../../../redux/constants/user/userConstants';
 import Loader from '../../loader/Loader';
+import { complaintsColumns, requestsColumns } from './dashboardTableColumns';
+import { listRequests } from '../../../redux/actions/requests/requestsActions';
 
 export const requestColumns = [
   'ID',
@@ -45,6 +48,9 @@ const DashboardEmployee = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { user, error: errorUserDetails } = userDetails;
 
+  const requestsList = useSelector((state) => state.requestsList);
+  const { requests, error: errorRequestsList } = requestsList;
+
   const loading = useSelector((state) => state.loading);
   const { loading: loadingState } = loading;
 
@@ -52,6 +58,7 @@ const DashboardEmployee = () => {
     dispatch({ type: USER_DETAILS_RESET });
     dispatch(getUserDetails(userInfo?.user?.id));
     dispatch(listComplaints());
+    dispatch(listRequests());
   }, [dispatch, userInfo?.user?.id]);
 
   const handleProfileEdit = () => {
@@ -74,7 +81,7 @@ const DashboardEmployee = () => {
         <Box className={'header-right'}>
           <Button
             variant="contained"
-            startIcon={<FontAwesomeIcon icon={faAdd} className="icon-size" />}
+            startIcon={<EditOutlinedIcon />}
             classes={{ root: 'create-button' }}
             onClick={handleProfileEdit}
           >
@@ -172,7 +179,11 @@ const DashboardEmployee = () => {
         </Box>
       </Box>
       {error && <Error error={error} />}
-      <DataTable columns={requestColumns} data={complaints && complaints} />
+      <DataTable
+        columns={requestsColumns}
+        data={requests && requests}
+        viewType="requests"
+      />
 
       <Box className={'header'} sx={{ mt: 3 }}>
         <Box className={'header-left'}>
@@ -187,7 +198,11 @@ const DashboardEmployee = () => {
         </Box>
       </Box>
       {error && <Error error={error} />}
-      <DataTable columns={employeeColumns} data={complaints && complaints} />
+      <DataTable
+        columns={complaintsColumns}
+        data={complaints && complaints}
+        viewType="complaints"
+      />
     </CardContainer>
   );
 };

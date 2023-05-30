@@ -29,6 +29,7 @@ import {
   categoryCreateReducer,
   categoryDetailsListReducer,
   categoryDetailsReducer,
+  categoryFetchReducer,
   categoryListReducer,
 } from './reducers/category/categoryReducers';
 import {
@@ -61,6 +62,7 @@ import {
   requestsUpdateReducer,
 } from './reducers/requests/requestsReducers';
 import { departmentListReducer } from './reducers/department/departmentReducers';
+import axiosConfig from '../utils/axiosConfig';
 
 const reducer = combineReducers({
   userCreate: userCreateReducer,
@@ -87,6 +89,7 @@ const reducer = combineReducers({
   categoryList: categoryListReducer,
   categoryDetailsList: categoryDetailsListReducer,
   categoryDetails: categoryDetailsReducer,
+  categoryFetch: categoryFetchReducer,
   subcategoryDetails: subcategoryDetailsReducer,
   vendorCreate: vendorCreateReducer,
   vendorList: vendorListReducer,
@@ -117,6 +120,13 @@ const userInfoFromStorage = localStorage.getItem('userInfo')
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
 };
+
+// if (initialState?.userLogin?.userInfo?.token) {
+//   axiosConfig.defaults.headers.common[
+//     'Authorization'
+//   ] = `Bearer ${initialState?.userLogin?.userInfo?.token}`;
+// }
+console.log('Initial state', initialState.userLogin.userInfo);
 
 const middleware = [thunk];
 

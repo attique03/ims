@@ -28,6 +28,11 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
+  @Get('/individual/:id')
+  findOne(@Req() request, @Param('id') id: number) {
+    return this.categoryService.findOne(id);
+  }
+
   @Get('/all')
   getCategoriesWithSubcategoriesAndVendors() {
     return this.categoryService.getCategoriesWithSubcategoriesAndVendors();

@@ -24,70 +24,68 @@ import { listRequests } from '../../../redux/actions/requests/requestsActions';
 import { ADMIN, EMPLOYEE, PENDING, RESOLVED } from '../../../utils/constants';
 
 const ReturnsListPage = () => {
-  const [category, setCategory] = useState();
-  const [subCategory, setSubCategory] = useState();
-  const [location, setLocation] = React.useState('');
   const [searchValue, setSearchValue] = React.useState('');
-  const [filteredInventory, setFilteredInventory] = useState([]);
+  const [filteredOnSearch, setFilteredOnSearch] = useState([]);
   const [status, setStatus] = useState('');
+  const [filteredOnStatus, setFilteredOnStatus] = useState([]);
   const [type, setType] = useState('');
+  const [filteredOnType, setFilteredOnType] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const assetList = useSelector((state) => state.assetList);
-  const { assets, error } = assetList;
-
   const requestsList = useSelector((state) => state.requestsList);
   const { requests, error: errorRequestsList } = requestsList;
-
-  const categoryList = useSelector((state) => state.categoryList);
-  const { categories, error: errorcategoryList } = categoryList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    dispatch(listAssets());
-    dispatch(listCategories());
     dispatch(listRequests('faulty'));
-
-    // Filter the requests based on the search query
   }, [dispatch]);
-
-  const handleChange = (event) => {
-    setLocation(event.target.value);
-  };
 
   const handleAdd = () => {
     navigate('create');
   };
 
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    const subCat = categories[1].filter(
-      (cat) => cat.category_parentId === e.target.value,
-    );
-    setSubCategory(subCat);
-  };
-
-  const handleChangeStatus = (event) => {
-    setStatus(event.target.value);
-  };
-
-  const handleChangeType = (event) => {
-    setType(event.target.value);
-  };
-
   const handleSearch = (e) => {
     e.preventDefault();
+    setStatus('');
+    setFilteredOnStatus('');
     setSearchValue(e.target.value);
+
     let search = e.target.value;
-    const filtered = assets.filter((request) =>
-      request.asset_name.toLowerCase().includes(search.toLowerCase()),
+    const filtered = requests.filter((request) =>
+      request.requests_itemName.toLowerCase().includes(search.toLowerCase()),
     );
-    setFilteredInventory(filtered);
+    setFilteredOnSearch(filtered);
   };
+
+  const handleChangeStatus = (e) => {
+    e.preventDefault();
+    setSearchValue('');
+    setFilteredOnSearch('');
+    setStatus(e.target.value);
+
+    let search = e.target.value;
+    const filtered = requests.filter((request) =>
+      request.requests_status.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnStatus(filtered);
+  };
+
+  // const handleChangeType = (e) => {
+  //   e.preventDefault();
+  //   setSearchValue('');
+  //   setFilteredOnSearch('');
+  //   setType(e.target.value);
+
+  //   let search = e.target.value;
+  //   const filtered = requests.filter((request) =>
+  //     request.requests_returnType.toLowerCase().includes(search.toLowerCase()),
+  //   );
+  //   setFilteredOnStatus(filtered);
+  // };
 
   return (
     <CardContainer>
@@ -104,8 +102,8 @@ const ReturnsListPage = () => {
               <>
                 <TextField
                   label="Search"
-                  id="outlined-size-small"
-                  defaultValue=""
+                  id="search"
+                  value={searchValue}
                   size="small"
                   sx={{ width: '200px' }}
                   onChange={handleSearch}
@@ -141,7 +139,7 @@ const ReturnsListPage = () => {
                     id="type"
                     value={status}
                     label="Select Type"
-                    onChange={handleChangeType}
+                    // onChange={handleChangeType}
                   >
                     <MenuItem value=""></MenuItem>
                     <MenuItem value="repair">Repair</MenuItem>
@@ -173,7 +171,7 @@ const ReturnsListPage = () => {
           columns={tableColumns}
           data={requests && requests}
           //   data={
-          //     filteredInventory.length > 0 ? filteredInventory : assets && assets
+          //     filteredOnSearch.length > 0 ? filteredOnSearch : assets && assets
           //   }
         />
       </Box>

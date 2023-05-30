@@ -1,5 +1,7 @@
+import axios from 'axios';
 import { getDepartment } from '../../../api/departmentApi/Department';
 import axiosConfig from '../../../utils/axiosConfig';
+import { baseURL } from '../../../utils/constants';
 import { errorHandler } from '../../../utils/errorHandler';
 import {
   DEPARTMENT_LIST_FAIL,
@@ -10,13 +12,26 @@ import {
   LOADING_TRUE,
 } from '../../constants/loading/loadingConstants';
 
-export const listDepartments = () => async (dispatch) => {
+export const listDepartments = () => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.get(getDepartment);
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${baseURL}${getDepartment}`, config);
+
+    // const { data } = await axiosConfig.get(getDepartment);
 
     dispatch({
       type: DEPARTMENT_LIST_SUCCESS,

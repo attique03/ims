@@ -50,16 +50,16 @@ const countries = [
 
 const OrganizationEditPage = () => {
   const [formData, setFormData] = useState({
-    image: '',
-    name: '',
-    email: '',
-    bio: '',
-    address: '',
-    city: '',
-    country: '',
-    zip: 0,
-    representativeName: '',
-    representativeContact: '',
+    image: null,
+    name: null,
+    email: null,
+    bio: null,
+    address: null,
+    city: null,
+    country: null,
+    zip: null,
+    representativeName: null,
+    representativeContact: null,
   });
   const [image, setImage] = useState(null);
 
@@ -81,15 +81,15 @@ const OrganizationEditPage = () => {
   const { loading: loadingState } = loading;
 
   useEffect(() => {
-    if (image) {
-      // console.log('Here in Image');
-      setFormData({
-        ...formData,
-        image: image,
-      });
+    // if (image) {
+    //   // console.log('Here in Image');
+    //   setFormData({
+    //     ...formData,
+    //     image: image,
+    //   });
 
-      // console.log('Here in Image 2', formData);
-    }
+    //   // console.log('Here in Image 2', formData);
+    // }
 
     if (organizationUpdated?.id && success) {
       dispatch({ type: ORGANIZATION_UPDATE_RESET });
@@ -100,19 +100,31 @@ const OrganizationEditPage = () => {
 
         dispatch(listOrganizationDetails(params.id));
       } else {
-        console.log('Inside Else Setting Form ', formData);
-        setFormData({
-          image: organization.image,
-          name: organization.name,
-          email: organization.email,
-          bio: organization.bio,
-          address: organization.address,
-          city: organization.city,
-          country: organization.country,
-          zip: organization.zip,
-          representativeName: organization.representativeName,
-          representativeContact: organization.representativeContact,
-        });
+        if (
+          !formData.image &&
+          !formData.name &&
+          !formData.email &&
+          !formData.bio &&
+          !formData.address &&
+          !formData.city &&
+          !formData.country &&
+          !formData.zip &&
+          !formData.representativeName &&
+          !formData.representativeContact
+        ) {
+          setFormData({
+            image: organization.image,
+            name: organization.name,
+            email: organization.email,
+            bio: organization.bio,
+            address: organization.address,
+            city: organization.city,
+            country: organization.country,
+            zip: organization.zip,
+            representativeName: organization.representativeName,
+            representativeContact: organization.representativeContact,
+          });
+        }
       }
     }
   }, [
@@ -120,7 +132,7 @@ const OrganizationEditPage = () => {
     success,
     navigate,
     params.id,
-    // organization,
+    organization,
     organizationUpdated,
     image,
   ]);
@@ -202,6 +214,7 @@ const OrganizationEditPage = () => {
                   fullWidth
                   variant="contained"
                   color="info"
+                  onClick={goBackHandler}
                 >
                   Cancel
                 </Button>

@@ -265,11 +265,12 @@ const EmployeeCreatePage = () => {
                 }
               >
                 <MenuItem value=""></MenuItem>
-                {departments?.map((dept) => (
-                  <MenuItem key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </MenuItem>
-                ))}
+                {departments &&
+                  departments?.map((dept) => (
+                    <MenuItem key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </MenuItem>
+                  ))}
               </TextField>
             </Grid>
           </Grid>

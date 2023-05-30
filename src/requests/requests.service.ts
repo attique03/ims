@@ -74,6 +74,7 @@ export class RequestsService {
         .andWhere('requests.userId = :userId', {
           userId: req.user.id,
         })
+        .orderBy('requests', 'DESC')
         .getRawMany();
     } else if (req.user.role.role === ADMIN) {
       // ADMIN Fetches all the requets
@@ -99,6 +100,7 @@ export class RequestsService {
           .andWhere('requests.type = :type', {
             type: req.query.type,
           })
+          .orderBy('requests', 'DESC')
           .getRawMany();
       }
       // Requests of Individual Employee
@@ -121,6 +123,7 @@ export class RequestsService {
             .andWhere('requests.userId = :userId', {
               userId: req.query.userId,
             })
+            .orderBy('requests', 'DESC')
             .getRawMany()
         );
       } else {
@@ -144,6 +147,7 @@ export class RequestsService {
           .andWhere('requests.type = :type', {
             type: 'acquisition',
           })
+          .orderBy('requests', 'DESC')
           .getRawMany();
       }
     } else {
@@ -208,9 +212,12 @@ export class RequestsService {
         // })
         .getRawOne();
 
+      console.log('Request Above ', requestResolved, req.query.status);
+
       if (asset) {
         const assetId = asset.asset_id;
         const reqId = requestResolved.id;
+        console.log('Request for Asset ', assetId, reqId);
 
         const updatedAsset = await this.assetRepository
           .createQueryBuilder()

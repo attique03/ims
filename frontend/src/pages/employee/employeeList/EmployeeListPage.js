@@ -24,7 +24,11 @@ import Error from '../../../components/error/Error';
 import { listDepartments } from '../../../redux/actions/department/departmentActions';
 
 const EmployeeListPage = () => {
-  const [department, setDepartment] = React.useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredOnSearch, setFilteredOnSearch] = useState([]);
+
+  const [department, setDepartment] = useState('');
+  const [filteredOnDepartment, setFilteredOnDepartment] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -40,13 +44,36 @@ const EmployeeListPage = () => {
     dispatch(listDepartments());
   }, [dispatch]);
 
-  const handleChange = (event) => {
-    setDepartment(event.target.value);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setDepartment('');
+    setFilteredOnDepartment('');
+    setSearchValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = users.filter((user) =>
+      user.user_name.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnSearch(filtered);
+  };
+
+  const handleDepartmentChange = (e) => {
+    setSearchValue('');
+    setFilteredOnSearch('');
+    setDepartment(e.target.value);
+
+    let search = e.target.value;
+    const filtered = users.filter((user) =>
+      user.department.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnDepartment(filtered);
   };
 
   const handleAdd = () => {
     navigate('create');
   };
+
+  console.log('Department ', department);
 
   return (
     <CardContainer>
@@ -67,6 +94,8 @@ const EmployeeListPage = () => {
               label="Search"
               id="search"
               size="small"
+              value={searchValue}
+              onChange={handleSearch}
               classes={{ root: 'icon-box' }}
               InputProps={{
                 endAdornment: (
@@ -83,8 +112,9 @@ const EmployeeListPage = () => {
                 id="department"
                 value={department}
                 label="Department"
-                onChange={handleChange}
+                onChange={handleDepartmentChange}
               >
+                <MenuItem value="">None</MenuItem>
                 {departments?.map((dept) => (
                   <MenuItem value={dept.name}>{dept.name}</MenuItem>
                 ))}
@@ -105,7 +135,16 @@ const EmployeeListPage = () => {
       </Box>
 
       <Box sx={{ m: 2 }}>
-        <DataTable columns={tableColumns} data={users && users} />
+        <DataTable
+          columns={tableColumns}
+          data={
+            filteredOnSearch.length > 0
+              ? filteredOnSearch
+              : filteredOnDepartment.length > 0
+              ? filteredOnDepartment
+              : users && users
+          }
+        />
       </Box>
     </CardContainer>
   );

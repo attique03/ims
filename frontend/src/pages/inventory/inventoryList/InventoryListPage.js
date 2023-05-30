@@ -19,14 +19,22 @@ import DataTable from '../../../components/table/Table';
 import CardContainer from '../../../components/card/CardContainer';
 import { listAssets } from '../../../redux/actions/asset/assetActions';
 import { tableColumns } from './inventoryListData';
-import { listCategories } from '../../../redux/actions/category/categoryActions';
+import {
+  fetchCategoryDetails,
+  listCategories,
+} from '../../../redux/actions/category/categoryActions';
+import Loader from '../../../components/loader/Loader';
+import Error from '../../../components/error/Error';
 
 const InventoryListPage = () => {
   const [category, setCategory] = useState();
-  const [subCategory, setSubCategory] = useState();
-  const [location, setLocation] = React.useState('');
+  const [subCategory, setSubCategory] = useState([]);
+  const [subCatValue, setSubCatValue] = React.useState('');
+
   const [searchValue, setSearchValue] = React.useState('');
   const [filteredInventory, setFilteredInventory] = useState([]);
+  const [filteredOnSubCategory, setFilteredOnSubCategory] = useState([]);
+  const [filteredOnCategory, setFilteredOnCategory] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -35,17 +43,34 @@ const InventoryListPage = () => {
   const { assets, error } = assetList;
 
   const categoryList = useSelector((state) => state.categoryList);
-  const { categories, error: errorcategoryList } = categoryList;
+  const { categories, error: errorCategoryList } = categoryList;
+
+  const categoryFetch = useSelector((state) => state.categoryFetch);
+  const { categoryFetched, error: errorcategoryFetched } = categoryFetch;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
 
   useEffect(() => {
     dispatch(listAssets());
     dispatch(listCategories());
 
+    if (categoryFetched && categoryFetched?.name) {
+      console.log('Category fetched ', categoryFetched);
+
+      let search = categoryFetched?.name;
+      const filtered = assets.filter((asset) =>
+        asset.categoryName.toLowerCase().includes(search.toLowerCase()),
+      );
+
+      setFilteredOnCategory(filtered);
+    }
+
     // Filter the requests based on the search query
-  }, [dispatch]);
+  }, [dispatch, categoryFetched, category]);
 
   const handleChange = (event) => {
-    setLocation(event.target.value);
+    setSubCatValue(event.target.value);
   };
 
   const handleAdd = () => {
@@ -54,6 +79,16 @@ const InventoryListPage = () => {
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
+
+    // if (e.target.value === '') {
+    setFilteredOnCategory('');
+    setFilteredOnSubCategory('');
+    // }
+    if (e.target.value) {
+      dispatch(fetchCategoryDetails(e.target.value));
+      console.log('After Dispatch ', e.target.value);
+    }
+
     const subCat = categories[1].filter(
       (cat) => cat.category_parentId === e.target.value,
     );
@@ -62,7 +97,12 @@ const InventoryListPage = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    setCategory('');
+    setSubCatValue('');
+    setFilteredOnCategory('');
+    setFilteredOnSubCategory('');
     setSearchValue(e.target.value);
+
     let search = e.target.value;
     const filtered = assets.filter((request) =>
       request.asset_name.toLowerCase().includes(search.toLowerCase()),
@@ -70,8 +110,53 @@ const InventoryListPage = () => {
     setFilteredInventory(filtered);
   };
 
+  const handleFilterSubCategory = (e) => {
+    e.preventDefault();
+    if (e.target.value === '') {
+      console.log('Filter Sub Category ', e.target.value);
+      setCategory('');
+    }
+    setFilteredOnCategory('');
+    setSearchValue('');
+    setFilteredInventory('');
+    setSubCatValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = assets.filter((subCat) =>
+      subCat.subcategoryName.toLowerCase().includes(search.toLowerCase()),
+    );
+
+    setFilteredOnSubCategory(filtered);
+  };
+
+  const handleFilterCategory = (e) => {
+    e.preventDefault();
+    setSearchValue('');
+    setFilteredInventory('');
+    setSubCatValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = assets.filter((subCat) =>
+      subCat.subcategoryName.toLowerCase().includes(search.toLowerCase()),
+    );
+
+    setFilteredOnSubCategory(filtered);
+  };
+
+  console.log(
+    'SubCategory ',
+    filteredOnCategory,
+    filteredOnSubCategory,
+    subCategory,
+    category,
+    subCatValue,
+  );
+
   return (
     <CardContainer>
+      {error && <Error error={error} />}
+
+      {loadingState && <Loader />}
       <Box display="flex" p={1} sx={{ mb: 4 }}>
         <Box p={1} flexGrow={1}>
           <Stack
@@ -105,14 +190,19 @@ const InventoryListPage = () => {
                 labelId="demo-select-small"
                 id="demo-select-small"
                 value={category}
-                label="Location"
                 onChange={handleCategoryChange}
               >
-                {categories[0]?.map((option) => (
-                  <MenuItem key={option.category_id} value={option.category_id}>
-                    {option.category_name}
-                  </MenuItem>
-                ))}
+                {errorCategoryList && <Error error={errorCategoryList} />}
+                <MenuItem value="">None</MenuItem>
+                {categories &&
+                  categories[0]?.map((option) => (
+                    <MenuItem
+                      key={option.category_id}
+                      value={option.category_id}
+                    >
+                      {option.category_name}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
             <FormControl sx={{ width: 200 }} size="small">
@@ -122,12 +212,23 @@ const InventoryListPage = () => {
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"
-                value={location}
+                value={subCatValue}
                 label="Category"
-                onChange={handleChange}
+                onChange={handleFilterSubCategory}
               >
+                {subCategory.length === 0 && (
+                  <Error
+                    title="Sub-Category"
+                    error={'Please Select Catgeory'}
+                    severity="info"
+                  />
+                )}
+                {subCategory && <MenuItem value="">None</MenuItem>}
                 {subCategory?.map((option) => (
-                  <MenuItem key={option.category_id} value={option.category_id}>
+                  <MenuItem
+                    key={option.category_id}
+                    value={option.category_name}
+                  >
                     {option.category_name}
                   </MenuItem>
                 ))}
@@ -153,7 +254,13 @@ const InventoryListPage = () => {
         <DataTable
           columns={tableColumns}
           data={
-            filteredInventory.length > 0 ? filteredInventory : assets && assets
+            filteredInventory.length > 0
+              ? filteredInventory
+              : filteredOnCategory.length > 0
+              ? filteredOnCategory
+              : filteredOnSubCategory.length > 0
+              ? filteredOnSubCategory
+              : assets && assets
           }
         />
       </Box>

@@ -21,6 +21,7 @@ import { ASSET_CREATE_RESET } from '../../../redux/constants/asset/assetConstant
 import { useNavigate } from 'react-router-dom';
 import { createAsset } from '../../../redux/actions/asset/assetActions';
 import Error from '../../../components/error/Error';
+import Loader from '../../../components/loader/Loader';
 
 const InventoryCreatePage = () => {
   const [formData, setFormData] = useState({
@@ -58,6 +59,9 @@ const InventoryCreatePage = () => {
   const categoryList = useSelector((state) => state.categoryList);
   const { categories, error: errorcategoryList } = categoryList;
 
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
   useEffect(() => {
     dispatch(listVendors());
     dispatch(listCategories());
@@ -79,9 +83,9 @@ const InventoryCreatePage = () => {
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
-    const subCat = categories[1].filter(
-      (cat) => cat.category_parentId === e.target.value,
-    );
+    const subCat =
+      categories &&
+      categories[1].filter((cat) => cat.category_parentId === e.target.value);
     setSubCategory(subCat);
   };
 
@@ -89,6 +93,8 @@ const InventoryCreatePage = () => {
     <ThemeProvider theme={theme}>
       <CardContainer>
         {error && <Error error={error} />}
+        {loadingState && <Loader />}
+
         <form onSubmit={createAssetHandler}>
           <Box display="flex" p={1} className={'border-card'}>
             <Box p={1} flexGrow={1}>
@@ -212,14 +218,15 @@ const InventoryCreatePage = () => {
                   size="small"
                   onChange={handleCategoryChange}
                 >
-                  {categories[0]?.map((option) => (
-                    <MenuItem
-                      key={option.category_id}
-                      value={option.category_id}
-                    >
-                      {option.category_name}
-                    </MenuItem>
-                  ))}
+                  {categories &&
+                    categories[0]?.map((option) => (
+                      <MenuItem
+                        key={option.category_id}
+                        value={option.category_id}
+                      >
+                        {option.category_name}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
             </Grid>
@@ -302,11 +309,12 @@ const InventoryCreatePage = () => {
                     setFormData({ ...formData, vendor: e.target.value })
                   }
                 >
-                  {vendors?.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.name}
-                    </MenuItem>
-                  ))}
+                  {vendors &&
+                    vendors?.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
             </Grid>

@@ -34,6 +34,7 @@ const AdminCreatePage = () => {
     organization: 0,
   });
   const [email, setEmail] = useState();
+  const [image, setImage] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,11 +49,18 @@ const AdminCreatePage = () => {
 
   useEffect(() => {
     dispatch(listOrganizations());
+
+    if (image) {
+      setFormData({
+        ...formData,
+        image: image,
+      });
+    }
     if (user?.id) {
       dispatch({ type: USER_CREATE_RESET });
       navigate('/admins');
     }
-  }, [user?.id, dispatch, navigate, formData?.image]);
+  }, [user?.id, dispatch, navigate, image]);
 
   const createUserHandler = (e) => {
     e.preventDefault();
@@ -68,10 +76,12 @@ const AdminCreatePage = () => {
     const { data } = await axios.post('http://127.0.0.1:4000/upload', formData);
 
     if (data) {
-      setFormData({
-        ...formData,
-        image: data,
-      });
+      setImage(data);
+
+      // setFormData({
+      //   ...formData,
+      //   image: data,
+      // });
     }
   };
 
@@ -133,10 +143,15 @@ const AdminCreatePage = () => {
             <Grid item xs={1}>
               <img
                 src={
-                  formData?.image
-                    ? `/uploads/${formData?.image?.split('/')[3]}`
-                    : imgUrl
+                  image
+                    ? `/uploads/${image?.split('/')[3]}`
+                    : 'https://www.sourcedogg.com/wp-content/uploads/2015/05/default-placeholder.png'
                 }
+                // src={
+                //   formData?.image
+                //     ? `/uploads/${formData?.image?.split('/')[3]}`
+                //     : imgUrl
+                // }
                 className={'profile-img'}
                 alt="organization_logo"
               />

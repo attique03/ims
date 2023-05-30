@@ -20,14 +20,35 @@ import {
   REQUESTS_UPDATE_FAIL,
   REQUESTS_UPDATE_SUCCESS,
 } from '../../constants/requests/requestsConstants';
+import axios from 'axios';
+import { baseURL } from '../../../utils/constants';
 
-export const createRequest = (requests) => async (dispatch) => {
+export const createRequest = (requests) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.post(createRequests, requests);
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `${baseURL}${createRequests}`,
+      requests,
+      config,
+    );
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.post(createRequests, requests);
 
     dispatch({
       type: REQUESTS_CREATE_SUCCESS,
@@ -47,15 +68,31 @@ export const createRequest = (requests) => async (dispatch) => {
 
 export const listRequests =
   (type = '', userId = '') =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
       dispatch({
         type: LOADING_TRUE,
       });
 
-      console.log('Actionss ', userId);
+      const {
+        userLogin: { userInfo },
+      } = getState();
 
-      const { data } = await axiosConfig.get(getRequests(type, userId));
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `${baseURL}${getRequests(type, userId)}`,
+        config,
+      );
+
+      console.log('Here ', data);
+
+      // const { data } = await axiosConfig.get(getRequests(type, userId));
 
       dispatch({
         type: REQUESTS_LIST_SUCCESS,
@@ -77,13 +114,31 @@ export const listRequests =
     }
   };
 
-export const listRequestsDetails = (id) => async (dispatch) => {
+export const listRequestsDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.get(getRequestsById(id));
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `${baseURL}${getRequestsById(id)}`,
+      config,
+    );
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.get(getRequestsById(id));
 
     dispatch({
       type: REQUESTS_DETAILS_SUCCESS,
@@ -103,15 +158,36 @@ export const listRequestsDetails = (id) => async (dispatch) => {
 
 export const updateRequests =
   (id, status = '', returnType = '') =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
       dispatch({
         type: LOADING_TRUE,
       });
 
-      const { data } = await axiosConfig.patch(
-        updateRequestsById(id, status, returnType),
+      console.log('aksdalsk ', id, status, returnType);
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.patch(
+        `${baseURL}${updateRequestsById(id, status, returnType)}`,
+        {},
+        config,
       );
+
+      console.log('Here ', data);
+
+      // const { data } = await axiosConfig.patch(
+      //   updateRequestsById(id, status, returnType),
+      // );
 
       dispatch({
         type: REQUESTS_UPDATE_SUCCESS,

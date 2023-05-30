@@ -16,7 +16,7 @@ const ComplaintCreatePage = () => {
   const [formData, setFormData] = useState({
     title: null,
     description: '',
-    image: 'frontend/public/uploads/image-1682844629823.jpg',
+    image: '',
   });
   const [image, setImage] = useState(null);
 
@@ -30,11 +30,18 @@ const ComplaintCreatePage = () => {
   const { userInfo } = userLogin;
 
   useEffect(() => {
+    if (image) {
+      setFormData({
+        ...formData,
+        image: image,
+      });
+    }
+
     if (complaint?.id) {
       dispatch({ type: COMPLAINT_CREATE_RESET });
       navigate('/complaints');
     }
-  }, [complaint?.id, dispatch, navigate]);
+  }, [complaint?.id, dispatch, navigate, image]);
 
   const handleChange = async (event) => {
     event.preventDefault(); // prevent the default behavior of form submission
@@ -51,10 +58,10 @@ const ComplaintCreatePage = () => {
 
       if (data) {
         setImage(data);
-        setFormData({
-          ...formData,
-          image: data,
-        });
+        // setFormData({
+        //   ...formData,
+        //   image: data,
+        // });
       }
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -71,6 +78,8 @@ const ComplaintCreatePage = () => {
   const handleGoBack = () => {
     navigate('/complaints');
   };
+
+  console.log('Form Data ', formData);
 
   return (
     <CardContainer>

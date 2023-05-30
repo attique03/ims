@@ -21,41 +21,76 @@ import {
   ORGANIZATION_DELETE_FAIL,
 } from '../../constants//organization/organizationConstants';
 import axios from 'axios';
+import { baseURL } from '../../../utils/constants';
 
-export const createOrganization = (organization) => async (dispatch) => {
+export const createOrganization =
+  (organization) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: LOADING_TRUE,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `${baseURL}${createOrganizationApi}`,
+        organization,
+        config,
+      );
+
+      // const { data } = await axiosConfig.post(
+      //   createOrganizationApi,
+      //   organization,
+      // );
+
+      dispatch({
+        type: ORGANIZATION_CREATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ORGANIZATION_CREATE_FAIL,
+        payload: errorHandler(error),
+      });
+    }
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  };
+
+export const listOrganizations = () => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.post(
-      createOrganizationApi,
-      organization,
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `${baseURL}${createOrganizationApi}`,
+      config,
     );
 
-    dispatch({
-      type: ORGANIZATION_CREATE_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: ORGANIZATION_CREATE_FAIL,
-      payload: errorHandler(error),
-    });
-  }
-
-  dispatch({
-    type: LOADING_FALSE,
-  });
-};
-
-export const listOrganizations = () => async (dispatch) => {
-  try {
-    dispatch({
-      type: LOADING_TRUE,
-    });
-
-    const { data } = await axiosConfig.get(createOrganizationApi);
+    // const { data } = await axiosConfig.get(createOrganizationApi);
 
     dispatch({
       type: ORGANIZATION_LIST_SUCCESS,
@@ -77,13 +112,29 @@ export const listOrganizations = () => async (dispatch) => {
   }
 };
 
-export const listOrganizationDetails = (id) => async (dispatch) => {
+export const listOrganizationDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.get(getOrganizationApi(id));
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `${baseURL}${getOrganizationApi(id)}`,
+      config,
+    );
+
+    // const { data } = await axiosConfig.get(getOrganizationApi(id));
 
     dispatch({
       type: ORGANIZATION_DETAILS_SUCCESS,

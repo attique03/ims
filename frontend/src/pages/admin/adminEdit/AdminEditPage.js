@@ -83,12 +83,19 @@ const AdminEditPage = () => {
       if (!userDetail.name || !userDetail.id) {
         dispatch(getUserDetails(params.id));
       } else {
-        setFormData({
-          image: userDetail.image,
-          name: userDetail.name,
-          email: userDetail.email,
-          phone: userDetail.phone,
-        });
+        if (
+          !formData.image &&
+          !formData.name &&
+          !formData.email &&
+          !formData.phone
+        ) {
+          setFormData({
+            image: userDetail.image,
+            name: userDetail.name,
+            email: userDetail.email,
+            phone: userDetail.phone,
+          });
+        }
       }
     }
   }, [dispatch, success, navigate, params.id, image, user, userDetail]);

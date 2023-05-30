@@ -71,12 +71,12 @@ const EmployeeEditPage = () => {
   //    }, [user?.id, dispatch, navigate, formData?.image]);
 
   useEffect(() => {
-    if (image) {
-      setFormData({
-        ...formData,
-        image: image,
-      });
-    }
+    // if (image) {
+    //   setFormData({
+    //     ...formData,
+    //     image: image,
+    //   });
+    // }
 
     if (user?.id && success) {
       dispatch({ type: USER_UPDATE_RESET });
@@ -85,16 +85,27 @@ const EmployeeEditPage = () => {
       if (!userDetail.name || !userDetail.id) {
         dispatch(getUserDetails(params.id));
       } else {
-        setFormData({
-          image: userDetail.image,
-          name: userDetail.name,
-          email: userDetail.email,
-          phone: userDetail.phone,
-          designation: userDetail.designation,
-          education: userDetail.education,
-          companyExperience: userDetail.companyExperience,
-          totalExperience: userDetail.totalExperience,
-        });
+        if (
+          !formData.image &&
+          !formData.name &&
+          !formData.email &&
+          !formData.phone &&
+          !formData.designation &&
+          !formData.education &&
+          !formData.companyExperience &&
+          !formData.totalExperience
+        ) {
+          setFormData({
+            image: userDetail.image,
+            name: userDetail.name,
+            email: userDetail.email,
+            phone: userDetail.phone,
+            designation: userDetail.designation,
+            education: userDetail.education,
+            companyExperience: userDetail.companyExperience,
+            totalExperience: userDetail.totalExperience,
+          });
+        }
       }
     }
   }, [
@@ -107,6 +118,21 @@ const EmployeeEditPage = () => {
     userDetail,
     // !formData.name,
   ]);
+
+  // useEffect(() => {
+  //   if (userDetail.name) {
+  //     setFormData({
+  //       image: userDetail.image,
+  //       name: userDetail.name,
+  //       email: userDetail.email,
+  //       phone: userDetail.phone,
+  //       designation: userDetail.designation,
+  //       education: userDetail.education,
+  //       companyExperience: userDetail.companyExperience,
+  //       totalExperience: userDetail.totalExperience,
+  //     });
+  //   }
+  // }, [formData.name, userDetail]);
 
   const updateUserHandler = (e) => {
     e.preventDefault();

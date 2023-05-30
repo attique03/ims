@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { TableCell, TablePagination, Typography } from '@mui/material';
 import Error from '../error/Error';
 
-export default function DataTable({ columns, data }) {
+export default function DataTable({ columns, data, viewType }) {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -57,7 +57,13 @@ export default function DataTable({ columns, data }) {
                     <StyledTableCell
                       align="left"
                       className="view"
-                      onClick={() => navigate(`${row.id}`)}
+                      onClick={() =>
+                        viewType
+                          ? navigate(`/${viewType}/${row.id}`)
+                          : navigate(`${row.id}`)
+                      }
+
+                      // onClick={() => navigate(`${row.id}`)}
                     >
                       View
                     </StyledTableCell>

@@ -153,15 +153,17 @@ export class ComplaintsService {
     return complaint.getOne();
   }
 
-  async update(id: number) {
+  async update(id: number, req) {
+    console.log('Here ', id);
     let complaintResolved = await this.complaintRepository.findOneBy({ id });
-
-    if (!complaintResolved) {
-      throw new NotFoundException('Complaint Not Found');
-    } else {
-      complaintResolved = { ...complaintResolved, status: 'Resolved' };
-      return await this.complaintRepository.save(complaintResolved);
-    }
+    if (req.user.role.role === ADMIN || req.user.role.role === SUPERADMIN) {
+      if (!complaintResolved) {
+        throw new NotFoundException('Complaint Not Found');
+      } else {
+        complaintResolved = { ...complaintResolved, status: 'Resolved' };
+        return await this.complaintRepository.save(complaintResolved);
+      }
+    } else throw new NotAcceptableException('Not Authorized');
   }
 
   async remove(id: number) {

@@ -39,14 +39,34 @@ import {
   DASHBOARD_STATS_RESET,
 } from '../../constants/dashboard/dashboardConstants';
 import axios from 'axios';
+import { baseURL } from '../../../utils/constants';
 
-export const createUser = (user, email) => async (dispatch) => {
+export const createUser = (user, email) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.post(createUserApi(email), user);
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `${baseURL}${createUserApi(email)}`,
+      user,
+      config,
+    );
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.post(createUserApi(email), user);
 
     dispatch({
       type: USER_CREATE_SUCCESS,
@@ -130,13 +150,31 @@ export const login = (email, password) => async (dispatch) => {
 
 export const listUsers =
   (organizationId = '') =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
       dispatch({
         type: LOADING_TRUE,
       });
 
-      const { data } = await axiosConfig.get(getUsersApi(organizationId));
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `${baseURL}${getUsersApi(organizationId)}`,
+        config,
+      );
+
+      console.log('Here ', data);
+
+      // const { data } = await axiosConfig.get(getUsersApi(organizationId));
 
       dispatch({
         type: USER_LIST_SUCCESS,
@@ -158,13 +196,28 @@ export const listUsers =
     }
   };
 
-export const getUserDetails = (id) => async (dispatch) => {
+export const getUserDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.get(getUserApi(id));
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`${baseURL}${getUserApi(id)}`, config);
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.get(getUserApi(id));
 
     dispatch({
       type: USER_DETAILS_SUCCESS,

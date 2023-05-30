@@ -42,7 +42,12 @@ const DashboardSuperAdmin = () => {
         </Box>
       </Box>
       {error && <Error error={error} />}
-      <DataTable columns={tableColumns} data={complaints && complaints} />
+      <DataTable
+        columns={tableColumns}
+        data={complaints && complaints}
+        viewType="complaints"
+        // rows={2}
+      />
     </CardContainer>
   );
 };

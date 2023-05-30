@@ -21,66 +21,67 @@ import { listAssets } from '../../../redux/actions/asset/assetActions';
 import { listCategories } from '../../../redux/actions/category/categoryActions';
 import { adminColumns, employeeColumns } from './requestsListData';
 import { listRequests } from '../../../redux/actions/requests/requestsActions';
-import { ADMIN, EMPLOYEE } from '../../../utils/constants';
+import {
+  ADMIN,
+  EMPLOYEE,
+  PENDING,
+  REJECTED,
+  RESOLVED,
+} from '../../../utils/constants';
+import Error from '../../../components/error/Error';
 
 const RequestsListPage = () => {
-  const [category, setCategory] = useState();
-  const [subCategory, setSubCategory] = useState();
-  const [location, setLocation] = React.useState('');
-  const [searchValue, setSearchValue] = React.useState('');
+  const [searchValue, setSearchValue] = useState('');
   const [filteredInventory, setFilteredInventory] = useState([]);
+  const [status, setStatus] = useState('');
+  const [filteredOnStatus, setFilteredOnStatus] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const assetList = useSelector((state) => state.assetList);
-  const { assets, error } = assetList;
-
   const requestsList = useSelector((state) => state.requestsList);
   const { requests, error: errorRequestsList } = requestsList;
-
-  const categoryList = useSelector((state) => state.categoryList);
-  const { categories, error: errorcategoryList } = categoryList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    dispatch(listAssets());
-    dispatch(listCategories());
     dispatch(listRequests());
-
-    // Filter the requests based on the search query
   }, [dispatch]);
-
-  const handleChange = (event) => {
-    setLocation(event.target.value);
-  };
 
   const handleAdd = () => {
     navigate('create');
   };
 
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    const subCat = categories[1].filter(
-      (cat) => cat.category_parentId === e.target.value,
-    );
-    setSubCategory(subCat);
-  };
-
   const handleSearch = (e) => {
     e.preventDefault();
+    setStatus('');
+    setFilteredOnStatus('');
     setSearchValue(e.target.value);
+
     let search = e.target.value;
-    const filtered = assets.filter((request) =>
-      request.asset_name.toLowerCase().includes(search.toLowerCase()),
+    const filtered = requests.filter((request) =>
+      request.requests_itemName.toLowerCase().includes(search.toLowerCase()),
     );
     setFilteredInventory(filtered);
   };
 
+  const handleChangeStatus = (e) => {
+    e.preventDefault();
+    setSearchValue('');
+    setFilteredInventory('');
+    setStatus(e.target.value);
+
+    let search = e.target.value;
+    const filtered = requests.filter((request) =>
+      request.requests_status.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnStatus(filtered);
+  };
+
   return (
     <CardContainer>
+      {errorRequestsList && <Error error={errorRequestsList} />}
       <Box display="flex" p={1} sx={{ mb: 4 }}>
         <Box p={1} flexGrow={1}>
           <Stack
@@ -94,10 +95,10 @@ const RequestsListPage = () => {
               <>
                 <TextField
                   label="Search"
-                  id="outlined-size-small"
-                  defaultValue=""
+                  id="search"
                   size="small"
                   sx={{ width: '200px' }}
+                  value={searchValue}
                   onChange={handleSearch}
                   InputProps={{
                     endAdornment: (
@@ -110,46 +111,19 @@ const RequestsListPage = () => {
                     ),
                   }}
                 />
-                <FormControl sx={{ width: 200 }} size="small">
-                  <InputLabel id="demo-select-small">
-                    Select Category
-                  </InputLabel>
+                <FormControl classes={{ root: 'icon-box' }} size="small">
+                  <InputLabel id="status">Select Status</InputLabel>
                   <Select
-                    labelId="demo-select-small"
-                    id="demo-select-small"
-                    value={category}
-                    label="Location"
-                    onChange={handleCategoryChange}
+                    labelId="status"
+                    id="status"
+                    value={status}
+                    label="Select Status"
+                    onChange={handleChangeStatus}
                   >
-                    {categories[0]?.map((option) => (
-                      <MenuItem
-                        key={option.category_id}
-                        value={option.category_id}
-                      >
-                        {option.category_name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl sx={{ width: 200 }} size="small">
-                  <InputLabel id="demo-select-small">
-                    Select Sub-Category
-                  </InputLabel>
-                  <Select
-                    labelId="demo-select-small"
-                    id="demo-select-small"
-                    value={location}
-                    label="Category"
-                    onChange={handleChange}
-                  >
-                    {subCategory?.map((option) => (
-                      <MenuItem
-                        key={option.category_id}
-                        value={option.category_id}
-                      >
-                        {option.category_name}
-                      </MenuItem>
-                    ))}
+                    <MenuItem value="">None</MenuItem>
+                    <MenuItem value={PENDING}>{PENDING}</MenuItem>
+                    <MenuItem value={RESOLVED}>{RESOLVED}</MenuItem>
+                    <MenuItem value={REJECTED}>{REJECTED}</MenuItem>
                   </Select>
                 </FormControl>
               </>
@@ -179,10 +153,13 @@ const RequestsListPage = () => {
               ? adminColumns
               : employeeColumns
           }
-          data={requests && requests}
-          //   data={
-          //     filteredInventory.length > 0 ? filteredInventory : assets && assets
-          //   }
+          data={
+            filteredInventory.length > 0
+              ? filteredInventory
+              : filteredOnStatus.length > 0
+              ? filteredOnStatus
+              : requests && requests
+          }
         />
       </Box>
     </CardContainer>

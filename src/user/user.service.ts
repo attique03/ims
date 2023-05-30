@@ -87,7 +87,6 @@ export class UserService {
     req,
     mail: SendGrid.MailDataRequired,
   ): Promise<User> {
-    console.log('sdlkasj ', user);
     if (
       user.email &&
       user.image &&
@@ -97,32 +96,61 @@ export class UserService {
       user.phone &&
       req.query.email
     ) {
-      const newUser = this.userRepository.create({
-        ...user,
-        password: await bcrypt.hash(user.password, 12),
-        organization: req.user.organization.id,
-        role:
-          req.user.role.id === 1
-            ? req?.user?.role?.id + 1
-            : req?.user?.role?.id === 2
-            ? req?.user?.role?.id + 1
-            : req?.user?.role?.id - 3,
-      });
+      if (req.user.organization) {
+        const newUser = this.userRepository.create({
+          ...user,
+          password: await bcrypt.hash(user.password, 12),
+          organization: req.user.organization.id,
+          role:
+            req?.user?.role?.id === 1
+              ? req?.user?.role?.id + 1
+              : req?.user?.role?.id === 2
+              ? req?.user?.role?.id + 1
+              : req?.user?.role?.id - 3,
+        });
 
-      mail.html = `<div>
-                    <h1>Welcome to the Inventory Management System</h1>
-                    <br/>
-                    <span>Below is your Login Credentials to login to IMS</span>
-                    <br/>
-                    <span>Remember not to share this with anyone.</span>
-                    <br/> 
-                    Email: <b>${user.email}</b> 
-                    <br/> 
-                    Password: <b>${user.password}</b>
-                  </div>`;
-      await SendGrid.send(mail);
+        mail.html = `<div>
+                      <h1>Welcome to the Inventory Management System</h1>
+                      <br/>
+                      <span>Below is your Login Credentials to login to IMS</span>
+                      <br/>
+                      <span>Remember not to share this with anyone.</span>
+                      <br/> 
+                      Email: <b>${user.email}</b> 
+                      <br/> 
+                      Password: <b>${user.password}</b>
+                    </div>`;
+        await SendGrid.send(mail);
 
-      return await this.userRepository.save(newUser);
+        return await this.userRepository.save(newUser);
+      } else {
+        const newUser = this.userRepository.create({
+          ...user,
+          password: await bcrypt.hash(user.password, 12),
+          // organization: req.user.organization.id,
+          role:
+            req?.user?.role?.id === 1
+              ? req?.user?.role?.id + 1
+              : req?.user?.role?.id === 2
+              ? req?.user?.role?.id + 1
+              : req?.user?.role?.id - 3,
+        });
+
+        mail.html = `<div>
+                      <h1>Welcome to the Inventory Management System</h1>
+                      <br/>
+                      <span>Below is your Login Credentials to login to IMS</span>
+                      <br/>
+                      <span>Remember not to share this with anyone.</span>
+                      <br/> 
+                      Email: <b>${user.email}</b> 
+                      <br/> 
+                      Password: <b>${user.password}</b>
+                    </div>`;
+        await SendGrid.send(mail);
+
+        return await this.userRepository.save(newUser);
+      }
     } else {
       throw new NotAcceptableException(
         'Please fill all of the required fields',

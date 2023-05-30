@@ -133,6 +133,8 @@ const OrganizationCreatePage = () => {
       // config,
     );
 
+    console.log('Data ', data);
+
     if (data) {
       setImage(data);
       // setFormData({

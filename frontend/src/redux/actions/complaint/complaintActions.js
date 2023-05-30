@@ -19,14 +19,35 @@ import {
   getComplaintApi,
   getComplaintsApi,
 } from '../../../api/complaintApi/ComplaintApi';
+import axios from 'axios';
+import { baseURL } from '../../../utils/constants';
 
-export const createComplaint = (complaint) => async (dispatch) => {
+export const createComplaint = (complaint) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.post(createComplaintApi, complaint);
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `${baseURL}${createComplaintApi}`,
+      complaint,
+      config,
+    );
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.post(createComplaintApi, complaint);
 
     dispatch({
       type: COMPLAINT_CREATE_SUCCESS,
@@ -46,13 +67,31 @@ export const createComplaint = (complaint) => async (dispatch) => {
 
 export const listComplaints =
   (employees = '') =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
       dispatch({
         type: LOADING_TRUE,
       });
 
-      const { data } = await axiosConfig.get(getComplaintsApi(employees));
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `${baseURL}${getComplaintsApi(employees)}`,
+        config,
+      );
+
+      console.log('Here ', data);
+
+      // const { data } = await axiosConfig.get(getComplaintsApi(employees));
 
       dispatch({
         type: COMPLAINT_LIST_SUCCESS,
@@ -74,13 +113,31 @@ export const listComplaints =
     }
   };
 
-export const listComplaintDetails = (id) => async (dispatch) => {
+export const listComplaintDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.get(getComplaintApi(id));
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `${baseURL}${getComplaintApi(id)}`,
+      config,
+    );
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.get(getComplaintApi(id));
 
     dispatch({
       type: COMPLAINT_DETAILS_SUCCESS,
@@ -98,13 +155,36 @@ export const listComplaintDetails = (id) => async (dispatch) => {
   });
 };
 
-export const updateComplaint = (id) => async (dispatch) => {
+export const updateComplaint = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LOADING_TRUE,
     });
 
-    const { data } = await axiosConfig.patch(getComplaintApi(id));
+    console.log('Here ', id);
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    console.log('Token  ', userInfo.token);
+
+    const { data } = await axios.patch(
+      `${baseURL}${getComplaintApi(id)}`,
+      {},
+      config,
+    );
+
+    console.log('Here ', data);
+
+    // const { data } = await axiosConfig.patch(getComplaintApi(id));
 
     dispatch({
       type: COMPLAINT_UPDATE_SUCCESS,

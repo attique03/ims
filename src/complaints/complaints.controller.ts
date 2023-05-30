@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Put,
 } from '@nestjs/common';
 import { ComplaintsService } from './complaints.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
@@ -32,8 +33,8 @@ export class ComplaintsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number) {
-    return this.complaintsService.update(id);
+  update(@Param('id') id: number, @Req() req) {
+    return this.complaintsService.update(id, req);
   }
 
   @Delete(':id')
