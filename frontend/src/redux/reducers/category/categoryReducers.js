@@ -2,6 +2,9 @@ import {
   CATEGORY_CREATE_FAIL,
   CATEGORY_CREATE_RESET,
   CATEGORY_CREATE_SUCCESS,
+  CATEGORY_DELETE_FAIL,
+  CATEGORY_DELETE_RESET,
+  CATEGORY_DELETE_SUCCESS,
   CATEGORY_DETAILS_FAIL,
   CATEGORY_DETAILS_LIST_FAIL,
   CATEGORY_DETAILS_LIST_RESET,
@@ -13,6 +16,9 @@ import {
   CATEGORY_LIST_FAIL,
   CATEGORY_LIST_RESET,
   CATEGORY_LIST_SUCCESS,
+  CATEGORY_UPDATE_FAIL,
+  CATEGORY_UPDATE_RESET,
+  CATEGORY_UPDATE_SUCCESS,
 } from '../../constants/category/categoryConstants';
 
 export const categoryCreateReducer = (state = {}, action) => {
@@ -82,6 +88,36 @@ export const categoryFetchReducer = (
     case CATEGORY_FETCH_FAIL:
       return { error: action.payload };
     case CATEGORY_FETCH_RESET:
+      return {
+        categoryFetched: {},
+      };
+    default:
+      return state;
+  }
+};
+
+export const categoryUpdateReducer = (state = { category: {} }, action) => {
+  switch (action.type) {
+    case CATEGORY_UPDATE_SUCCESS:
+      return { success: true, category: action.payload };
+    case CATEGORY_UPDATE_FAIL:
+      return { error: action.payload };
+    case CATEGORY_UPDATE_RESET:
+      return {
+        category: {},
+      };
+    default:
+      return state;
+  }
+};
+
+export const categoryDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case CATEGORY_DELETE_SUCCESS:
+      return { success: true };
+    case CATEGORY_DELETE_FAIL:
+      return { error: action.payload };
+    case CATEGORY_DELETE_RESET:
       return {};
     default:
       return state;

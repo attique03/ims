@@ -7,3 +7,7 @@ export const getCategoryByIdApi = (id) => {
 export const getIndividualCategory = (id) => {
   return `/category/individual/${id}`;
 };
+
+export const UDCategoryById = (id) => {
+  return `/category/${id}`;
+};

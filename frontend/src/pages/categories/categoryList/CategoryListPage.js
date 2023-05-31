@@ -30,6 +30,8 @@ export default function CollapsibleTable() {
     dispatch(listDetailsCategories());
   }, [dispatch]);
 
+  console.log('Cats List ', categories);
+
   return (
     <CardContainer>
       {error && <Error error={error} />}

@@ -1,3 +1,19 @@
 .icon-height {
   height: 20px;
 }
+
+.icon-height:hover {
+  cursor: pointer;
+}
+
+.icon-add {
+  color: #31de79;
+}
+
+.icon-edit {
+  color: #2979ff;
+}
+
+.icon-delete {
+  color: #d50000;
+}

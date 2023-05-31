@@ -3,9 +3,12 @@ import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { Category } from './entities/category.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Requests } from 'src/requests/entities/request.entity';
+import { Asset } from 'src/assets/entities/asset.entity';
+import { Vendor } from 'src/vendor/entities/vendor.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category])],
+  imports: [TypeOrmModule.forFeature([Category, Requests, Asset, Vendor])],
   controllers: [CategoryController],
   providers: [CategoryService],
   exports: [TypeOrmModule.forFeature([Category])],

@@ -27,10 +27,12 @@ import {
 } from './reducers/complaint/complaintReducers';
 import {
   categoryCreateReducer,
+  categoryDeleteReducer,
   categoryDetailsListReducer,
   categoryDetailsReducer,
   categoryFetchReducer,
   categoryListReducer,
+  categoryUpdateReducer,
 } from './reducers/category/categoryReducers';
 import {
   vendorCreateReducer,
@@ -46,7 +48,11 @@ import {
   assetListReducer,
   assetUpdateReducer,
 } from './reducers/asset/assetReducers';
-import { subcategoryDetailsReducer } from './reducers/subcategory/subcategoryReducers';
+import {
+  subcategoryAddReducer,
+  subcategoryDeleteReducer,
+  subcategoryDetailsReducer,
+} from './reducers/subcategory/subcategoryReducers';
 import {
   dashboardDataReducer,
   dashboardStatsReducer,
@@ -90,7 +96,11 @@ const reducer = combineReducers({
   categoryDetailsList: categoryDetailsListReducer,
   categoryDetails: categoryDetailsReducer,
   categoryFetch: categoryFetchReducer,
+  categoryUpdate: categoryUpdateReducer,
+  categoryDelete: categoryDeleteReducer,
+  subcategoryAdd: subcategoryAddReducer,
   subcategoryDetails: subcategoryDetailsReducer,
+  subcategoryDelete: subcategoryDeleteReducer,
   vendorCreate: vendorCreateReducer,
   vendorList: vendorListReducer,
   vendorDetails: vendorDetailsReducer,

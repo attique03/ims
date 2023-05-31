@@ -21,10 +21,16 @@ import { listAssets } from '../../../redux/actions/asset/assetActions';
 import { listCategories } from '../../../redux/actions/category/categoryActions';
 import { tableColumns } from './returnsListData';
 import { listRequests } from '../../../redux/actions/requests/requestsActions';
-import { ADMIN, EMPLOYEE, PENDING, RESOLVED } from '../../../utils/constants';
+import {
+  ADMIN,
+  EMPLOYEE,
+  PENDING,
+  REJECTED,
+  RESOLVED,
+} from '../../../utils/constants';
 
 const ReturnsListPage = () => {
-  const [searchValue, setSearchValue] = React.useState('');
+  const [searchValue, setSearchValue] = useState('');
   const [filteredOnSearch, setFilteredOnSearch] = useState([]);
   const [status, setStatus] = useState('');
   const [filteredOnStatus, setFilteredOnStatus] = useState([]);
@@ -51,7 +57,9 @@ const ReturnsListPage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setStatus('');
+    setType('');
     setFilteredOnStatus('');
+    setFilteredOnType('');
     setSearchValue(e.target.value);
 
     let search = e.target.value;
@@ -64,7 +72,9 @@ const ReturnsListPage = () => {
   const handleChangeStatus = (e) => {
     e.preventDefault();
     setSearchValue('');
+    setType('');
     setFilteredOnSearch('');
+    setFilteredOnType('');
     setStatus(e.target.value);
 
     let search = e.target.value;
@@ -74,18 +84,22 @@ const ReturnsListPage = () => {
     setFilteredOnStatus(filtered);
   };
 
-  // const handleChangeType = (e) => {
-  //   e.preventDefault();
-  //   setSearchValue('');
-  //   setFilteredOnSearch('');
-  //   setType(e.target.value);
+  const handleChangeType = (e) => {
+    e.preventDefault();
+    setSearchValue('');
+    setStatus('');
+    setFilteredOnSearch('');
+    setFilteredOnStatus('');
+    setType(e.target.value);
 
-  //   let search = e.target.value;
-  //   const filtered = requests.filter((request) =>
-  //     request.requests_returnType.toLowerCase().includes(search.toLowerCase()),
-  //   );
-  //   setFilteredOnStatus(filtered);
-  // };
+    let search = e.target.value;
+    const filtered = requests.filter((request) =>
+      request.requests_returnType.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnType(filtered);
+  };
+
+  console.log('Type Filter ', filteredOnType);
 
   return (
     <CardContainer>
@@ -127,9 +141,10 @@ const ReturnsListPage = () => {
                     label="Select Status"
                     onChange={handleChangeStatus}
                   >
-                    <MenuItem value=""></MenuItem>
+                    <MenuItem value="">None</MenuItem>
                     <MenuItem value={PENDING}>{PENDING}</MenuItem>
                     <MenuItem value={RESOLVED}>{RESOLVED}</MenuItem>
+                    <MenuItem value={REJECTED}>{REJECTED}</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl classes={{ root: 'icon-box' }} size="small">
@@ -137,11 +152,11 @@ const ReturnsListPage = () => {
                   <Select
                     labelId="type"
                     id="type"
-                    value={status}
+                    value={type}
                     label="Select Type"
-                    // onChange={handleChangeType}
+                    onChange={handleChangeType}
                   >
-                    <MenuItem value=""></MenuItem>
+                    <MenuItem value=" ">No Type</MenuItem>
                     <MenuItem value="repair">Repair</MenuItem>
                     <MenuItem value="replace">Replace</MenuItem>
                   </Select>
@@ -169,10 +184,16 @@ const ReturnsListPage = () => {
       <Box sx={{ m: 2 }}>
         <DataTable
           columns={tableColumns}
-          data={requests && requests}
-          //   data={
-          //     filteredOnSearch.length > 0 ? filteredOnSearch : assets && assets
-          //   }
+          // data={requests && requests}
+          data={
+            filteredOnSearch.length > 0
+              ? filteredOnSearch
+              : filteredOnStatus.length > 0
+              ? filteredOnStatus
+              : filteredOnType.length > 0
+              ? filteredOnType
+              : requests && requests
+          }
         />
       </Box>
     </CardContainer>

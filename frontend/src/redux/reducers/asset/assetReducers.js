@@ -3,6 +3,7 @@ import {
   ASSET_CREATE_RESET,
   ASSET_CREATE_SUCCESS,
   ASSET_DELETE_FAIL,
+  ASSET_DELETE_RESET,
   ASSET_DELETE_SUCCESS,
   ASSET_DETAILS_FAIL,
   ASSET_DETAILS_SUCCESS,
@@ -74,6 +75,8 @@ export const assetDeleteReducer = (state = {}, action) => {
       return { success: true };
     case ASSET_DELETE_FAIL:
       return { error: action.payload };
+    case ASSET_DELETE_RESET:
+      return {};
     default:
       return state;
   }

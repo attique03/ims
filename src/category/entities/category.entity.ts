@@ -39,7 +39,7 @@ export class Category {
   // @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
   // vendor: Vendor;
 
-  @OneToMany(() => Asset, (asset) => asset.subCategory)
+  @OneToMany(() => Asset, (asset) => asset.subCategory, { nullable: true })
   @JoinColumn({ name: 'subCategory', referencedColumnName: 'id' })
   asset: Asset;
 

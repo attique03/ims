@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   Divider,
@@ -13,21 +14,31 @@ import CardContainer from '../../../components/card/CardContainer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAdd, faRemove } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
-import './categoryCreate.css';
-import { createCategory } from '../../../redux/actions/category/categoryActions';
+import {
+  createCategory,
+  fetchCategoryDetails,
+} from '../../../redux/actions/category/categoryActions';
 import { useDispatch, useSelector } from 'react-redux';
 import Error from '../../../components/error/Error';
+import { addSubCategory } from '../../../redux/actions/subcategory/subcategoryActions';
+import { SUBCATEGORY_ADD_RESET } from '../../../redux/constants/subcategory/subCategoryConstants';
 
-const CategoryCreatePage = () => {
+const SubCategoryAddPage = () => {
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState([{ value: '' }]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const categoryCreate = useSelector((state) => state.categoryCreate);
-  const { success, error } = categoryCreate;
+  // const categoryCreate = useSelector((state) => state.categoryCreate);
+  // const { success, error } = categoryCreate;
+
+  const categoryFetch = useSelector((state) => state.categoryFetch);
+  const { categoryFetched, error: errorcategoryFetched } = categoryFetch;
+
+  const subcategoryAdd = useSelector((state) => state.subcategoryAdd);
+  const { subcategoryAdded, success, error } = subcategoryAdd;
 
   const handleAddField = () => {
     const newFields = [...subCategory, { value: '' }];
@@ -35,10 +46,12 @@ const CategoryCreatePage = () => {
   };
 
   useEffect(() => {
+    dispatch(fetchCategoryDetails(id));
     if (success) {
+      dispatch({ type: SUBCATEGORY_ADD_RESET });
       navigate('/categories');
     }
-  }, [success, navigate]);
+  }, [dispatch, id, success, navigate]);
 
   const handleFieldChange = (index, event) => {
     const { value } = event.target;
@@ -56,14 +69,14 @@ const CategoryCreatePage = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    dispatch(createCategory([category, subCategory]));
+    dispatch(addSubCategory(id, [[], subCategory]));
   };
 
   const handleGoBack = () => {
     navigate('/categories');
   };
 
-  console.log('Add ', [category, subCategory]);
+  console.log('Add ', subCategory, id);
 
   return (
     <CardContainer>
@@ -79,12 +92,18 @@ const CategoryCreatePage = () => {
               Back
             </Typography>
             <Typography variant="h5" component="h5">
-              Add New Category
+              Add New Sub-categories Category
             </Typography>
           </Stack>
         </Box>
         <Box className={'header-right'}>
-          <Button type="submit" fullWidth variant="contained" color="info">
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="info"
+            onClick={handleGoBack}
+          >
             Cancel
           </Button>
         </Box>
@@ -102,8 +121,80 @@ const CategoryCreatePage = () => {
 
       <Divider sx={{ mb: 3 }} />
 
-      {/* Form */}
       <Box>
+        <Box className={'box-spacing'}>
+          <Grid container>
+            <Grid item xs={3}>
+              <Typography sx={{ mt: 1 }}>Category Name</Typography>
+            </Grid>
+            <Grid item xs={9} sx={{ mt: 1 }}>
+              <Typography>{categoryFetched?.name}</Typography>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Box variant="h3" component="h3" sx={{ ml: 2, mt: 5 }}>
+          Sub-Categories
+        </Box>
+
+        {categoryFetched &&
+          categoryFetched?.children?.map((child, index) => (
+            <Box className={'box-spacing'}>
+              <Grid container>
+                <Grid item xs={3}>
+                  <Typography sx={{ mt: 1 }} variant="b">
+                    Sub-Category#{index + 1} Name
+                  </Typography>
+                </Grid>
+                <Grid item xs={9}>
+                  <Typography>{child?.name}</Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          ))}
+
+        {subCategory.map((field, index) => (
+          <Box className={'box-spacing'}>
+            <Grid container>
+              <Grid item xs={3}>
+                <Typography sx={{ mt: 1 }} variant="b">
+                  Sub-Category#{index + 1} Name
+                </Typography>
+              </Grid>
+              <Grid item xs={9}>
+                <TextField
+                  label={`subCategory#${index + 1} Name`}
+                  id={`subCategory-${index + 1}`}
+                  size="small"
+                  classes={{ root: 'input-width' }}
+                  required
+                  name={`subCategory-${index + 1}`}
+                  value={field.value}
+                  onChange={(event) => handleFieldChange(index, event)}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+        ))}
+
+        <Box className={'header'}>
+          <Box className={'header-left'}>
+            <Button
+              variant="contained"
+              startIcon={
+                <FontAwesomeIcon icon={faAdd} className={'icon-size'} />
+              }
+              classes={{ root: 'save-btn' }}
+              onClick={handleAddField}
+            >
+              Add Sub-Category
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Form */}
+      {/* <Box>
         <Box className={'box-spacing'}>
           <Grid container>
             <Grid item xs={3}>
@@ -179,9 +270,9 @@ const CategoryCreatePage = () => {
             </Button>
           </Box>
         </Box>
-      </Box>
+      </Box> */}
     </CardContainer>
   );
 };
 
-export default CategoryCreatePage;
+export default SubCategoryAddPage;

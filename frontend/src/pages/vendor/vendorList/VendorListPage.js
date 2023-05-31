@@ -22,14 +22,21 @@ import { listVendors } from '../../../redux/actions/vendor/vendorActions';
 import { listUsers } from '../../../redux/actions/user/userActions';
 import Error from '../../../components/error/Error';
 import { listDepartments } from '../../../redux/actions/department/departmentActions';
-import { listCategories } from '../../../redux/actions/category/categoryActions';
+import {
+  fetchCategoryDetails,
+  listCategories,
+} from '../../../redux/actions/category/categoryActions';
 import Loader from '../../../components/loader/Loader';
 
 const VendorListPage = () => {
-  const [department, setDepartment] = useState('');
   const [category, setCategory] = useState();
-  const [subCategory, setSubCategory] = useState();
-  const [location, setLocation] = useState('');
+  const [subCategory, setSubCategory] = useState([]);
+  const [subCatValue, setSubCatValue] = React.useState('');
+
+  const [searchValue, setSearchValue] = React.useState('');
+  const [filteredInventory, setFilteredInventory] = useState([]);
+  const [filteredOnSubCategory, setFilteredOnSubCategory] = useState([]);
+  const [filteredOnCategory, setFilteredOnCategory] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -37,27 +44,81 @@ const VendorListPage = () => {
   const vendorList = useSelector((state) => state.vendorList);
   const { vendors, error } = vendorList;
 
-  const loading = useSelector((state) => state.loading);
-  const { loading: loadingState } = loading;
-
   const categoryList = useSelector((state) => state.categoryList);
   const { categories, error: errorcategoryList } = categoryList;
+
+  const categoryFetch = useSelector((state) => state.categoryFetch);
+  const { categoryFetched, error: errorcategoryFetched } = categoryFetch;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
 
   useEffect(() => {
     dispatch(listVendors());
     dispatch(listCategories());
-  }, [dispatch]);
+
+    if (categoryFetched && categoryFetched?.name) {
+      console.log('Category fetched ', categoryFetched);
+
+      let search = categoryFetched?.name;
+      const filtered = vendors.filter((asset) =>
+        asset.categoryName.toLowerCase().includes(search.toLowerCase()),
+      );
+
+      setFilteredOnCategory(filtered);
+    }
+  }, [dispatch, categoryFetched, category]);
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
+
+    // if (e.target.value === '') {
+    setFilteredOnCategory('');
+    setFilteredOnSubCategory('');
+    // }
+    if (e.target.value) {
+      dispatch(fetchCategoryDetails(e.target.value));
+      console.log('After Dispatch ', e.target.value);
+    }
+
     const subCat = categories[1].filter(
       (cat) => cat.category_parentId === e.target.value,
     );
     setSubCategory(subCat);
   };
 
-  const handleChange = (event) => {
-    setLocation(event.target.value);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setCategory('');
+    setSubCatValue('');
+    setFilteredOnCategory('');
+    setFilteredOnSubCategory('');
+    setSearchValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = vendors.filter((request) =>
+      request.name.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredInventory(filtered);
+  };
+
+  const handleFilterSubCategory = (e) => {
+    e.preventDefault();
+    if (e.target.value === '') {
+      console.log('Filter Sub Category ', e.target.value);
+      setCategory('');
+    }
+    setFilteredOnCategory('');
+    setSearchValue('');
+    setFilteredInventory('');
+    setSubCatValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = vendors.filter((subCat) =>
+      subCat.subcategoryName.toLowerCase().includes(search.toLowerCase()),
+    );
+
+    setFilteredOnSubCategory(filtered);
   };
 
   const handleAdd = () => {
@@ -81,6 +142,7 @@ const VendorListPage = () => {
               label="Search"
               id="search"
               size="small"
+              onChange={handleSearch}
               classes={{ root: 'icon-box' }}
               InputProps={{
                 endAdornment: (
@@ -114,9 +176,9 @@ const VendorListPage = () => {
               <Select
                 labelId="demo-select-small"
                 id="demo-select-small"
-                value={location}
                 label="Category"
-                onChange={handleChange}
+                value={subCatValue}
+                onChange={handleFilterSubCategory}
               >
                 {subCategory?.map((option) => (
                   <MenuItem key={option.category_id} value={option.category_id}>
@@ -154,7 +216,18 @@ const VendorListPage = () => {
       </Box>
 
       <Box sx={{ m: 2 }}>
-        <DataTable columns={tableColumns} data={vendors && vendors} />
+        <DataTable
+          columns={tableColumns}
+          data={
+            filteredInventory.length > 0
+              ? filteredInventory
+              : filteredOnCategory.length > 0
+              ? filteredOnCategory
+              : filteredOnSubCategory.length > 0
+              ? filteredOnSubCategory
+              : vendors && vendors
+          }
+        />
       </Box>
     </CardContainer>
   );

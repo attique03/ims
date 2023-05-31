@@ -35,7 +35,9 @@ export class Asset {
   employee: User;
 
   // Asset of this category
-  @ManyToOne(() => Category, (subCategory) => subCategory.asset)
+  @ManyToOne(() => Category, (subCategory) => subCategory.asset, {
+    nullable: true,
+  })
   subCategory: Category;
 
   // Asset from this Vendor

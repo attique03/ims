@@ -42,7 +42,7 @@ export class RequestsService {
         ...requests,
         user: req.id,
         organization: { id: req.organization.id },
-        returnType: '',
+        returnType: ' ',
         status: PENDING,
       });
 

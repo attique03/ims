@@ -8,7 +8,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { StyledTableCell } from '../tableStyle/TableStyle';
@@ -17,9 +17,14 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { listCategoryDetails } from '../../../redux/actions/category/categoryActions';
+import {
+  deleteCategory,
+  listCategoryDetails,
+} from '../../../redux/actions/category/categoryActions';
 import './nestedRow.css';
 import Error from '../../error/Error';
+import { CATEGORY_DELETE_RESET } from '../../../redux/constants/category/categoryConstants';
+import Loader from '../../loader/Loader';
 
 export default function NestedRow({ row }) {
   const [open, setOpen] = useState(false);
@@ -29,9 +34,28 @@ export default function NestedRow({ row }) {
   const categoryDetails = useSelector((state) => state.categoryDetails);
   const { category, error } = categoryDetails;
 
+  const categoryDelete = useSelector((state) => state.categoryDelete);
+  const { success, error: errorDelete } = categoryDelete;
+
+  const loading = useSelector((state) => state.loading);
+  const { loading: loadingState } = loading;
+
+  useEffect(() => {
+    if (success) {
+      dispatch({ type: CATEGORY_DELETE_RESET });
+    }
+  }, [dispatch, success, row, category]);
+
+  const deleteHandler = (id) => {
+    if (window.confirm('Are You Sure')) {
+      dispatch(deleteCategory(id));
+    }
+  };
+
   return (
     <>
       {error && <Error error={error} />}
+      {loadingState && <Loader />}
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <StyledTableCell component="th" scope="row" align="center">
           {row.category_id}
@@ -42,9 +66,19 @@ export default function NestedRow({ row }) {
         </StyledTableCell>
         <StyledTableCell align="center">{row.vendors_count}</StyledTableCell>
         <StyledTableCell align="center">
-          <AddIcon classes={{ root: 'icon-height' }} />
-          <EditIcon classes={{ root: 'icon-height' }} />
-          <DeleteOutlineIcon classes={{ root: 'icon-height' }} />
+          <AddIcon
+            classes={{ root: 'icon-height icon-add' }}
+            onClick={() => navigate(`${row.category_id}/sub-category/add`)}
+          />
+          <EditIcon
+            classes={{ root: 'icon-height icon-edit' }}
+            onClick={() => navigate(`${row.category_id}/edit`)}
+          />
+          <DeleteOutlineIcon
+            classes={{ root: 'icon-height icon-delete' }}
+            // onClick={() => dispatch(deleteCategory(row.category_id))}
+            onClick={() => deleteHandler(row.category_id)}
+          />
         </StyledTableCell>
         <StyledTableCell align="center">
           <IconButton
@@ -73,7 +107,7 @@ export default function NestedRow({ row }) {
                       Vendor Name
                     </TableCell>
                     <TableCell align="center" className={'table-cell'}>
-                      Qunatity
+                      Quantity
                     </TableCell>
                     <TableCell align="center" className={'table-cell'}>
                       Quantity Assigned

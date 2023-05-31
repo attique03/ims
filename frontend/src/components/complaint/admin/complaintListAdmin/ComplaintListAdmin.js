@@ -42,9 +42,13 @@ function a11yProps(index) {
 }
 
 const ComplaintListAdmin = () => {
-  const [status, setStatus] = useState('');
   const [filter, setFilter] = useState(true);
   const [value, setValue] = useState(0);
+
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredOnSearch, setFilteredOnSearch] = useState([]);
+  const [status, setStatus] = useState('');
+  const [filteredOnStatus, setFilteredOnStatus] = useState([]);
 
   const theme = useTheme();
   const navigate = useNavigate();
@@ -57,11 +61,33 @@ const ComplaintListAdmin = () => {
     dispatch(listComplaints(true));
   }, [dispatch]);
 
-  const handleChangeStatus = (event) => {
-    setStatus(event.target.value);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setFilteredOnStatus('');
+    setSearchValue(e.target.value);
+
+    let search = e.target.value;
+    const filtered = complaints.filter((complaint) =>
+      complaint.complaint_description
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+    );
+    setFilteredOnSearch(filtered);
   };
 
-  const handleClick = () => {
+  const handleChangeStatus = (event) => {
+    event.preventDefault();
+    setFilteredOnSearch('');
+    setStatus(event.target.value);
+
+    let search = event.target.value;
+    const filtered = complaints.filter((complaint) =>
+      complaint.complaint_status.toLowerCase().includes(search.toLowerCase()),
+    );
+    setFilteredOnStatus(filtered);
+  };
+
+  const handleSort = () => {
     setFilter(!filter);
   };
 
@@ -71,6 +97,10 @@ const ComplaintListAdmin = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    setSearchValue('');
+    setFilteredOnSearch('');
+    setStatus('');
+    setFilteredOnStatus('');
     if (newValue === 0) {
       dispatch(listComplaints(true));
     } else if (newValue === 1) {
@@ -91,7 +121,9 @@ const ComplaintListAdmin = () => {
             <TextField
               label="Search"
               size="small"
+              value={searchValue}
               classes={{ root: 'icon-box' }}
+              onChange={handleSearch}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -109,7 +141,7 @@ const ComplaintListAdmin = () => {
                 label="Select Status"
                 onChange={handleChangeStatus}
               >
-                <MenuItem value=""></MenuItem>
+                <MenuItem value="">None</MenuItem>
                 <MenuItem value={PENDING}>{PENDING}</MenuItem>
                 <MenuItem value={RESOLVED}>{RESOLVED}</MenuItem>
               </Select>
@@ -120,7 +152,7 @@ const ComplaintListAdmin = () => {
         <Box className={'header-right'}>
           <IconButton
             aria-label="filter"
-            onClick={handleClick}
+            onClick={handleSort}
             classes={{ root: 'icon-background' }}
           >
             {filter ? (
@@ -182,13 +214,25 @@ const ComplaintListAdmin = () => {
             <TabPanel value={value} index={0} dir={theme.direction}>
               <DataTable
                 columns={employeeColumns}
-                data={complaints && complaints}
+                data={
+                  filteredOnSearch.length > 0
+                    ? filteredOnSearch
+                    : filteredOnStatus.length > 0
+                    ? filteredOnStatus
+                    : complaints && complaints
+                }
               />
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
               <DataTable
                 columns={adminColumns}
-                data={complaints && complaints}
+                data={
+                  filteredOnSearch.length > 0
+                    ? filteredOnSearch
+                    : filteredOnStatus.length > 0
+                    ? filteredOnStatus
+                    : complaints && complaints
+                }
               />
             </TabPanel>
           </SwipeableViews>

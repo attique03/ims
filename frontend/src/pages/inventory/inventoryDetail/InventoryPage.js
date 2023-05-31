@@ -24,6 +24,7 @@ import {
 } from '../../../redux/actions/asset/assetActions';
 import Error from '../../../components/error/Error';
 import Loader from '../../../components/loader/Loader';
+import { ASSET_DELETE_RESET } from '../../../redux/constants/asset/assetConstants';
 
 const InventoryPage = () => {
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ const InventoryPage = () => {
     dispatch(listAssetDetails(params.id));
 
     if (success) {
+      dispatch({ type: ASSET_DELETE_RESET });
       navigate('/inventory');
     }
   }, [dispatch, params, success, navigate]);

@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   ParseArrayPipe,
+  Put,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -62,8 +63,30 @@ export class CategoryController {
     return this.categoryService.findByIds(ids);
   }
 
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateCategoryDto: CreateCategoryDto,
+  ) {
+    return this.categoryService.update(+id, updateCategoryDto);
+  }
+
+  @Put(':id/add')
+  addSubcategory(
+    @Param('id') id: string,
+    @Body() updateCategoryDto: CreateCategoryDto,
+    @Req() req,
+  ) {
+    return this.categoryService.addSubcategory(+id, updateCategoryDto, req);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.categoryService.remove(+id);
+  }
+
+  @Delete('/subcategory/:id')
+  removeSubcategory(@Param('id') id: string) {
+    return this.categoryService.removeSubcategory(+id);
   }
 }

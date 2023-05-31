@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { listSubCategoryDetails } from '../../../redux/actions/subcategory/subcategoryActions';
+import {
+  deleteSubCategory,
+  listSubCategoryDetails,
+} from '../../../redux/actions/subcategory/subcategoryActions';
 import CardContainer from '../../../components/card/CardContainer';
 import {
   Box,
@@ -18,6 +21,7 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import MenuActions from '../../../components/menu/Menu';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { SUBCATEGORY_DELETE_RESET } from '../../../redux/constants/subcategory/subCategoryConstants';
 
 const SubCategoryPage = () => {
   const params = useParams();
@@ -29,12 +33,26 @@ const SubCategoryPage = () => {
   const subcategoryDetails = useSelector((state) => state.subcategoryDetails);
   const { subcategory, error } = subcategoryDetails;
 
+  const subcategoryDelete = useSelector((state) => state.subcategoryDelete);
+  const { success, error: errorDelete } = subcategoryDelete;
+
   useEffect(() => {
     dispatch(listSubCategoryDetails(params.subCatId));
-  }, [dispatch, params]);
+
+    if (success) {
+      dispatch({ type: SUBCATEGORY_DELETE_RESET });
+      navigate(-1);
+    }
+  }, [dispatch, params, success, navigate]);
 
   const handleGoBack = () => {
     navigate('/categories');
+  };
+
+  const deleteHandler = (id) => {
+    if (window.confirm('Are You Sure')) {
+      dispatch(deleteSubCategory(id));
+    }
   };
 
   const handleMenuOpen = (event) => {
@@ -85,14 +103,17 @@ const SubCategoryPage = () => {
             open={open}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleMenuClose} disableRipple>
+            <MenuItem onClick={() => navigate('edit')} disableRipple>
               <div className="edit-color">
                 <EditOutlinedIcon classes={{ root: 'edit-color' }} />
               </div>
               Edit
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
-            <MenuItem onClick={handleMenuClose} disableRipple>
+            <MenuItem
+              onClick={() => deleteHandler(params.subCatId)}
+              disableRipple
+            >
               <DeleteOutlineOutlinedIcon classes={{ root: 'delete-color' }} />
               Delete
             </MenuItem>

@@ -4,6 +4,7 @@ import {
   getAllCategoriesApi,
   getCategoryByIdApi,
   getIndividualCategory,
+  UDCategoryById,
 } from '../../../api/categoryApi/CategoryApi';
 import axiosConfig from '../../../utils/axiosConfig';
 import { baseURL } from '../../../utils/constants';
@@ -11,6 +12,8 @@ import { errorHandler } from '../../../utils/errorHandler';
 import {
   CATEGORY_CREATE_FAIL,
   CATEGORY_CREATE_SUCCESS,
+  CATEGORY_DELETE_FAIL,
+  CATEGORY_DELETE_SUCCESS,
   CATEGORY_DETAILS_FAIL,
   CATEGORY_DETAILS_LIST_FAIL,
   CATEGORY_DETAILS_LIST__SUCCESS,
@@ -19,6 +22,8 @@ import {
   CATEGORY_FETCH__SUCCESS,
   CATEGORY_LIST_FAIL,
   CATEGORY_LIST_SUCCESS,
+  CATEGORY_UPDATE_FAIL,
+  CATEGORY_UPDATE_SUCCESS,
 } from '../../constants/category/categoryConstants';
 import {
   LOADING_FALSE,
@@ -225,6 +230,95 @@ export const fetchCategoryDetails = (id) => async (dispatch, getState) => {
     dispatch({
       type: CATEGORY_FETCH_FAIL,
       payload: errorHandler(error),
+    });
+  }
+
+  dispatch({
+    type: LOADING_FALSE,
+  });
+};
+
+export const updateCategory = (id, category) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: LOADING_TRUE,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    console.log('Cat Update in Actions  ', category);
+
+    const { data } = await axios.put(
+      `http://127.0.0.1:4000${UDCategoryById(id)}`,
+      category,
+      config,
+    );
+
+    dispatch({
+      type: CATEGORY_UPDATE_SUCCESS,
+      payload: data,
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  } catch (error) {
+    dispatch({
+      type: CATEGORY_UPDATE_FAIL,
+      payload: errorHandler(error),
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  }
+};
+
+export const deleteCategory = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: LOADING_TRUE,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.delete(
+      `http://127.0.0.1:4000${UDCategoryById(id)}`,
+      config,
+    );
+
+    dispatch({
+      type: CATEGORY_DELETE_SUCCESS,
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
+    });
+  } catch (error) {
+    dispatch({
+      type: CATEGORY_DELETE_FAIL,
+      payload: errorHandler(error),
+    });
+
+    dispatch({
+      type: LOADING_FALSE,
     });
   }
 

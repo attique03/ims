@@ -44,6 +44,9 @@ import AdminEditPage from './pages/admin/adminEdit/AdminEditPage';
 import InventoryEditPage from './pages/inventory/inventoryEdit/InventoryEditPage';
 import EmployeeEditPage from './pages/employee/employeeEdit/EmployeeEditPage';
 import ProfileEditPage from './pages/profile/ProfileEditPage';
+import SubCategoryAddPage from './pages/subCategory/subCategoryAdd/SubCategoryAddPage';
+import CategoryEditPage from './pages/categories/categoryEdit/CategoryEditPage';
+import SubCategoryEditPage from './pages/subCategory/subCategoryEdit/SubCategoryEditPage';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -234,6 +237,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <CategoryEditPage />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="create"
               element={
@@ -247,6 +260,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SubCategoryPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id/sub-category/:subCatId/edit"
+              element={
+                <ProtectedRoute>
+                  <SubCategoryEditPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id/sub-category/add"
+              element={
+                <ProtectedRoute>
+                  <SubCategoryAddPage />
                 </ProtectedRoute>
               }
             />
