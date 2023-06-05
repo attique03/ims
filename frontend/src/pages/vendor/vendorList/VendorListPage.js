@@ -67,7 +67,7 @@ const VendorListPage = () => {
 
       setFilteredOnCategory(filtered);
     }
-  }, [dispatch, categoryFetched, category]);
+  }, [dispatch, categoryFetched, category, vendors?.id]);
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
@@ -75,6 +75,9 @@ const VendorListPage = () => {
     // if (e.target.value === '') {
     setFilteredOnCategory('');
     setFilteredOnSubCategory('');
+    // }
+    // if (e.target.value === '') {
+    //   setSubCategory('');
     // }
     if (e.target.value) {
       dispatch(fetchCategoryDetails(e.target.value));
@@ -114,9 +117,22 @@ const VendorListPage = () => {
     setSubCatValue(e.target.value);
 
     let search = e.target.value;
-    const filtered = vendors.filter((subCat) =>
-      subCat.subcategoryName.toLowerCase().includes(search.toLowerCase()),
-    );
+
+    console.log('Search ', search);
+
+    // const filtered = vendors.filter((subCat) =>
+    //   subCat.subCategories.filter((subCt) =>
+    //     subCt.toLowerCase().includes(search.toLowerCase()),
+    //   ),
+    // );
+
+    const filtered = vendors.filter((vendor) => {
+      return vendor.subCategories.some((sbCt) =>
+        sbCt.toLowerCase().includes(search.toLowerCase()),
+      );
+    });
+
+    console.log('Filtered ', filtered);
 
     setFilteredOnSubCategory(filtered);
   };
@@ -124,6 +140,8 @@ const VendorListPage = () => {
   const handleAdd = () => {
     navigate('create');
   };
+
+  console.log('Filtered On SubCategory', filteredOnSubCategory);
 
   return (
     <CardContainer>
@@ -162,6 +180,7 @@ const VendorListPage = () => {
                 label="Location"
                 onChange={handleCategoryChange}
               >
+                {categories && <MenuItem value="">None</MenuItem>}
                 {categories[0]?.map((option) => (
                   <MenuItem key={option.category_id} value={option.category_id}>
                     {option.category_name}
@@ -169,7 +188,7 @@ const VendorListPage = () => {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ width: 200 }} size="small">
+            {/* <FormControl sx={{ width: 200 }} size="small">
               <InputLabel id="demo-select-small">
                 Select Sub-Category
               </InputLabel>
@@ -186,21 +205,37 @@ const VendorListPage = () => {
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
-            {/* <FormControl classes={{ root: 'icon-box' }} size="small">
-              <InputLabel id="department">Department</InputLabel>
+            </FormControl> */}
+
+            <FormControl sx={{ width: 200 }} size="small">
+              <InputLabel id="demo-select-small">
+                Select Sub-Category
+              </InputLabel>
               <Select
-                labelId="department"
-                id="department"
-                value={department}
-                label="Department"
-                onChange={handleChange}
+                labelId="demo-select-small"
+                id="demo-select-small"
+                value={subCatValue}
+                label="Category"
+                onChange={handleFilterSubCategory}
               >
-                {departments?.map((dept) => (
-                  <MenuItem value={dept.name}>{dept.name}</MenuItem>
+                {subCategory.length === 0 && (
+                  <Error
+                    title="Sub-Category"
+                    error={'Please Select Catgeory'}
+                    severity="info"
+                  />
+                )}
+                {subCategory && <MenuItem value="">None</MenuItem>}
+                {subCategory?.map((option) => (
+                  <MenuItem
+                    key={option.category_id}
+                    value={option.category_name}
+                  >
+                    {option.category_name}
+                  </MenuItem>
                 ))}
               </Select>
-            </FormControl> */}
+            </FormControl>
           </Stack>
         </Box>
         <Box p={1}>

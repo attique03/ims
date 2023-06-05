@@ -122,6 +122,8 @@ const InventoryListPage = () => {
     setSubCatValue(e.target.value);
 
     let search = e.target.value;
+    console.log('Search ', search);
+
     const filtered = assets.filter((subCat) =>
       subCat.subcategoryName.toLowerCase().includes(search.toLowerCase()),
     );

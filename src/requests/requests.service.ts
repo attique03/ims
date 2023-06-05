@@ -1,13 +1,13 @@
 import {
   ForbiddenException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Asset } from 'src/assets/entities/asset.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Requests } from './entities/request.entity';
 import {
   ADMIN,
   EMPLOYEE,
@@ -16,10 +16,6 @@ import {
   RESOLVED,
   SUPERADMIN,
 } from 'src/constants/constants';
-import { Repository } from 'typeorm';
-import { CreateRequestDto } from './dto/create-request.dto';
-import { UpdateRequestDto } from './dto/update-request.dto';
-import { Requests } from './entities/request.entity';
 
 @Injectable()
 export class RequestsService {
@@ -74,10 +70,11 @@ export class RequestsService {
         .andWhere('requests.userId = :userId', {
           userId: req.user.id,
         })
+        .andWhere('category IS NOT NULL')
         .orderBy('requests', 'DESC')
         .getRawMany();
     } else if (req.user.role.role === ADMIN) {
-      // ADMIN Fetches all the requets
+      // ADMIN Fetches all the Returns
       if (req.query.type === 'faulty') {
         return this.requestRepository
           .createQueryBuilder('requests')
@@ -100,6 +97,7 @@ export class RequestsService {
           .andWhere('requests.type = :type', {
             type: req.query.type,
           })
+          .andWhere('category IS NOT NULL')
           .orderBy('requests', 'DESC')
           .getRawMany();
       }
@@ -123,6 +121,7 @@ export class RequestsService {
             .andWhere('requests.userId = :userId', {
               userId: req.query.userId,
             })
+            .andWhere('category IS NOT NULL')
             .orderBy('requests', 'DESC')
             .getRawMany()
         );
@@ -147,12 +146,13 @@ export class RequestsService {
           .andWhere('requests.type = :type', {
             type: 'acquisition',
           })
+          .andWhere('category IS NOT NULL')
           .orderBy('requests', 'DESC')
           .getRawMany();
       }
     } else {
       throw new ForbiddenException({
-        error: 'Not Allowed into the requests ',
+        error: 'Not Allowed to fetch requests ',
       });
     }
   }
@@ -193,38 +193,59 @@ export class RequestsService {
       relations: ['subCategory', 'user', 'organization'],
     });
 
+    // console.log('Found the Request ', requestResolved);
+
     if (
       requestResolved &&
       requestResolved.type === 'acquisition' &&
       req.query.status === 'Resolved'
     ) {
-      const asset = await this.assetRepository
-        .createQueryBuilder('asset')
-        .leftJoin('asset.subCategory', 'subCategory')
-        .leftJoin('asset.employee', 'employee')
-        .leftJoin('asset.organization', 'organization')
-        .where('subCategory.id = :subCategoryId', {
-          subCategoryId: requestResolved.subCategory.id,
-        })
-        .andWhere('employee.id IS NULL')
-        // .andWhere('asset.organization = :organizationId', {
-        //   organizationId: req.user.organization.id,
-        // })
-        .getRawOne();
+      console.log('In First If ', requestResolved, req.query.status);
 
-      console.log('Request Above ', requestResolved, req.query.status);
+      if (requestResolved.type === 'acquisition') {
+        console.log('If Acquisition ', requestResolved, req.query.status);
 
-      if (asset) {
-        const assetId = asset.asset_id;
+        const asset = await this.assetRepository
+          .createQueryBuilder('asset')
+          .leftJoin('asset.subCategory', 'subCategory')
+          .leftJoin('asset.employee', 'employee')
+          .leftJoin('asset.organization', 'organization')
+          .where('subCategory.id = :subCategoryId', {
+            subCategoryId: requestResolved.subCategory.id,
+          })
+          .andWhere('employee.id IS NULL')
+          // .andWhere('asset.organization = :organizationId', {
+          //   organizationId: req.user.organization.id,
+          // })
+          .getRawOne();
+
+        if (asset) {
+          const assetId = asset.asset_id;
+          const reqId = requestResolved.id;
+          console.log('Request for Asset ', assetId, reqId);
+
+          const updatedAsset = await this.assetRepository
+            .createQueryBuilder()
+            .update(Asset)
+            .set({ employee: { id: requestResolved.user.id } })
+            .where('id = :assetId', { assetId })
+            .execute();
+
+          const updatedRequest = await this.requestRepository
+            .createQueryBuilder()
+            .update(Requests)
+            .set({ status: RESOLVED })
+            .where('id = :reqId', { reqId })
+            .execute();
+
+          return { updatedRequest, updatedAsset };
+        } else {
+          throw new NotFoundException('No Asset Available at the moment');
+        }
+      } else {
         const reqId = requestResolved.id;
-        console.log('Request for Asset ', assetId, reqId);
 
-        const updatedAsset = await this.assetRepository
-          .createQueryBuilder()
-          .update(Asset)
-          .set({ employee: { id: requestResolved.user.id } })
-          .where('id = :assetId', { assetId })
-          .execute();
+        console.log('Inside Else ', reqId);
 
         const updatedRequest = await this.requestRepository
           .createQueryBuilder()
@@ -233,9 +254,7 @@ export class RequestsService {
           .where('id = :reqId', { reqId })
           .execute();
 
-        return { updatedRequest, updatedAsset };
-      } else {
-        throw new NotFoundException('No Asset Available at the moment');
+        return updatedRequest;
       }
     } else if (requestResolved && req.query.status === 'Rejected') {
       const reqId = requestResolved.id;
@@ -248,30 +267,25 @@ export class RequestsService {
         .execute();
 
       return updatedRequest;
+    } else if (
+      requestResolved &&
+      requestResolved.type === 'faulty' &&
+      req.query.returnType
+    ) {
+      console.log('Request Faulty with Return Type ', req.query.returnType);
+      const reqId = requestResolved.id;
+
+      const updatedRequest = await this.requestRepository
+        .createQueryBuilder()
+        .update(Requests)
+        .set({ returnType: req.query.returnType })
+        .where('id = :reqId', { reqId })
+        .execute();
+
+      return updatedRequest;
     } else {
       throw new NotFoundException('Request not found');
     }
-
-    // return;
-
-    // if (req.query.status === 'Resolved' && assets.length > 0) {
-    //   assets.map((asset, index) => {
-    //     if (asset.employee !== null) {
-    //     } else {
-    //       throw new NotFoundException(
-    //         'Inventory not available at the moment to be assigned',
-    //       );
-    //     }
-    //   });
-    // }
-    // let asset = awa
-
-    // if (!requestResolved) {
-    //   throw new NotFoundException('Request Not Found');
-    // } else {
-    //   requestResolved = { ...requestResolved, status, returnType };
-    //   return await this.requestRepository.save(requestResolved);
-    // }
   }
 
   async remove(id: number) {
@@ -284,3 +298,25 @@ export class RequestsService {
     return await this.requestRepository.remove(requests);
   }
 }
+
+// Update Extra Content
+
+// return;
+// if (req.query.status === 'Resolved' && assets.length > 0) {
+//   assets.map((asset, index) => {
+//     if (asset.employee !== null) {
+//     } else {
+//       throw new NotFoundException(
+//         'Inventory not available at the moment to be assigned',
+//       );
+//     }
+//   });
+// }
+// let asset = awa
+
+// if (!requestResolved) {
+//   throw new NotFoundException('Request Not Found');
+// } else {
+//   requestResolved = { ...requestResolved, status, returnType };
+//   return await this.requestRepository.save(requestResolved);
+// }

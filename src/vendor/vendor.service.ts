@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/category/entities/category.entity';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { CreateVendorDto } from './dto/create-vendor.dto';
 import { UpdateVendorDto } from './dto/update-vendor.dto';
 import { Vendor } from './entities/vendor.entity';
@@ -66,17 +66,39 @@ export class VendorService {
       },
     });
 
-    return vendors.map((vendor) => ({
+    // const vendors = await this.vendorRepository
+    //   .createQueryBuilder('vendor')
+    //   .leftJoinAndSelect('vendor.subCategory', 'subCategory')
+    //   .leftJoinAndSelect('subCategory.parent', 'parent')
+    //   .leftJoinAndSelect('vendor.organization', 'organization')
+    //   .where('organization.id = :organizationId', {
+    //     organizationId: req.user.organization.id,
+    //   })
+    //   .andWhere('subCategory IS NOT NULL')
+    //   .orderBy('vendor.id', 'DESC')
+    //   .getRawMany();
+
+    const vends = vendors.map((vendor) => ({
       id: vendor.id,
       name: vendor.name,
       phone: vendor.phone,
-      categoryName: vendor?.subCategory[0]?.parent?.name
-        ? vendor?.subCategory[0]?.parent?.name
-        : null,
-      subCategories: vendor.subCategory.map(
-        (subCategory) => subCategory.name + ', ',
-      ),
+      categoryName:
+        vendor &&
+        vendor.subCategory.length > 0 &&
+        vendor?.subCategory[0]?.parent?.name
+          ? vendor?.subCategory[0]?.parent?.name
+          : null,
+      subCategories:
+        vendor && vendor.subCategory.length > 0
+          ? vendor.subCategory.map((subCategory) => subCategory.name + ', ')
+          : null,
     }));
+
+    const filteredVendors = vends.filter(
+      (vend) => vend.categoryName && vend.subCategories,
+    );
+
+    return filteredVendors;
   }
 
   async findOne(id: number, req) {

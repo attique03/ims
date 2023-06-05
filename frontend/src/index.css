@@ -78,17 +78,24 @@
 }
 
 .tab {
-  background: #2979ff;
+  /* background: #2979ff; */
   margin: 0 20px;
   border-radius: 5px;
 }
 
-.tabs button {
+/* .tabs button {
   background: #2979ff;
   margin: 10px 20px;
   border-radius: 5px;
   color: white;
-}
+} */
+
+/* .tabs button {
+  background: #2979ff;
+  margin: 10px 20px;
+  border-radius: 5px;
+  color: white;
+} */
 
 .input-width {
   width: 400px;

@@ -44,11 +44,13 @@ function a11yProps(index) {
 const ComplaintListAdmin = () => {
   const [filter, setFilter] = useState(true);
   const [value, setValue] = useState(0);
+  const [sortOrder, setSortOrder] = useState('descending');
 
   const [searchValue, setSearchValue] = useState('');
   const [filteredOnSearch, setFilteredOnSearch] = useState([]);
   const [status, setStatus] = useState('');
   const [filteredOnStatus, setFilteredOnStatus] = useState([]);
+  const [sortedComplaints, setSortedComplaints] = useState([]);
 
   const theme = useTheme();
   const navigate = useNavigate();
@@ -89,6 +91,16 @@ const ComplaintListAdmin = () => {
 
   const handleSort = () => {
     setFilter(!filter);
+
+    if (sortOrder === 'descending') {
+      const sortedVendors = complaints.sort((a, b) => a.id - b.id);
+      setSortedComplaints(sortedVendors);
+      setSortOrder('ascending');
+    } else {
+      const sortedVendors = complaints.sort((a, b) => b.id - a.id);
+      setSortedComplaints(sortedVendors);
+      setSortOrder('descending');
+    }
   };
 
   const handleComplaintCreate = () => {
@@ -101,12 +113,16 @@ const ComplaintListAdmin = () => {
     setFilteredOnSearch('');
     setStatus('');
     setFilteredOnStatus('');
+    setFilter(true);
+
     if (newValue === 0) {
       dispatch(listComplaints(true));
     } else if (newValue === 1) {
       dispatch(listComplaints());
     }
   };
+
+  console.log('Sorted ', sortedComplaints);
   return (
     <CardContainer>
       {error && <Error error={error} />}
@@ -156,9 +172,9 @@ const ComplaintListAdmin = () => {
             classes={{ root: 'icon-background' }}
           >
             {filter ? (
-              <FontAwesomeIcon icon={faArrowUpAZ} />
-            ) : (
               <FontAwesomeIcon icon={faArrowDownZA} />
+            ) : (
+              <FontAwesomeIcon icon={faArrowUpAZ} />
             )}
           </IconButton>
         </Box>
@@ -190,17 +206,19 @@ const ComplaintListAdmin = () => {
                 display: 'none',
               },
             }}
+            // classes={{ root: 'tabs' }}
           >
             <Tab
               label="Employees"
               {...a11yProps(0)}
-              classes={{ root: value === 0 && 'tab' }}
+              classes={{ root: 'tab' }}
+              // classes={{ root: value === 0 && 'tab' }}
               selected={false}
             />
             <Tab
               label="Submitted"
               {...a11yProps(1)}
-              classes={{ root: value === 1 && 'tab' }}
+              // classes={{ root: value === 1 && 'tab' }}
               selected={false}
             />
           </Tabs>

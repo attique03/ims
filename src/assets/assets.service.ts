@@ -57,6 +57,7 @@ export class AssetsService {
         .andWhere('asset.employeeId = :employeeId', {
           employeeId: req.query.employeeId,
         })
+        .andWhere('category IS NOT NULL')
         .orderBy('asset.id', 'DESC')
         .getRawMany();
     }
@@ -71,6 +72,7 @@ export class AssetsService {
       .where('asset.organizationId = :organizationId', {
         organizationId: req.user.organization.id,
       })
+      .andWhere('category IS NOT NULL')
       .orderBy('asset.id', 'DESC')
       .getRawMany();
   }

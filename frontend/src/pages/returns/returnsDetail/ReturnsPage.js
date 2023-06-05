@@ -8,6 +8,7 @@ import { Box, Stack } from '@mui/system';
 import {
   Avatar,
   Button,
+  Chip,
   Divider,
   Grid,
   MenuItem,
@@ -63,6 +64,10 @@ const ReturnsPage = () => {
 
   const handleReturnTypeChange = (e) => {
     setReturnType(e.target.value);
+
+    dispatch(updateRequests(params.id, '', e.target.value));
+
+    console.log('Return type ', e.target.value);
   };
 
   return (
@@ -130,23 +135,35 @@ const ReturnsPage = () => {
                   Approve
                 </Button>
               </Box>
-
-              <Box className={'mark-box'}>
-                <TextField
-                  id="category"
-                  select
-                  label="Repair/Replace"
-                  sx={{ width: '200px' }}
-                  size="small"
-                  onChange={handleReturnTypeChange}
-                >
-                  <MenuItem value="Repair">Repair</MenuItem>
-                  <MenuItem value="Replace">Replace</MenuItem>
-                </TextField>
-              </Box>
             </>
           )}
+
+        {userInfo?.user?.role?.role === ADMIN &&
+        requests?.returnType !== ' ' ? (
+          <Chip
+            sx={{ mt: 1.5, ml: 4 }}
+            label={requests.returnType}
+            variant="outlined"
+            className="chip"
+          />
+        ) : (
+          <Box className={'mark-box'}>
+            <TextField
+              id="category"
+              select
+              label="Repair/Replace"
+              sx={{ width: '200px' }}
+              size="small"
+              onChange={handleReturnTypeChange}
+            >
+              <MenuItem value=" ">None</MenuItem>
+              <MenuItem value="Repair">Repair</MenuItem>
+              <MenuItem value="Replace">Replace</MenuItem>
+            </TextField>
+          </Box>
+        )}
       </Box>
+
       {/* ______________________ Header Ends ______________________ */}
 
       {/* ______________________ Content Starts ______________________ */}
